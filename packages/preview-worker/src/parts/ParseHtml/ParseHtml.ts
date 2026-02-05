@@ -57,8 +57,8 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
           type: GetVirtualDomTag.getVirtualDomTag(token.text),
         }
         dom.push(newNode)
-        current = newNode
         if (!IsSelfClosingTag.isSelfClosingTag(token.text)) {
+          current = newNode
           stack.push(current)
         }
         break
