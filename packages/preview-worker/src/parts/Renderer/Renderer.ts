@@ -1,5 +1,5 @@
-import type { StatusBarState } from '../StatusBarState/StatusBarState.ts'
+import type { PreviewState } from '../PreviewState/PreviewState.ts'
 
 export interface Renderer {
-  (oldState: StatusBarState, newState: StatusBarState): readonly any[]
+  (oldState: PreviewState, newState: PreviewState): readonly any[]
 }

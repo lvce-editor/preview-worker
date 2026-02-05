@@ -1,11 +1,11 @@
-import type { StatusBarState } from '../StatusBarState/StatusBarState.ts'
+import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { getMatchingItem } from '../GetMatchingItem/GetMatchingItem.ts'
 import { handleClickExtensionStatusBarItem } from '../HandleClickExtensionStatusBarItem/HandleClickExtensionStatusBarItem.ts'
 import { handleClickNotification } from '../HandleClickNotification/HandleClickNotification.ts'
 import { handleClickProblems } from '../HandleClickProblems/HandleClickProblems.ts'
 import * as InputName from '../InputName/InputName.ts'
 
-export const handleClick = async (state: StatusBarState, name: string): Promise<StatusBarState> => {
+export const handleClick = async (state: PreviewState, name: string): Promise<PreviewState> => {
   if (!name) {
     return state
   }

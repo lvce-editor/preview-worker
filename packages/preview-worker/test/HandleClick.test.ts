@@ -1,23 +1,23 @@
 import { expect, test } from '@jest/globals'
 import { ExtensionHost, RendererWorker } from '@lvce-editor/rpc-registry'
-import type { StatusBarState } from '../src/parts/StatusBarState/StatusBarState.ts'
+import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as HandleClick from '../src/parts/HandleClick/HandleClick.ts'
 
 test('handleClick should return state unchanged when name is empty', async () => {
-  const state: StatusBarState = createDefaultState()
+  const state: PreviewState = createDefaultState()
   const result = await HandleClick.handleClick(state, '')
   expect(result).toBe(state)
 })
 
 test('handleClick should return state unchanged when item is not found', async () => {
-  const state: StatusBarState = createDefaultState()
+  const state: PreviewState = createDefaultState()
   const result = await HandleClick.handleClick(state, 'non-existent-item')
   expect(result).toBe(state)
 })
 
 test('handleClick should return the same state object', async () => {
-  const state: StatusBarState = createDefaultState()
+  const state: PreviewState = createDefaultState()
   const result = await HandleClick.handleClick(state, 'any-item')
   expect(result).toBe(state)
 })
@@ -28,7 +28,7 @@ test('handleClick should call handleClickNotification when item is Notifications
     'Panel.toggleView': async () => {},
   })
 
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     statusBarItemsLeft: [
       {
@@ -53,7 +53,7 @@ test('handleClick should call handleClickProblems when item is Problems', async 
     'Panel.toggleView': async () => {},
   })
 
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     statusBarItemsLeft: [],
     statusBarItemsRight: [
@@ -77,7 +77,7 @@ test('handleClick should call handleClickExtensionStatusBarItem for extension it
     'ExtensionHostStatusBar.executeCommand': async () => {},
   })
 
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     statusBarItemsLeft: [
       {
@@ -101,7 +101,7 @@ test('handleClick should find item in statusBarItemsLeft', async () => {
     'ExtensionHostStatusBar.executeCommand': async () => {},
   })
 
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     statusBarItemsLeft: [
       {
@@ -124,7 +124,7 @@ test('handleClick should find item in statusBarItemsRight', async () => {
     'ExtensionHostStatusBar.executeCommand': async () => {},
   })
 
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     statusBarItemsLeft: [],
     statusBarItemsRight: [
@@ -147,7 +147,7 @@ test('handleClick should prioritize left items over right items with same name',
     'ExtensionHostStatusBar.executeCommand': async () => {},
   })
 
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     statusBarItemsLeft: [
       {
@@ -179,7 +179,7 @@ test('handleClick should handle extension item with command property', async () 
     'ExtensionHostStatusBar.executeCommand': async () => {},
   })
 
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     statusBarItemsLeft: [
       {
@@ -203,7 +203,7 @@ test('handleClick should handle multiple items in left array', async () => {
     'ExtensionHostStatusBar.executeCommand': async () => {},
   })
 
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     statusBarItemsLeft: [
       {
@@ -238,7 +238,7 @@ test('handleClick should handle multiple items in right array', async () => {
     'ExtensionHostStatusBar.executeCommand': async () => {},
   })
 
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     statusBarItemsLeft: [],
     statusBarItemsRight: [
@@ -277,7 +277,7 @@ test('handleClick should not call RPC methods for empty name', async () => {
     'ExtensionHostStatusBar.executeCommand': async () => {},
   })
 
-  const state: StatusBarState = createDefaultState()
+  const state: PreviewState = createDefaultState()
 
   await HandleClick.handleClick(state, '')
 
@@ -294,7 +294,7 @@ test('handleClick should not call RPC methods for item not found', async () => {
     'ExtensionHostStatusBar.executeCommand': async () => {},
   })
 
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     statusBarItemsLeft: [
       {

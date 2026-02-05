@@ -1,10 +1,10 @@
 import { expect, test } from '@jest/globals'
-import type { StatusBarState } from '../src/parts/StatusBarState/StatusBarState.ts'
+import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as Resize from '../src/parts/Resize/Resize.ts'
 
 test('resize should merge dimensions into state', () => {
-  const state: StatusBarState = { ...createDefaultState(), uid: 1 }
+  const state: PreviewState = { ...createDefaultState(), uid: 1 }
   const dimensions = {
     height: 50,
     width: 100,
@@ -18,7 +18,7 @@ test('resize should merge dimensions into state', () => {
 })
 
 test('resize should preserve existing state properties', () => {
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     disposed: true,
     uid: 5,
@@ -35,7 +35,7 @@ test('resize should preserve existing state properties', () => {
 })
 
 test('resize should overwrite existing properties in dimensions', () => {
-  const state: StatusBarState = {
+  const state: PreviewState = {
     ...createDefaultState(),
     uid: 1,
   }
@@ -51,7 +51,7 @@ test('resize should overwrite existing properties in dimensions', () => {
 })
 
 test('resize should handle empty dimensions', () => {
-  const state: StatusBarState = { ...createDefaultState(), uid: 1 }
+  const state: PreviewState = { ...createDefaultState(), uid: 1 }
   const dimensions = {}
   const result = Resize.resize(state, dimensions)
   expect(result).toEqual(state)
@@ -61,7 +61,7 @@ test('resize should handle empty dimensions', () => {
 })
 
 test('resize should not mutate original state', () => {
-  const state: StatusBarState = { ...createDefaultState(), uid: 1 }
+  const state: PreviewState = { ...createDefaultState(), uid: 1 }
   const dimensions = {
     height: 50,
     width: 100,
@@ -74,7 +74,7 @@ test('resize should not mutate original state', () => {
 })
 
 test('resize should handle multiple dimension properties', () => {
-  const state: StatusBarState = { ...createDefaultState(), uid: 1 }
+  const state: PreviewState = { ...createDefaultState(), uid: 1 }
   const dimensions = {
     height: 50,
     width: 100,

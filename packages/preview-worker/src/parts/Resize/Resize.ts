@@ -1,6 +1,6 @@
-import type { StatusBarState } from '../StatusBarState/StatusBarState.ts'
+import type { PreviewState } from '../PreviewState/PreviewState.ts'
 
-export const resize = (state: StatusBarState, dimensions: any): StatusBarState => {
+export const resize = (state: PreviewState, dimensions: any): PreviewState => {
   return {
     ...state,
     ...dimensions,

@@ -1,16 +1,16 @@
 import { expect, test } from '@jest/globals'
-import type { StatusBarState } from '../src/parts/StatusBarState/StatusBarState.ts'
+import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import * as Create from '../src/parts/Create/Create.ts'
-import * as StatusBarStates from '../src/parts/StatusBarStates/StatusBarStates.ts'
+import * as PreviewStates from '../src/parts/PreviewStates/PreviewStates.ts'
 
 test('create should store state with the given uid', () => {
   const uid = 123
   Create.create(uid, '', 0, 0, 0, 0, 0, '')
-  const result = StatusBarStates.get(uid)
+  const result = PreviewStates.get(uid)
   const { newState } = result
-  const newStateTyped: StatusBarState = newState
+  const newStateTyped: PreviewState = newState
   const { oldState } = result
-  const oldStateTyped: StatusBarState = oldState
+  const oldStateTyped: PreviewState = oldState
   expect(newStateTyped).toBeDefined()
   expect(newStateTyped.uid).toBe(uid)
   expect(newStateTyped.statusBarItemsLeft).toEqual([])

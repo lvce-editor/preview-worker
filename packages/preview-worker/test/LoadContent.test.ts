@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals'
 import { ExtensionHost, RendererWorker } from '@lvce-editor/rpc-registry'
-import type { StatusBarState } from '../src/parts/StatusBarState/StatusBarState.ts'
+import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as ExtensionHostActivationEvent from '../src/parts/ExtensionHostActivationEvent/ExtensionHostActivationEvent.ts'
 import * as ExtensionHostCommandType from '../src/parts/ExtensionHostCommandType/ExtensionHostCommandType.ts'
@@ -29,7 +29,7 @@ test('loadContent should load Preview items when preference is true', async () =
     ],
   })
 
-  const state: StatusBarState = { ...createDefaultState(), uid: 1 }
+  const state: PreviewState = { ...createDefaultState(), uid: 1 }
   const result = await LoadContent.loadContent(state)
 
   expect(mockRendererRpc.invocations).toEqual([
@@ -84,7 +84,7 @@ test('loadContent should return empty array when preference is false', async () 
     },
   })
 
-  const state: StatusBarState = { ...createDefaultState(), uid: 2 }
+  const state: PreviewState = { ...createDefaultState(), uid: 2 }
   const result = await LoadContent.loadContent(state)
 
   expect(mockRendererRpc.invocations).toEqual([['Preferences.get', 'statusBar.itemsVisible']])
@@ -104,7 +104,7 @@ test('loadContent should return empty array when preference is undefined', async
     [ExtensionHostCommandType.GetStatusBarItems]: async () => [],
   })
 
-  const state: StatusBarState = { ...createDefaultState(), uid: 3 }
+  const state: PreviewState = { ...createDefaultState(), uid: 3 }
   const result = await LoadContent.loadContent(state)
 
   expect(mockRendererRpc.invocations).toEqual([
@@ -144,7 +144,7 @@ test('loadContent should preserve existing state properties', async () => {
     'Preferences.get': async () => false,
   })
 
-  const state: StatusBarState & { disposed?: boolean } = {
+  const state: PreviewState & { disposed?: boolean } = {
     ...createDefaultState(),
     disposed: true,
     uid: 4,
@@ -183,7 +183,7 @@ test('loadContent should handle multiple Preview items', async () => {
     ],
   })
 
-  const state: StatusBarState = { ...createDefaultState(), uid: 5 }
+  const state: PreviewState = { ...createDefaultState(), uid: 5 }
   const result = await LoadContent.loadContent(state)
 
   expect(mockRendererRpc.invocations).toEqual([

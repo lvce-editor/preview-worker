@@ -1,6 +1,6 @@
-import type { StatusBarState } from '../StatusBarState/StatusBarState.ts'
+import type { PreviewState } from '../PreviewState/PreviewState.ts'
 
-export const createDefaultState = (): StatusBarState => {
+export const createDefaultState = (): PreviewState => {
   return {
     assetDir: '',
     errorCount: 0,

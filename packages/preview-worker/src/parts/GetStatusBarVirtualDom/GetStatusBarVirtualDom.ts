@@ -1,6 +1,6 @@
 import { VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
 
-export const getStatusBarVirtualDom = (): readonly any[] => {
+export const getPreviewDom = (): readonly any[] => {
   return [
     {
       type: VirtualDomElements.H1,

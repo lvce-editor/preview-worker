@@ -11,7 +11,7 @@ import { render2 } from '../Render2/Render2.ts'
 import { renderEventListeners } from '../RenderEventListeners/RenderEventListeners.ts'
 import { resize } from '../Resize/Resize.ts'
 import { saveState } from '../SaveState/SaveState.ts'
-import { getCommandIds, wrapCommand, wrapGetter } from '../StatusBarStates/StatusBarStates.ts'
+import { getCommandIds, wrapCommand, wrapGetter } from '../PreviewStates/PreviewStates.ts'
 
 export const commandMap = {
   'StatusBar.create': StatusBar.create,
