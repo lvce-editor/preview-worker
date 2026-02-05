@@ -7,6 +7,6 @@ export const renderItems = (oldState: PreviewState, newState: PreviewState): any
   if (initial) {
     return [ViewletCommand.SetDom2, uid, []]
   }
-  const dom = getPreviewDom()
+  const dom = getPreviewDom(newState)
   return [ViewletCommand.SetDom2, uid, dom]
 }
