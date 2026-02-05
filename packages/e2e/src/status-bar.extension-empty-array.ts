@@ -5,8 +5,8 @@ export const name = 'preview.extension-empty-array'
 export const skip = 1
 
 export const test: Test = async ({ expect, Locator }) => {
-  const statusBar = Locator('.StatusBar')
-  await expect(statusBar).toBeVisible()
+  const preview = Locator('.StatusBar')
+  await expect(preview).toBeVisible()
 
   const itemProblems = Locator('.StatusBarItem[name="Problems"]')
   await expect(itemProblems).toBeVisible()

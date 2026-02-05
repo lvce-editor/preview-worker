@@ -26,14 +26,14 @@
 
 // const content = await readFile(rendererWorkerMainPath, 'utf-8')
 
-// const statusBarWorkerPath = join(root, '.tmp/dist/dist/statusBarWorkerMain.js')
+// const previewWorkerPath = join(root, '.tmp/dist/dist/previewWorkerMain.js')
 
-// const remoteUrl = getRemoteUrl(statusBarWorkerPath)
-// if (!content.includes('// const statusBarWorkerUrl = ')) {
+// const remoteUrl = getRemoteUrl(previewWorkerPath)
+// if (!content.includes('// const previewWorkerUrl = ')) {
 //   await cp(rendererWorkerMainPath, rendererWorkerMainPath + '.original')
-//   const occurrence = `const statusBarWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/statusBarWorkerMain.js\``
-//   const replacement = `// const statusBarWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/statusBarWorkerMain.js\`
-// const statusBarWorkerUrl = \`${remoteUrl}\``
+//   const occurrence = `const previewWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/previewWorkerMain.js\``
+//   const replacement = `// const previewWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/previewWorkerMain.js\`
+// const previewWorkerUrl = \`${remoteUrl}\``
 
 //   const newContent = content.replace(occurrence, replacement)
 //   await writeFile(rendererWorkerMainPath, newContent)

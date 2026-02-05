@@ -25,12 +25,12 @@ const rendererWorkerPath = join(root, 'dist', commitHash, 'packages', 'renderer-
 // }
 
 // const content = await readFile(rendererWorkerPath, 'utf8')
-// const workerPath = join(root, '.tmp/dist/dist/statusBarWorkerMain.js')
+// const workerPath = join(root, '.tmp/dist/dist/previewWorkerMain.js')
 // const remoteUrl = getRemoteUrl(workerPath)
 
-// const occurrence = `// const statusBarWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/statusBarWorkerMain.js\`
-// const statusBarWorkerUrl = \`${remoteUrl}\``
-// const replacement = `const statusBarWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/statusBarWorkerMain.js\``
+// const occurrence = `// const previewWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/previewWorkerMain.js\`
+// const previewWorkerUrl = \`${remoteUrl}\``
+// const replacement = `const previewWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/previewWorkerMain.js\``
 // if (!content.includes(occurrence)) {
 //   throw new Error('occurrence not found')
 // }
