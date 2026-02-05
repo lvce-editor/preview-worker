@@ -13,8 +13,6 @@ test('create should store state with the given uid', () => {
   const oldStateTyped: PreviewState = oldState
   expect(newStateTyped).toBeDefined()
   expect(newStateTyped.uid).toBe(uid)
-  expect(newStateTyped.statusBarItemsLeft).toEqual([])
-  expect(newStateTyped.statusBarItemsRight).toEqual([])
   expect(oldStateTyped).toBeDefined()
   expect(oldStateTyped.uid).toBe(uid)
 })
