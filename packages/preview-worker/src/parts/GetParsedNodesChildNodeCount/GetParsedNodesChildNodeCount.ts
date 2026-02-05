@@ -4,6 +4,11 @@ import * as Assert from '../Assert/Assert.ts'
 export const getParsedNodesChildNodeCount = (parsedDom: readonly VirtualDomNode[]): number => {
   Assert.array(parsedDom)
 
+  const rootCountFromParse = (parsedDom as any).rootChildCount
+  if (typeof rootCountFromParse === 'number') {
+    return rootCountFromParse
+  }
+
   let rootChildCount = 0
   let i = 0
 
