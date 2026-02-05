@@ -5,6 +5,6 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
     ...state,
     errorCount: 0,
     initial: false,
-    warningCount: 0,
+    warningCount: 1,
   }
 }
