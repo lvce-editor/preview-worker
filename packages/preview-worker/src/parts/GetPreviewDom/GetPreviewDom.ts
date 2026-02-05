@@ -3,7 +3,7 @@ import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { getEmptyPreviewDom } from '../GetEmptyPreviewDom/GetEmptyPreviewDom.ts'
 
 export const getPreviewDom = (state: PreviewState): readonly any[] => {
-  const { uri, parsedDom, parsedNodesChildNodeCount } = state
+  const { parsedDom, parsedNodesChildNodeCount, uri } = state
 
   if (!uri) {
     return getEmptyPreviewDom()
