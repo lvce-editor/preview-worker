@@ -13,7 +13,7 @@ test('setUri should set the uri property on the state', () => {
 })
 
 test('setUri should preserve other state properties', () => {
-  const state: PreviewState = { ...createDefaultState(), uid: 42, errorCount: 5 }
+  const state: PreviewState = { ...createDefaultState(), errorCount: 5, uid: 42 }
   const newUri = 'file:///home/user/test.html'
 
   const result = setUri(state, newUri)
@@ -37,8 +37,8 @@ test('setUri should handle different uri formats', () => {
   const state: PreviewState = createDefaultState()
   const uris = ['file:///home/user/test.html', 'http://localhost:3000', 'https://example.com/page', 'data:text/html,<h1>Test</h1>']
 
-  uris.forEach((uri) => {
+  for (const uri of uris) {
     const result = setUri(state, uri)
     expect(result.uri).toBe(uri)
-  })
+  }
 })
