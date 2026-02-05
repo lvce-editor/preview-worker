@@ -1,0 +1,71 @@
+import { VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
+import * as ElementTags from '../ElementTags/ElementTags.ts'
+
+export const getVirtualDomTag = (text: string): number => {
+  switch (text) {
+    case ElementTags.A:
+      return VirtualDomElements.A
+    case ElementTags.Abbr:
+      return VirtualDomElements.Abbr
+    case ElementTags.Article:
+      return VirtualDomElements.Article
+    case ElementTags.Aside:
+      return VirtualDomElements.Aside
+    case ElementTags.Br:
+      return VirtualDomElements.Br
+    case ElementTags.Cite:
+      return VirtualDomElements.Cite
+    case ElementTags.Data:
+      return VirtualDomElements.Data
+    case ElementTags.Dd:
+      return VirtualDomElements.Dd
+    case ElementTags.Div:
+      return VirtualDomElements.Div
+    case ElementTags.Dl:
+      return VirtualDomElements.Dl
+    case ElementTags.Figcaption:
+      return VirtualDomElements.Figcaption
+    case ElementTags.Figure:
+      return VirtualDomElements.Figure
+    case ElementTags.Footer:
+      return VirtualDomElements.Footer
+    case ElementTags.H1:
+      return VirtualDomElements.H1
+    case ElementTags.H2:
+      return VirtualDomElements.H2
+    case ElementTags.H3:
+      return VirtualDomElements.H3
+    case ElementTags.H4:
+      return VirtualDomElements.H4
+    case ElementTags.H5:
+      return VirtualDomElements.H5
+    case ElementTags.Header:
+      return VirtualDomElements.Header
+    case ElementTags.Hr:
+      return VirtualDomElements.Hr
+    case ElementTags.Img:
+      return VirtualDomElements.Img
+    case ElementTags.Li:
+      return VirtualDomElements.Li
+    case ElementTags.Nav:
+      return VirtualDomElements.Nav
+    case ElementTags.Ol:
+      return VirtualDomElements.Ol
+    case ElementTags.P:
+      return VirtualDomElements.P
+    case ElementTags.Pre:
+      return VirtualDomElements.Pre
+    case ElementTags.Search:
+      return VirtualDomElements.Search
+    case ElementTags.Section:
+      return VirtualDomElements.Section
+    case ElementTags.Span:
+      return VirtualDomElements.Span
+    case ElementTags.Tfoot:
+      return VirtualDomElements.Tfoot
+    case ElementTags.Time:
+      return VirtualDomElements.Time
+    default:
+      return VirtualDomElements.Div
+  }
+}
