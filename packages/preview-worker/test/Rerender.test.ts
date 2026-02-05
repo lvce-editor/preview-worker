@@ -14,7 +14,7 @@ test('rerender should return a new state object', () => {
 test('rerender should return a new parsedDom array reference', () => {
   const state: PreviewState = {
     ...createDefaultState(),
-    parsedDom: [{ type: 1, childCount: 0 }],
+    parsedDom: [{ childCount: 0, type: 1 }],
   }
   const result = rerender(state)
 
@@ -31,7 +31,7 @@ test('rerender should preserve all state properties', () => {
     errorCount: 2,
     errorMessage: 'test error',
     initial: false,
-    parsedDom: [{ type: 1, childCount: 1 }, { type: 2, childCount: 0 }],
+    parsedDom: [{ childCount: 1, type: 1 }, { childCount: 0, type: 2 }],
     platform: 1,
     uid: 123,
     uri: 'file:///test.html',
@@ -63,7 +63,7 @@ test('rerender should handle empty parsedDom', () => {
 })
 
 test('rerender should create shallow copy of parsedDom elements', () => {
-  const domElement = { type: 1, childCount: 2, className: 'test' }
+  const domElement = { childCount: 2, className: 'test', type: 1 }
   const state: PreviewState = {
     ...createDefaultState(),
     parsedDom: [domElement],

@@ -7,7 +7,7 @@ import { rerender } from '../src/parts/Rerender/Rerender.ts'
 test('rerender should cause DiffItems.isEqual to return false', () => {
   const state: PreviewState = {
     ...createDefaultState(),
-    parsedDom: [{ type: 1, childCount: 0 }],
+    parsedDom: [{ childCount: 0, type: 1 }],
   }
   
   const newState = rerender(state)
@@ -20,8 +20,8 @@ test('rerender should trigger rerender even with same content', () => {
   const state: PreviewState = {
     ...createDefaultState(),
     content: '<div>same content</div>',
-    parsedDom: [{ type: 1, childCount: 1 }],
     initial: false,
+    parsedDom: [{ childCount: 1, type: 1 }],
     warningCount: 0,
   }
   
