@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals'
-import type { StatusBarItem } from '../src/parts/StatusBarItem/StatusBarItem.ts'
 import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
+import type { StatusBarItem } from '../src/parts/StatusBarItem/StatusBarItem.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as Diff from '../src/parts/Diff/Diff.ts'
 import * as DiffType from '../src/parts/DiffType/DiffType.ts'

@@ -7,11 +7,11 @@ import * as ItemLeftUpdate from '../ItemLeftUpdate/ItemLeftUpdate.ts'
 import * as ItemRightCreate from '../ItemRightCreate/ItemRightCreate.ts'
 import * as ItemRightUpdate from '../ItemRightUpdate/ItemRightUpdate.ts'
 import * as LoadContent from '../LoadContent/LoadContent.ts'
+import { getCommandIds, wrapCommand, wrapGetter } from '../PreviewStates/PreviewStates.ts'
 import { render2 } from '../Render2/Render2.ts'
 import { renderEventListeners } from '../RenderEventListeners/RenderEventListeners.ts'
 import { resize } from '../Resize/Resize.ts'
 import { saveState } from '../SaveState/SaveState.ts'
-import { getCommandIds, wrapCommand, wrapGetter } from '../PreviewStates/PreviewStates.ts'
 
 export const commandMap = {
   'StatusBar.create': StatusBar.create,

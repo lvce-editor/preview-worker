@@ -1,9 +1,9 @@
 import { expect, test } from '@jest/globals'
-import type { StatusBarItem } from '../src/parts/StatusBarItem/StatusBarItem.ts'
 import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
+import type { StatusBarItem } from '../src/parts/StatusBarItem/StatusBarItem.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
-import * as SaveState from '../src/parts/SaveState/SaveState.ts'
 import * as PreviewStates from '../src/parts/PreviewStates/PreviewStates.ts'
+import * as SaveState from '../src/parts/SaveState/SaveState.ts'
 
 test('saveState should return empty arrays when state has no items', () => {
   const uid = 1
