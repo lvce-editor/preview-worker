@@ -3,11 +3,11 @@ import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import { setUri } from '../src/parts/SetUri/SetUri.ts'
 
-test('setUri should set the uri property on the state', () => {
+test('setUri should set the uri property on the state', async () => {
   const state: PreviewState = createDefaultState()
   const newUri = 'file:///home/user/test.html'
 
-  const result = setUri(state, newUri)
+  const result = await setUri(state, newUri)
 
   expect(result.uri).toBe(newUri)
 })

@@ -1,6 +1,6 @@
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 
-export const setUri = (state: PreviewState, uri: string): PreviewState => {
+export const setUri = async (state: PreviewState, uri: string): Promise<PreviewState> => {
   return {
     ...state,
     uri,
