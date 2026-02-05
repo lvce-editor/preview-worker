@@ -1,4 +1,4 @@
-import { EditorWorker } from '@lvce-editor/rpc-registry'
+import { EditorWorker, RendererWorker } from '@lvce-editor/rpc-registry'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as PreviewStates from '../PreviewStates/PreviewStates.ts'
 
@@ -21,9 +21,10 @@ export const handleEditorChanged = async (): Promise<void> => {
     // Find the editor that matches our preview's URI
     let matchingEditorUid: any = null
     for (const editorKey of editorKeys) {
-      const editorUri = await EditorWorker.invoke('Editor.getUri', editorKey)
+      const editorUid = Number.parseFloat(editorKey)
+      const editorUri = await EditorWorker.invoke('Editor.getUri', editorUid)
       if (editorUri === state.uri) {
-        matchingEditorUid = editorKey
+        matchingEditorUid = editorUid
         break
       }
     }
@@ -56,4 +57,7 @@ export const handleEditorChanged = async (): Promise<void> => {
       }
     }
   }
+
+  // Rerender all previews after updates are complete
+  await RendererWorker.invoke('Preview.rerender')
 }
