@@ -4,6 +4,7 @@ export interface PreviewState {
   readonly assetDir: string
   readonly content: string
   readonly errorCount: number
+  readonly errorMessage: string
   readonly initial: boolean
   readonly parsedDom: readonly VirtualDomNode[]
   readonly platform: number
