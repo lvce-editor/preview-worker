@@ -4,6 +4,11 @@ export const getPreviewDom = (): readonly any[] => {
   return [
     {
       childCount: 1,
+      className: 'Viewlet Preview',
+      type: VirtualDomElements.Div,
+    },
+    {
+      childCount: 1,
       type: VirtualDomElements.H1,
     },
     {
