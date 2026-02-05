@@ -5,6 +5,7 @@ export const isSelfClosingTag = (tag: string): boolean => {
     case ElementTags.Br:
     case ElementTags.Hr:
     case ElementTags.Img:
+    case ElementTags.Input:
       return true
     default:
       return false
