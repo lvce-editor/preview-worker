@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import { VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
+import { VirtualDomElements, text } from '@lvce-editor/virtual-dom-worker'
 import { parseHtml } from '../src/parts/ParseHtml/ParseHtml.ts'
 
 // Basic HTML parsing tests
