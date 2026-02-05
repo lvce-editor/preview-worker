@@ -104,7 +104,8 @@ jobs:
 
       - run: npm publish --access public
         working-directory: ./.tmp/dist
-
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Publish GitHub release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
