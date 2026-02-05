@@ -78,12 +78,3 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
 
   return dom
 }
-
-// attach root child count to the returned array for downstream consumers
-;(function () {
-  try {
-    // no-op to keep TypeScript happy about top-level augmentation
-  } catch {
-    // ignore
-  }
-})()
