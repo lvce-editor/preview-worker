@@ -14,6 +14,7 @@ export const commandMap = {
   'Preview.create': Preview.create,
   'Preview.diff2': diff2,
   'Preview.getCommandIds': getCommandIds,
+  'Preview.handleEditorChange': wrapCommand(handleFileEdited),
   'Preview.handleFileEdited': wrapCommand(handleFileEdited),
   'Preview.loadContent': wrapCommand(LoadContent.loadContent),
   'Preview.render2': render2,
