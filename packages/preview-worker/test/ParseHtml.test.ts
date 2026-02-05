@@ -192,6 +192,7 @@ test('parseHtml should parse combined h1 and h2 elements', () => {
   // Find the h2 element in the result (whitespace between tags may create additional text nodes)
   const h2Element = result.find((node) => node.type === VirtualDomElements.H2)
   expect(h2Element).toBeDefined()
+  // @ts-ignore
   expect(h2Element.type).toBe(VirtualDomElements.H2)
 })
 
