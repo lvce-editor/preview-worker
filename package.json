@@ -1,0 +1,32 @@
+{
+  "name": "@lvce-editor/preview-worker-monorepo",
+  "version": "0.0.0-dev",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node packages/build/src/build.js",
+    "build:static": "node packages/build/src/build-static.ts",
+    "build:watch": "./packages/build/node_modules/.bin/esbuild --format=esm --bundle --external:node:buffer --external:electron --external:ws --external:node:worker_threads --watch packages/preview-worker/src/previewWorkerMain.ts --outfile=.tmp/dist/dist/previewWorkerMain.js",
+    "dev": "node packages/build/src/dev.js",
+    "e2e": "cd packages/e2e && npm run e2e",
+    "format": "prettier --write .",
+    "postinstall": "lerna bootstrap --ci",
+    "lint": "eslint . && prettier --check .",
+    "measure": "cd packages/memory && npm run measure",
+    "test": "lerna run test",
+    "type-check": "tsc -b"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 150
+  },
+  "devDependencies": {
+    "@lerna/legacy-package-management": "^8.2.4",
+    "@lvce-editor/eslint-config": "^5.5.0",
+    "eslint": "^9.39.2",
+    "lerna": "^8.2.3",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3"
+  }
+}
