@@ -9,7 +9,7 @@ test('rerender should cause DiffItems.isEqual to return false', () => {
     ...createDefaultState(),
     parsedDom: [{ childCount: 0, type: 1 }],
   }
-  
+
   const newState = rerender(state)
 
   // DiffItems.isEqual should return false because parsedDom reference changed
@@ -24,7 +24,7 @@ test('rerender should trigger rerender even with same content', () => {
     parsedDom: [{ childCount: 1, type: 1 }],
     warningCount: 0,
   }
-  
+
   const newState = rerender(state)
 
   // Even though content, warningCount, and initial are the same,

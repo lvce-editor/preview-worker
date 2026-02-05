@@ -31,7 +31,10 @@ test('rerender should preserve all state properties', () => {
     errorCount: 2,
     errorMessage: 'test error',
     initial: false,
-    parsedDom: [{ childCount: 1, type: 1 }, { childCount: 0, type: 2 }],
+    parsedDom: [
+      { childCount: 1, type: 1 },
+      { childCount: 0, type: 2 },
+    ],
     platform: 1,
     uid: 123,
     uri: 'file:///test.html',
