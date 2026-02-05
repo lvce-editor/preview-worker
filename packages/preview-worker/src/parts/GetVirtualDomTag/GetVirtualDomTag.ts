@@ -65,6 +65,12 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.Tfoot
     case ElementTags.Time:
       return VirtualDomElements.Time
+    case ElementTags.Button:
+      return VirtualDomElements.Button
+    case ElementTags.Input:
+      return VirtualDomElements.Input
+    case ElementTags.Code:
+      return VirtualDomElements.Code
     default:
       return VirtualDomElements.Div
   }
