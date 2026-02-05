@@ -17,7 +17,7 @@ test('getPreviewDom should return Div wrapper as first item', () => {
   const firstElement = result[0]
   expect(firstElement.type).toBe(VirtualDomElements.Div)
   expect(firstElement.className).toBe('Viewlet Preview')
-  expect(firstElement.childCount).toBe(2)
+  expect(firstElement.childCount).toBe(1)
 })
 
 test('getPreviewDom should return H1 element as second item', () => {
