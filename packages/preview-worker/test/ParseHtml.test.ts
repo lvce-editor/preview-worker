@@ -359,7 +359,22 @@ test('parseHtml should maintain childCount property', () => {
 })
 
 test('parseHtml should handle void elements correctly', () => {
-  const voidElements = ['<area>', '<base>', '<br>', '<col>', '<embed>', '<hr>', '<img>', '<input>', '<link>', '<meta>', '<param>', '<source>', '<track>', '<wbr>']
+  const voidElements = [
+    '<area>',
+    '<base>',
+    '<br>',
+    '<col>',
+    '<embed>',
+    '<hr>',
+    '<img>',
+    '<input>',
+    '<link>',
+    '<meta>',
+    '<param>',
+    '<source>',
+    '<track>',
+    '<wbr>',
+  ]
   for (const elem of voidElements) {
     const result = parseHtml(elem, [])
     expect(result).toHaveLength(1)
