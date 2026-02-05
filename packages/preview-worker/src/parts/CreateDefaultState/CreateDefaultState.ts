@@ -5,6 +5,7 @@ export const createDefaultState = (): PreviewState => {
     assetDir: '',
     content: '',
     errorCount: 0,
+    errorMessage: '',
     initial: true,
     parsedDom: [],
     platform: 0,

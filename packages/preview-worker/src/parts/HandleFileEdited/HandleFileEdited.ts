@@ -1,14 +1,13 @@
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { updateContent } from '../UpdateContent/UpdateContent.ts'
 
-export const setUri = async (state: PreviewState, uri: string): Promise<PreviewState> => {
-  const { content, errorMessage, parsedDom } = await updateContent(state, uri)
+export const handleFileEdited = async (state: PreviewState): Promise<PreviewState> => {
+  const { content, errorMessage, parsedDom } = await updateContent(state, state.uri)
 
   return {
     ...state,
     content,
     errorMessage,
     parsedDom,
-    uri,
   }
 }
