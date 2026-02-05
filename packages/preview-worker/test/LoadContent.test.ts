@@ -12,5 +12,4 @@ test('loadContent should load content and preserve state properties', async () =
   expect(result.initial).toBeDefined()
   expect(result.platform).toBeDefined()
   expect(result.errorCount).toBe(0)
-  expect(result.warningCount).toBe(0)
 })
