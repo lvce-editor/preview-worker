@@ -1,8 +1,9 @@
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
+import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 
-export const updateContent = async (state: PreviewState, uri: string): Promise<{ content: string; parsedDom: any[]; errorMessage: string }> => {
+export const updateContent = async (state: PreviewState, uri: string): Promise<{ content: string; parsedDom: readonly VirtualDomNode[]; errorMessage: string }> => {
   try {
     // Read the file content using RendererWorker RPC
     // @ts-ignore
