@@ -10,26 +10,34 @@ test('parseHtml should parse empty string', () => {
 })
 
 test('parseHtml should parse simple div tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div },
+  ]
   const result = parseHtml('<div></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse simple span tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Span }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Span },
+  ]
   const result = parseHtml('<span></span>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse paragraph tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.P }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.P },
+  ]
   const result = parseHtml('<p></p>', [])
   expect(result).toEqual(expectedArray)
 })
 
 // Text content tests
 test('parseHtml should parse text content', () => {
-  const expectedArray = [{ childCount: 0, text: 'Hello World', type: VirtualDomElements.Text }]
+  const expectedArray = [
+    { childCount: 0, text: 'Hello World', type: VirtualDomElements.Text },
+  ]
   const result = parseHtml('Hello World', [])
   expect(result).toEqual(expectedArray)
 })
@@ -86,40 +94,52 @@ test('parseHtml should handle multiple levels of nesting', () => {
 
 // Attributes tests
 test('parseHtml should allow specified attributes', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div, 'data-id': '123' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, 'data-id': '123' },
+  ]
   const result = parseHtml('<div data-id="123"></div>', ['data-id'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should not allow unspecified attributes', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div },
+  ]
   const result = parseHtml('<div onclick="alert()"></div>', [])
   expect(result).toEqual(expectedArray)
-})'daa-id': '123', t
+})
 
 test('parseHtml should allow multiple attributes when specified', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div, 'data-id': '123', title: 'test' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, 'data-id': '123', title: 'test' },
+  ]
   const result = parseHtml('<div data-id="123" title="test"></div>', ['data-id', 'title'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should allow only specified attributes from multiple', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div, 'data-id': '123' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, 'data-id': '123' },
+  ]
   const result = parseHtml('<div data-id="123" onclick="alert()"></div>', ['data-id'])
   expect(result).toEqual(expectedArray)
 })
 
 // Class to className conversion tests
 test('parseHtml should convert class attribute to className', () => {
-  const expectedArra tualDomElements.Div, className:, type: VirtualDomElements.Div 'container' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, className: 'container' },
+  ]
   const result = parseHtml('<div class="container"></div>', ['class'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should convert class with multiple values', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div, className: 'container primary active' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, className: 'container primary active' },
+  ]
   const result = parseHtml('<div class="container primary active"></div>', ['class'])
-  expect(result).toEq'daua-id': '123', tal(expectedArray)
+  expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should convert class on nested elements', () => {
@@ -128,36 +148,46 @@ test('parseHtml should convert class on nested elements', () => {
     { childCount: 0, type: VirtualDomElements.Span, className: 'inner' },
   ]
   const result = parseHtml('<div class="outer"><span class="inner"></span></div>', ['class'])
-  expect(result).to, className: 'container'Equal(expectedArray)
+  expect(result).toEqual(expectedArray)
 })
 
 // Self-closing tags tests
 test('parseHtml should parse self-closing br tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Br }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Br },
+  ]
   const result = parseHtml('<br>', [])
   expect(result).toEqual(expectedArray)
-}), type: VirtualDomElements.Div
+})
 
 test('parseHtml should parse self-closing img tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Img }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Img },
+  ]
   const result = parseHtml('<img>', [])
   expect(result).toEqual(expectedArray)
 })
 
-test('parseHtml sho, className: 'outer'uld parse self-closing hr tag' 
-  const expectedArr, className: 'inner'ay = [{ childCount: 0, type: Vs}]
+test('parseHtml should parse self-closing hr tag', () => {
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Hr },
+  ]
   const result = parseHtml('<hr>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse self-closing input tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Input }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Input },
+  ]
   const result = parseHtml('<input>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle attributes on self-closing tags', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Img, src: 'test.jpg' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Img, src: 'test.jpg' },
+  ]
   const result = parseHtml('<img src="test.jpg">', ['src'])
   expect(result).toEqual(expectedArray)
 })
@@ -186,8 +216,8 @@ test('parseHtml should parse multiple divs with content', () => {
 
 // Complex structures tests
 test('parseHtml should parse list structure', () => {
-  const expectedArr, src: 'test.jpg'ay = [
-    { childCount: 1, type: VirtualDomElements.Div },
+  const expectedArray = [
+    { childCount: 2, type: VirtualDomElements.Div },
     { childCount: 1, type: VirtualDomElements.Li },
     { childCount: 0, text: 'Item 1', type: VirtualDomElements.Text },
     { childCount: 1, type: VirtualDomElements.Li },
@@ -256,8 +286,8 @@ test('parseHtml should parse combined h1 and h2 elements', () => {
 
 test('parseHtml should parse form structure', () => {
   const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.Div },
-    { childCount: 1, type: VirtualDomElements.Input },
+    { childCount: 2, type: VirtualDomElements.Div },
+    { childCount: 0, type: VirtualDomElements.Input },
     { childCount: 1, type: VirtualDomElements.Button },
     { childCount: 0, text: 'Submit', type: VirtualDomElements.Text },
   ]
@@ -284,16 +314,16 @@ test('parseHtml should handle text with newlines', () => {
   expect(result).toEqual(expectedArray)
 })
 
-test('parseHtml should parse form structure', () => {
+test('parseHtml should handle text with tabs', () => {
   const expectedArray = [
     { childCount: 1, type: VirtualDomElements.Div },
-    { childCount: 1, type: VirtualDomElements.Input },
-    { childCount: 1, type: VirtualDomElements.Button },
-    { childCount: 0, text: 'Submit', type: VirtualDomElements.Text },
+    { childCount: 0, text: 'Text\twith\ttabs', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('<form><input><button>Submit</button></form>', [])
+  const result = parseHtml('<div>Text\twith\ttabs</div>', [])
   expect(result).toEqual(expectedArray)
 })
+
+// Element-specific tests
 test('parseHtml should parse anchor tag', () => {
   const expectedArray = [
     { childCount: 1, type: VirtualDomElements.A, href: 'https://example.com' },
@@ -304,13 +334,17 @@ test('parseHtml should parse anchor tag', () => {
 })
 
 test('parseHtml should parse article tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Article }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Article },
+  ]
   const result = parseHtml('<article></article>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse aside tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Aside }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Aside },
+  ]
   const result = parseHtml('<aside></aside>', [])
   expect(result).toEqual(expectedArray)
 })
@@ -325,31 +359,41 @@ test('parseHtml should parse button tag', () => {
 })
 
 test('parseHtml should parse header tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Header }]
-  const result = pa []), type: VirtualDomElements.A
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Header },
+  ]
+  const result = parseHtml('<header></header>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse footer tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Footer }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Footer },
+  ]
   const result = parseHtml('<footer></footer>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse main tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div },
+  ]
   const result = parseHtml('<main></main>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse nav tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Nav }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Nav },
+  ]
   const result = parseHtml('<nav></nav>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse section tag', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Section }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Section },
+  ]
   const result = parseHtml('<section></section>', [])
   expect(result).toEqual(expectedArray)
 })
@@ -415,7 +459,9 @@ test('parseHtml should parse inline and block elements', () => {
 
 // Edge cases
 test('parseHtml should handle tag case insensitivity', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div },
+  ]
   const result = parseHtml('<DIV></DIV>', [])
   expect(result).toEqual(expectedArray)
 })
@@ -440,20 +486,26 @@ test('parseHtml should handle consecutive self-closing tags', () => {
 })
 
 test('parseHtml should ignore attributes not in allowedAttributes', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div, 'data-valid': 'yes' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, 'data-valid': 'yes' },
+  ]
   const allowedAttributes = ['data-valid']
   const result = parseHtml('<div data-valid="yes" data-invalid="no"></div>', allowedAttributes)
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle empty allowedAttributes array', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div },
+  ]
   const result = parseHtml('<div id="test" class="cls"></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should preserve attribute order when multiple allowed', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div, 'data-first': '1', 'data-second': '2', 'data-third': '3' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, 'data-first': '1', 'data-second': '2', 'data-third': '3' },
+  ]
   const result = parseHtml('<div data-first="1" data-second="2" data-third="3"></div>', ['data-first', 'data-second', 'data-third'])
   expect(result).toEqual(expectedArray)
 })
@@ -487,7 +539,7 @@ test('parseHtml should parse navigation menu', () => {
         <li><a href="/">Home</a></li>
         <li><a href="/about">About</a></li>
         <li><a href="/contact">Contact</a></li>
-      </ul>'daa-valid': 'es', ty
+      </ul>
     </nav>
   `
   const result = parseHtml(html, ['class', 'href'])
@@ -504,7 +556,7 @@ test('parseHtml should parse article with metadata', () => {
         <time>2024-01-15</time>
       </header>
       <main>
-        <p>Article co,type: VirtualDomElements.Div 
+        <p>Article content goes here.</p>
       </main>
     </article>
   `
@@ -516,7 +568,7 @@ test('parseHtml should parse article with metadata', () => {
 
 test('parseHtml should maintain childCount property', () => {
   const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.Div },
+    { childCount: 2, type: VirtualDomElements.Div },
     { childCount: 0, type: VirtualDomElements.Span },
     { childCount: 0, type: VirtualDomElements.Span },
   ]
@@ -565,32 +617,42 @@ test('parseHtml should handle semantic HTML5 elements', () => {
 })
 
 test('parseHtml should handle data attributes', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div, 'data-user-id': '42', 'data-role': 'admin' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, 'data-user-id': '42', 'data-role': 'admin' },
+  ]
   const result = parseHtml('<div data-user-id="42" data-role="admin"></div>', ['data-user-id', 'data-role'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle aria attributes', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div, 'aria-label': 'Close', 'aria-hidden': 'true' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, 'aria-label': 'Close', 'aria-hidden': 'true' },
+  ]
   const result = parseHtml('<div aria-label="Close" aria-hidden="true"></div>', ['aria-label', 'aria-hidden'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse style attributes when allowed', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div, style: 'color: red;' }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, style: 'color: red;' },
+  ]
   const result = parseHtml('<div style="color: red;"></div>', ['style'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should not parse style attributes when not allowed', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div },
+  ]
   const result = parseHtml('<div style="color: red;"></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle very long attribute values', () => {
   const longValue = 'x'.repeat(1000)
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div, 'data-long': longValue }]
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div, 'data-long': longValue },
+  ]
   const result = parseHtml(`<div data-long="${longValue}"></div>`, ['data-long'])
   expect(result).toEqual(expectedArray)
 })
@@ -618,7 +680,7 @@ test('parseHtml should handle deeply nested structure', () => {
   html += 'Deep'
   expectedArrayItems.push({ childCount: 0, text: 'Deep', type: VirtualDomElements.Text })
   for (let i = 0; i < 50; i++) {
-    html += '</div>''daa-rol''dn'ypVirtulDoElemets.Div
+    html += '</div>'
   }
   html += '</div>'
   const result = parseHtml(html, [])
@@ -626,10 +688,9 @@ test('parseHtml should handle deeply nested structure', () => {
 })
 test('parseHtml should parse button with disabled attribute', () => {
   const expectedArray = [
-    { 'aria-hidden': 'true'ton, disabled: 'disabled'clCout 0,ype: VitalDomElemnts.Div
+    { childCount: 1, type: VirtualDomElements.Button, disabled: 'disabled' },
     { childCount: 0, text: 'test button', type: VirtualDomElements.Text },
   ]
   const result = parseHtml('<button disabled>test button</button>', ['disabled'])
   expect(result).toEqual(expectedArray)
 })
-, style: 'color: red;', 'data-long': longValue], disabled: 'disabled'
