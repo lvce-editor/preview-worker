@@ -7,6 +7,7 @@ export const createDefaultState = (): PreviewState => {
     initial: true,
     platform: 0,
     uid: 0,
+    uri: '',
     warningCount: 0,
   }
 }

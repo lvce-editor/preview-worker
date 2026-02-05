@@ -8,6 +8,7 @@ export const create = (uid: number, uri: string, x: number, y: number, width: nu
     initial: true,
     platform,
     uid,
+    uri,
     warningCount: 0,
   }
   set(uid, state, state)

@@ -4,5 +4,6 @@ export interface PreviewState {
   readonly initial: boolean
   readonly platform: number
   readonly uid: number
+  readonly uri: string
   readonly warningCount: number
 }
