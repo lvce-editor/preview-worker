@@ -70,7 +70,8 @@ export const getVirtualDomTag = (text: string): number => {
     case ElementTags.Tfoot:
       return VirtualDomElements.Tfoot
     case ElementTags.Time:
-      return VirtualDomElements.Time    case ElementTags.Del:
+      return VirtualDomElements.Time
+    case ElementTags.Del:
       return VirtualDomElements.Del
     case ElementTags.Dt:
       return VirtualDomElements.Dt
@@ -101,7 +102,8 @@ export const getVirtualDomTag = (text: string): number => {
     case ElementTags.Tr:
       return VirtualDomElements.Tr
     case ElementTags.Ul:
-      return VirtualDomElements.Ul    default:
+      return VirtualDomElements.Ul
+    default:
       return VirtualDomElements.Div
   }
 }
