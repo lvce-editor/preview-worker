@@ -7,8 +7,6 @@ export const create = (uid: number, uri: string, x: number, y: number, width: nu
     errorCount: 0,
     initial: true,
     platform,
-    statusBarItemsLeft: [],
-    statusBarItemsRight: [],
     uid,
     warningCount: 0,
   }

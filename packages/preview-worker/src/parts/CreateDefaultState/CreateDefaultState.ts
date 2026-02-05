@@ -6,8 +6,6 @@ export const createDefaultState = (): PreviewState => {
     errorCount: 0,
     initial: true,
     platform: 0,
-    statusBarItemsLeft: [],
-    statusBarItemsRight: [],
     uid: 0,
     warningCount: 0,
   }
