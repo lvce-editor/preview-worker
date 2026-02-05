@@ -6,9 +6,9 @@ import { handleFileEdited } from '../src/parts/HandleFileEdited/HandleFileEdited
 test('handleFileEdited should return a PreviewState with updated content', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
-    uri: 'file://test.html',
-    uid: 123,
     assetDir: '/assets',
+    uid: 123,
+    uri: 'file://test.html',
   }
 
   // The function should call updateContent and return an updated state
@@ -28,13 +28,13 @@ test('handleFileEdited should return a PreviewState with updated content', async
 test('handleFileEdited should preserve all immutable state properties', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
-    uri: 'file://complex.html',
-    uid: 456,
     assetDir: '/public',
-    platform: 1,
     errorCount: 5,
-    warningCount: 10,
     initial: false,
+    platform: 1,
+    uid: 456,
+    uri: 'file://complex.html',
+    warningCount: 10,
   }
 
   const result = await handleFileEdited(state)
