@@ -1,7 +1,7 @@
 {
   "name": "@lvce-editor/preview-worker",
   "version": "0.0.0-dev",
-  "description": "Status Bar Worker",
+  "description": "Preview Worker",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lvce-editor/preview-worker.git"
