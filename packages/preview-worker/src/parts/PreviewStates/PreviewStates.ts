@@ -1,4 +1,5 @@
-import type { PreviewState } from './PreviewState.ts'
+/* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
+import type { PreviewState } from '../PreviewState/PreviewState.ts'
 
 const states = new Map<number, { newState: PreviewState; oldState: PreviewState }>()
 
