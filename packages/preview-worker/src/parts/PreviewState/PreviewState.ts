@@ -1,7 +1,11 @@
+import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
+
 export interface PreviewState {
   readonly assetDir: string
+  readonly content: string
   readonly errorCount: number
   readonly initial: boolean
+  readonly parsedDom: readonly VirtualDomNode[]
   readonly platform: number
   readonly uid: number
   readonly uri: string
