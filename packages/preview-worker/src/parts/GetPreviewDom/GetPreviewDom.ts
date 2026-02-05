@@ -11,7 +11,7 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
   if (state.parsedDom && state.parsedDom.length > 0) {
     return [
       {
-        childCount: 1, // TODO
+        childCount: state.parsedNodesChildNodeCount,
         className: 'Viewlet Preview',
         type: VirtualDomElements.Div,
       },

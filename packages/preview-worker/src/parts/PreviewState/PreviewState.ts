@@ -7,6 +7,7 @@ export interface PreviewState {
   readonly errorMessage: string
   readonly initial: boolean
   readonly parsedDom: readonly VirtualDomNode[]
+  readonly parsedNodesChildNodeCount: number
   readonly platform: number
   readonly uid: number
   readonly uri: string

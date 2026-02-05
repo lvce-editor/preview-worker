@@ -8,6 +8,7 @@ export const createDefaultState = (): PreviewState => {
     errorMessage: '',
     initial: true,
     parsedDom: [],
+    parsedNodesChildNodeCount: 0,
     platform: 0,
     uid: 0,
     uri: '',

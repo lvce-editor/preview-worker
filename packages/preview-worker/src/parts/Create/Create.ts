@@ -9,6 +9,7 @@ export const create = (uid: number, uri: string, x: number, y: number, width: nu
     errorMessage: '',
     initial: true,
     parsedDom: [],
+    parsedNodesChildNodeCount: 0,
     platform,
     uid,
     uri,
