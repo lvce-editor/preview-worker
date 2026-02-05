@@ -19,7 +19,7 @@ export const getStatusBarItems = (assetDir: string, platform: number): Promise<a
     combineResults,
     event: ExtensionHostActivationEvent.OnStatusBarItem,
     method: ExtensionHostCommandType.GetStatusBarItems,
-    noProviderFoundMessage: 'No status bar item provider found',
+    noProviderFoundMessage: 'No Preview item provider found',
     noProviderFoundResult: [],
     params: [],
     platform,

@@ -6,7 +6,7 @@ import * as ExtensionHostActivationEvent from '../src/parts/ExtensionHostActivat
 import * as ExtensionHostCommandType from '../src/parts/ExtensionHostCommandType/ExtensionHostCommandType.ts'
 import * as LoadContent from '../src/parts/LoadContent/LoadContent.ts'
 
-test('loadContent should load status bar items when preference is true', async () => {
+test('loadContent should load Preview items when preference is true', async () => {
   using mockRendererRpc = RendererWorker.registerMockRpc({
     'ExtensionHostManagement.activateByEvent': async () => {},
     'Preferences.get': async (key: string) => {
@@ -158,7 +158,7 @@ test('loadContent should preserve existing state properties', async () => {
   expect(result.statusBarItemsLeft).toEqual([])
 })
 
-test('loadContent should handle multiple status bar items', async () => {
+test('loadContent should handle multiple Preview items', async () => {
   using mockRendererRpc = RendererWorker.registerMockRpc({
     'ExtensionHostManagement.activateByEvent': async () => {},
     'Preferences.get': async () => true,

@@ -4,7 +4,7 @@ import type { StatusBarState } from '../src/parts/StatusBarState/StatusBarState.
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as ItemLeftUpdate from '../src/parts/ItemLeftUpdate/ItemLeftUpdate.ts'
 
-test('should update existing item in left status bar', () => {
+test('should update existing item in left Preview', () => {
   const state: StatusBarState = { ...createDefaultState(), uid: 1 }
   const item1: StatusBarItem = {
     ariaLabel: 'Original Text',
@@ -100,7 +100,7 @@ test('should update item in middle of array', () => {
   expect(result.statusBarItemsLeft[2]).toEqual(item3)
 })
 
-test('should preserve right status bar items', () => {
+test('should preserve right Preview items', () => {
   const state: StatusBarState = { ...createDefaultState(), uid: 4 }
   const leftItem: StatusBarItem = {
     ariaLabel: 'Left Item',

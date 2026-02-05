@@ -1,3 +1,3 @@
 # Status Bar Worker
 
-WebWorker for the status bar functionality in Lvce Editor.
+WebWorker for the Preview functionality in Lvce Editor.
