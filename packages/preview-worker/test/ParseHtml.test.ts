@@ -167,6 +167,34 @@ test('parseHtml should parse multiple heading levels', () => {
   expect(result.length).toBeGreaterThan(0)
 })
 
+test('parseHtml should parse h1 with hello world content', () => {
+  const result = parseHtml('<h1>hello world</h1>', [])
+  expect(result).toHaveLength(2) // h1 and text
+  expect(result[0].type).toBe(VirtualDomElements.H1)
+  expect(result[0].childCount).toBe(1)
+  expect(result[1]).toHaveProperty('text')
+  expect(result[1].text).toBe('hello world')
+})
+
+test('parseHtml should parse h2 with live updating html content', () => {
+  const result = parseHtml('<h2>this is live updating html</h2>', [])
+  expect(result).toHaveLength(2) // h2 and text
+  expect(result[0].type).toBe(VirtualDomElements.H2)
+  expect(result[0].childCount).toBe(1)
+  expect(result[1]).toHaveProperty('text')
+  expect(result[1].text).toBe('this is live updating html')
+})
+
+test('parseHtml should parse combined h1 and h2 elements', () => {
+  const result = parseHtml('<h1>hello world</h1>\n<h2>this is live updating html</h2>', [])
+  expect(result.length).toBeGreaterThan(0)
+  expect(result[0].type).toBe(VirtualDomElements.H1)
+  // Find the h2 element in the result (whitespace between tags may create additional text nodes)
+  const h2Element = result.find(node => node.type === VirtualDomElements.H2)
+  expect(h2Element).toBeDefined()
+  expect(h2Element.type).toBe(VirtualDomElements.H2)
+})
+
 test('parseHtml should parse form structure', () => {
   const result = parseHtml('<form><input><button>Submit</button></form>', [])
   expect(result.length).toBeGreaterThan(0)
