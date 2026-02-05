@@ -26,7 +26,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
         break
       case HtmlTokenType.AttributeValue:
         if (allowedAttributes.includes(attributeName)) {
-          let finalAttributeName = attributeName === 'class' ? 'className' : attributeName
+          const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
           current[finalAttributeName] = token.text
         }
         attributeName = ''

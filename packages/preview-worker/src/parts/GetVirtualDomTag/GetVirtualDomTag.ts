@@ -13,8 +13,12 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.Aside
     case ElementTags.Br:
       return VirtualDomElements.Br
+    case ElementTags.Button:
+      return VirtualDomElements.Button
     case ElementTags.Cite:
       return VirtualDomElements.Cite
+    case ElementTags.Code:
+      return VirtualDomElements.Code
     case ElementTags.Data:
       return VirtualDomElements.Data
     case ElementTags.Dd:
@@ -45,6 +49,8 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.Hr
     case ElementTags.Img:
       return VirtualDomElements.Img
+    case ElementTags.Input:
+      return VirtualDomElements.Input
     case ElementTags.Li:
       return VirtualDomElements.Li
     case ElementTags.Nav:
@@ -65,12 +71,6 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.Tfoot
     case ElementTags.Time:
       return VirtualDomElements.Time
-    case ElementTags.Button:
-      return VirtualDomElements.Button
-    case ElementTags.Input:
-      return VirtualDomElements.Input
-    case ElementTags.Code:
-      return VirtualDomElements.Code
     default:
       return VirtualDomElements.Div
   }
