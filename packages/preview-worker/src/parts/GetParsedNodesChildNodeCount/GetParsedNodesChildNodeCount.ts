@@ -1,34 +1,22 @@
+import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import * as Assert from '../Assert/Assert.ts'
-import * as HtmlTokenType from '../HtmlTokenType/HtmlTokenType.ts'
-import * as IsSelfClosingTag from '../IsSelfClosingTag/IsSelfClosingTag.ts'
-import * as TokenizeHtml from '../TokenizeHtml/TokenizeHtml.ts'
 
-export const getParsedNodesChildNodeCount = (html: string): number => {
-  Assert.string(html)
-  const tokens = TokenizeHtml.tokenizeHtml(html)
+export const getParsedNodesChildNodeCount = (parsedDom: readonly VirtualDomNode[]): number => {
+  Assert.array(parsedDom)
+
   let rootChildCount = 0
-  let depth = 0
+  let i = 0
 
-  for (const token of tokens) {
-    switch (token.type) {
-      case HtmlTokenType.Content:
-        if (depth === 0) {
-          rootChildCount++
-        }
-        break
-      case HtmlTokenType.TagNameEnd:
-        depth--
-        break
-      case HtmlTokenType.TagNameStart:
-        if (depth === 0) {
-          rootChildCount++
-        }
-        if (!IsSelfClosingTag.isSelfClosingTag(token.text)) {
-          depth++
-        }
-        break
-      default:
-        break
+  while (i < parsedDom.length) {
+    rootChildCount++
+
+    // skip the entire subtree of the current node
+    let toSkip = parsedDom[i].childCount
+    i++
+    while (toSkip > 0 && i < parsedDom.length) {
+      toSkip -= 1
+      toSkip += parsedDom[i].childCount
+      i++
     }
   }
 

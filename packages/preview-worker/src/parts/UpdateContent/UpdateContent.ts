@@ -15,7 +15,7 @@ export const updateContent = async (
 
     // Parse the content into virtual DOM
     const parsedDom = ParseHtml.parseHtml(content, [])
-    const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(content)
+    const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
 
     return {
       content,
