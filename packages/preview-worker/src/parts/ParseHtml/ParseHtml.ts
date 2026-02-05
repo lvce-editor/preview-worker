@@ -68,11 +68,11 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
   }
   try {
     Object.defineProperty(dom, 'rootChildCount', {
-      value: root.childCount,
-      enumerable: false,
       configurable: true,
+      enumerable: false,
+      value: root.childCount,
     })
-  } catch (e) {
+  } catch {
     ;(dom as any).rootChildCount = root.childCount
   }
 
@@ -83,7 +83,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
 ;(function () {
   try {
     // no-op to keep TypeScript happy about top-level augmentation
-  } catch (e) {
+  } catch {
     // ignore
   }
 })()
