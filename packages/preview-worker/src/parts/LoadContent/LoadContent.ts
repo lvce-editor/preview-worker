@@ -3,21 +3,15 @@ import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { updateContent } from '../UpdateContent/UpdateContent.ts'
 
 export const loadContent = async (state: PreviewState): Promise<PreviewState> => {
+  // Try to register to receive editor change notifications from the editor worker.
+  // Use dynamic access and ignore errors so this is safe in environments where
+  // the EditorWorker / ListenerType are not available (e.g. unit tests).
+  const EditorChange = 1
+  const rpcId = 9112
   try {
-    // Try to register to receive editor change notifications from the editor worker.
-    // Use dynamic access and ignore errors so this is safe in environments where
-    // the EditorWorker / ListenerType are not available (e.g. unit tests).
-    const EditorChange = 1
-    const rpcId = 9112
-    try {
-      await EditorWorker.invoke('Listener.register', EditorChange, rpcId)
-      // eslint-disable-next-line no-console
-      console.log('Preview worker registered for editor changes')
-    } catch {
-      // ignore registration errors
-    }
-  } catch {
-    // ignore any unexpected errors during registration
+    await EditorWorker.invoke('Listener.register', EditorChange, rpcId)
+  } catch (error) {
+    console.error(error)
   }
 
   // Read and parse file contents if we have a URI
