@@ -3,11 +3,6 @@ import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 
 export const setUri = async (state: PreviewState, uri: string): Promise<PreviewState> => {
-<<<<<<< HEAD
-  return {
-    ...state,
-    uri,
-=======
   try {
     // Read the file content using RendererWorker RPC
     // @ts-ignore
@@ -30,6 +25,5 @@ export const setUri = async (state: PreviewState, uri: string): Promise<PreviewS
       parsedDom: [],
       uri,
     }
->>>>>>> origin/main
   }
 }
