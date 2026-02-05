@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import { VirtualDomElements, text } from '@lvce-editor/virtual-dom-worker'
+import { VirtualDomElements, VirtualDomNode, text } from '@lvce-editor/virtual-dom-worker'
 import { parseHtml } from '../src/parts/ParseHtml/ParseHtml.ts'
 
 // Basic HTML parsing tests
@@ -29,16 +29,13 @@ test('parseHtml should parse paragraph tag', () => {
 
 // Text content tests
 test('parseHtml should parse text content', () => {
-  const expectedArray = [{ childCount: 0, text: 'Hello World', type: VirtualDomElements.Text }]
+  const expectedArray = [text('Hello World')]
   const result = parseHtml('Hello World', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse text inside div', () => {
-  const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.Div },
-    { childCount: 0, text: 'Hello', type: VirtualDomElements.Text },
-  ]
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Hello')]
   const result = parseHtml('<div>Hello</div>', [])
   expect(result).toEqual(expectedArray)
 })
@@ -47,9 +44,9 @@ test('parseHtml should parse multiple text nodes', () => {
   const result = parseHtml('<div>Hello</div><div>World</div>', [])
   const expectedArray = [
     { childCount: 1, type: VirtualDomElements.Div },
-    { childCount: 0, text: 'Hello', type: VirtualDomElements.Text },
+    text('Hello'),
     { childCount: 1, type: VirtualDomElements.Div },
-    { childCount: 0, text: 'World', type: VirtualDomElements.Text },
+    text('World'),
   ]
   expect(result).toEqual(expectedArray)
 })
@@ -176,9 +173,9 @@ test('parseHtml should parse multiple sibling elements', () => {
 test('parseHtml should parse multiple divs with content', () => {
   const expectedArray = [
     { childCount: 1, type: VirtualDomElements.Div },
-    { childCount: 0, text: 'First', type: VirtualDomElements.Text },
+    text('First'),
     { childCount: 1, type: VirtualDomElements.Div },
-    { childCount: 0, text: 'Second', type: VirtualDomElements.Text },
+    text('Second'),
   ]
   const result = parseHtml('<div>First</div><div>Second</div>', [])
   expect(result).toEqual(expectedArray)
@@ -189,9 +186,9 @@ test('parseHtml should parse list structure', () => {
   const expectedArray = [
     { childCount: 2, type: VirtualDomElements.Div },
     { childCount: 1, type: VirtualDomElements.Li },
-    { childCount: 0, text: 'Item 1', type: VirtualDomElements.Text },
+    text('Item 1'),
     { childCount: 1, type: VirtualDomElements.Li },
-    { childCount: 0, text: 'Item 2', type: VirtualDomElements.Text },
+    text('Item 2'),
   ]
   const result = parseHtml('<ul><li>Item 1</li><li>Item 2</li></ul>', [])
   expect(result).toEqual(expectedArray)
@@ -202,17 +199,14 @@ test('parseHtml should parse table structure', () => {
     { childCount: 1, type: VirtualDomElements.Table },
     { childCount: 1, type: VirtualDomElements.Tr },
     { childCount: 1, type: VirtualDomElements.Td },
-    { childCount: 0, text: 'Cell', type: VirtualDomElements.Text },
+    text('Cell'),
   ]
   const result = parseHtml('<table><tr><td>Cell</td></tr></table>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse heading with content', () => {
-  const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.H1 },
-    { childCount: 0, text: 'Title', type: VirtualDomElements.Text },
-  ]
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.H1 }, text('Title')]
   const result = parseHtml('<h1>Title</h1>', [])
   expect(result).toEqual(expectedArray)
 })
@@ -220,30 +214,24 @@ test('parseHtml should parse heading with content', () => {
 test('parseHtml should parse multiple heading levels', () => {
   const expectedArray = [
     { childCount: 1, type: VirtualDomElements.H1 },
-    { childCount: 0, text: 'H1', type: VirtualDomElements.Text },
+    text('H1'),
     { childCount: 1, type: VirtualDomElements.H2 },
-    { childCount: 0, text: 'H2', type: VirtualDomElements.Text },
+    text('H2'),
     { childCount: 1, type: VirtualDomElements.H3 },
-    { childCount: 0, text: 'H3', type: VirtualDomElements.Text },
+    text('H3'),
   ]
   const result = parseHtml('<h1>H1</h1><h2>H2</h2><h3>H3</h3>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse h1 with hello world content', () => {
-  const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.H1 },
-    { childCount: 0, text: 'hello world', type: VirtualDomElements.Text },
-  ]
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.H1 }, text('hello world')]
   const result = parseHtml('<h1>hello world</h1>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse h2 with live updating html content', () => {
-  const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.H2 },
-    { childCount: 0, text: 'this is live updating html', type: VirtualDomElements.Text },
-  ]
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.H2 }, text('this is live updating html')]
   const result = parseHtml('<h2>this is live updating html</h2>', [])
   expect(result).toEqual(expectedArray)
 })
@@ -251,10 +239,10 @@ test('parseHtml should parse h2 with live updating html content', () => {
 test('parseHtml should parse combined h1 and h2 elements', () => {
   const expectedArray = [
     { childCount: 1, type: VirtualDomElements.H1 },
-    { childCount: 0, text: 'hello world', type: VirtualDomElements.Text },
-    { childCount: 0, text: '\n', type: VirtualDomElements.Text },
+    text('hello world'),
+    text('\n'),
     { childCount: 1, type: VirtualDomElements.H2 },
-    { childCount: 0, text: 'this is live updating html', type: VirtualDomElements.Text },
+    text('this is live updating html'),
   ]
   const result = parseHtml('<h1>hello world</h1>\n<h2>this is live updating html</h2>', [])
   expect(result).toEqual(expectedArray)
@@ -265,7 +253,7 @@ test('parseHtml should parse form structure', () => {
     { childCount: 2, type: VirtualDomElements.Div },
     { childCount: 0, type: VirtualDomElements.Input },
     { childCount: 1, type: VirtualDomElements.Button },
-    { childCount: 0, text: 'Submit', type: VirtualDomElements.Text },
+    text('Submit'),
   ]
   const result = parseHtml('<form><input><button>Submit</button></form>', [])
   expect(result).toEqual(expectedArray)
@@ -273,19 +261,13 @@ test('parseHtml should parse form structure', () => {
 
 // Text with special characters tests
 test('parseHtml should handle text with spaces', () => {
-  const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.Div },
-    { childCount: 0, text: 'Hello   World', type: VirtualDomElements.Text },
-  ]
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Hello   World')]
   const result = parseHtml('<div>Hello   World</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle text with newlines', () => {
-  const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.Div },
-    { childCount: 0, text: 'Line1\nLine2', type: VirtualDomElements.Text },
-  ]
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Line1\nLine2')]
   const result = parseHtml('<div>Line1\nLine2</div>', [])
   expect(result).toEqual(expectedArray)
 })
@@ -293,7 +275,7 @@ test('parseHtml should handle text with newlines', () => {
 test('parseHtml should handle text with tabs', () => {
   const expectedArray = [
     { childCount: 1, type: VirtualDomElements.Div },
-    { childCount: 0, text: 'Text\twith\ttabs', type: VirtualDomElements.Text },
+    text('Text\twith\ttabs'),
   ]
   const result = parseHtml('<div>Text\twith\ttabs</div>', [])
   expect(result).toEqual(expectedArray)
@@ -303,7 +285,7 @@ test('parseHtml should handle text with tabs', () => {
 test('parseHtml should parse anchor tag', () => {
   const expectedArray = [
     { childCount: 1, href: 'https://example.com', type: VirtualDomElements.A },
-    { childCount: 0, text: 'Link', type: VirtualDomElements.Text },
+    text('Link'),
   ]
   const result = parseHtml('<a href="https://example.com">Link</a>', ['href'])
   expect(result).toEqual(expectedArray)
@@ -324,7 +306,7 @@ test('parseHtml should parse aside tag', () => {
 test('parseHtml should parse button tag', () => {
   const expectedArray = [
     { childCount: 1, type: VirtualDomElements.Button },
-    { childCount: 0, text: 'Click', type: VirtualDomElements.Text },
+    text('Click'),
   ]
   const result = parseHtml('<button>Click</button>', [])
   expect(result).toEqual(expectedArray)
@@ -652,7 +634,7 @@ test('parseHtml should handle many siblings', () => {
 
 test('parseHtml should handle deeply nested structure', () => {
   let html = '<div>'
-  const expectedArrayItems = [{ childCount: 1, type: VirtualDomElements.Div }]
+  const expectedArrayItems: VirtualDomNode[] = [{ childCount: 1, type: VirtualDomElements.Div }]
   for (let i = 0; i < 50; i++) {
     html += '<div>'
     expectedArrayItems.push({ childCount: 1, type: VirtualDomElements.Div })
