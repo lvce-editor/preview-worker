@@ -35,6 +35,7 @@ test('rerender should preserve all state properties', () => {
       { childCount: 1, type: 1 },
       { childCount: 0, type: 2 },
     ],
+    parsedNodesChildNodeCount: 2,
     platform: 1,
     uid: 123,
     uri: 'file:///test.html',
