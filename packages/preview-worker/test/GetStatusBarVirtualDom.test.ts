@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals'
 import { VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
-import * as GetStatusBarVirtualDom from '../src/parts/GetStatusBarVirtualDom/GetStatusBarVirtualDom.ts'
+import * as GetStatusBarVirtualDom from '../src/parts/GetPreviewDom/GetPreviewDom.ts'
 
 test('getPreviewDom should return an array', () => {
   const result = GetStatusBarVirtualDom.getPreviewDom()

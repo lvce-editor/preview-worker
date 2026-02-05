@@ -1,6 +1,6 @@
 import { ViewletCommand } from '@lvce-editor/constants'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
-import { getPreviewDom } from '../GetStatusBarVirtualDom/GetStatusBarVirtualDom.ts'
+import { getPreviewDom } from '../GetPreviewDom/GetPreviewDom.ts'
 
 export const renderItems = (oldState: PreviewState, newState: PreviewState): any => {
   const { initial, uid } = newState
