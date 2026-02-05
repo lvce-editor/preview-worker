@@ -31,21 +31,33 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
         }
         attributeName = ''
         break
+      case HtmlTokenType.ClosingAngleBracket:
+      case HtmlTokenType.WhitespaceInsideOpeningTag:
+        // Handle boolean attributes (attributes without values)
+        if (attributeName && allowedAttributes.includes(attributeName)) {
+          const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
+          current[finalAttributeName] = attributeName
+        }
+        attributeName = ''
+        break
       case HtmlTokenType.Content:
         current.childCount++
         dom.push(text(ParseText.parseText(token.text)))
         break
       case HtmlTokenType.TagNameEnd:
-        stack.pop()
+        if (stack.length > 1) {
+          stack.pop()
+        }
         current = stack.at(-1) || root
         break
       case HtmlTokenType.TagNameStart:
         current.childCount++
-        current = {
+        const newNode: VirtualDomNode = {
           childCount: 0,
           type: GetVirtualDomTag.getVirtualDomTag(token.text),
         }
-        dom.push(current)
+        dom.push(newNode)
+        current = newNode
         if (!IsSelfClosingTag.isSelfClosingTag(token.text)) {
           stack.push(current)
         }
@@ -54,5 +66,24 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
         break
     }
   }
+  try {
+    Object.defineProperty(dom, 'rootChildCount', {
+      value: root.childCount,
+      enumerable: false,
+      configurable: true,
+    })
+  } catch (e) {
+    ;(dom as any).rootChildCount = root.childCount
+  }
+
   return dom
 }
+
+// attach root child count to the returned array for downstream consumers
+;(function () {
+  try {
+    // no-op to keep TypeScript happy about top-level augmentation
+  } catch (e) {
+    // ignore
+  }
+})()

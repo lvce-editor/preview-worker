@@ -44,8 +44,11 @@ test('getParsedNodesChildNodeCount should count mixed content', () => {
   expect(result).toBe(3) // text, div, text
 })
 
-test.skip('getParsedNodesChildNodeCount should handle self-closing tags', () => {
+test('getParsedNodesChildNodeCount should handle self-closing tags', () => {
   const parsed = ParseHtml.parseHtml('<br><hr><img>', [])
+  // debug
+  // eslint-disable-next-line no-console
+  console.log('DEBUG parsed:', parsed.map(p => ({ childCount: p.childCount, type: p.type })), (parsed as any).rootChildCount)
   const result = getParsedNodesChildNodeCount(parsed)
   expect(result).toBe(3)
 })
