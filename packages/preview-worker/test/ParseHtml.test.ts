@@ -1,5 +1,6 @@
+import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import { expect, test } from '@jest/globals'
-import { VirtualDomElements, VirtualDomNode, text } from '@lvce-editor/virtual-dom-worker'
+import { VirtualDomElements, text } from '@lvce-editor/virtual-dom-worker'
 import { parseHtml } from '../src/parts/ParseHtml/ParseHtml.ts'
 
 // Basic HTML parsing tests
@@ -273,20 +274,14 @@ test('parseHtml should handle text with newlines', () => {
 })
 
 test('parseHtml should handle text with tabs', () => {
-  const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.Div },
-    text('Text\twith\ttabs'),
-  ]
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Text\twith\ttabs')]
   const result = parseHtml('<div>Text\twith\ttabs</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 // Element-specific tests
 test('parseHtml should parse anchor tag', () => {
-  const expectedArray = [
-    { childCount: 1, href: 'https://example.com', type: VirtualDomElements.A },
-    text('Link'),
-  ]
+  const expectedArray = [{ childCount: 1, href: 'https://example.com', type: VirtualDomElements.A }, text('Link')]
   const result = parseHtml('<a href="https://example.com">Link</a>', ['href'])
   expect(result).toEqual(expectedArray)
 })
@@ -304,10 +299,7 @@ test('parseHtml should parse aside tag', () => {
 })
 
 test('parseHtml should parse button tag', () => {
-  const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.Button },
-    text('Click'),
-  ]
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Button }, text('Click')]
   const result = parseHtml('<button>Click</button>', [])
   expect(result).toEqual(expectedArray)
 })
