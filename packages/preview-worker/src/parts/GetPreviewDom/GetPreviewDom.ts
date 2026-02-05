@@ -3,19 +3,21 @@ import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { getEmptyPreviewDom } from '../GetEmptyPreviewDom/GetEmptyPreviewDom.ts'
 
 export const getPreviewDom = (state: PreviewState): readonly any[] => {
-  if (!state.uri) {
+  const { uri, parsedDom, parsedNodesChildNodeCount } = state
+
+  if (!uri) {
     return getEmptyPreviewDom()
   }
 
   // If parsedDom is available, render it as children of the wrapper
-  if (state.parsedDom && state.parsedDom.length > 0) {
+  if (parsedDom && parsedDom.length > 0) {
     return [
       {
-        childCount: state.parsedNodesChildNodeCount,
+        childCount: parsedNodesChildNodeCount,
         className: 'Viewlet Preview',
         type: VirtualDomElements.Div,
       },
-      ...state.parsedDom,
+      ...parsedDom,
     ]
   }
 
