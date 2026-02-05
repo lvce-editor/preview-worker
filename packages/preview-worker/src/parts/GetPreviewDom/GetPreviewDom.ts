@@ -3,6 +3,11 @@ import { VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
 export const getPreviewDom = (): readonly any[] => {
   return [
     {
+      childCount: 2,
+      className: 'Viewlet Preview',
+      type: VirtualDomElements.Div,
+    },
+    {
       childCount: 1,
       type: VirtualDomElements.H1,
     },
