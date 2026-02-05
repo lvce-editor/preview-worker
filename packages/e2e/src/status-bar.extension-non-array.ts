@@ -2,7 +2,7 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const skip = 1
 
-export const name = 'status-bar.extension-non-array'
+export const name = 'preview.extension-non-array'
 
 export const test: Test = async ({ expect, Locator }) => {
   const statusBar = Locator('.StatusBar')

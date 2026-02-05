@@ -1,6 +1,6 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
 
-export const name = 'status-bar.extension-empty-array'
+export const name = 'preview.extension-empty-array'
 
 export const skip = 1
 

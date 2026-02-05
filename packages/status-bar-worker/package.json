@@ -1,10 +1,10 @@
 {
-  "name": "@lvce-editor/status-bar-worker",
+  "name": "@lvce-editor/preview-worker",
   "version": "0.0.0-dev",
   "description": "Status Bar Worker",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lvce-editor/status-bar-worker.git"
+    "url": "git+https://github.com/lvce-editor/preview-worker.git"
   },
   "license": "MIT",
   "author": "Lvce Editor",

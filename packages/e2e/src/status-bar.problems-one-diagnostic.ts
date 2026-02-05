@@ -2,7 +2,7 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const skip = 1
 
-export const name = 'status-bar.problems-one-diagnostic'
+export const name = 'preview.problems-one-diagnostic'
 
 export const test: Test = async ({ expect, Locator }) => {
   const statusBar = Locator('.StatusBar')

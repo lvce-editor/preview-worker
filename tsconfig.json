@@ -3,7 +3,7 @@
   "include": [],
   "references": [
     {
-      "path": "./packages/status-bar-worker"
+      "path": "./packages/preview-worker"
     },
     {
       "path": "./packages/build"

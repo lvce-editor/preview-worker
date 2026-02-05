@@ -31,8 +31,8 @@ const statusBarWorkerPath = join(root, '.tmp/dist/dist/statusBarWorkerMain.js')
 const remoteUrl = getRemoteUrl(statusBarWorkerPath)
 if (!content.includes('// const statusBarWorkerUrl = ')) {
   await cp(rendererWorkerMainPath, rendererWorkerMainPath + '.original')
-  const occurrence = `const statusBarWorkerUrl = \`\${assetDir}/packages/status-bar-worker/dist/statusBarWorkerMain.js\``
-  const replacement = `// const statusBarWorkerUrl = \`\${assetDir}/packages/status-bar-worker/dist/statusBarWorkerMain.js\`
+  const occurrence = `const statusBarWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/statusBarWorkerMain.js\``
+  const replacement = `// const statusBarWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/statusBarWorkerMain.js\`
 const statusBarWorkerUrl = \`${remoteUrl}\``
 
   const newContent = content.replace(occurrence, replacement)

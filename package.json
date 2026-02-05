@@ -1,12 +1,12 @@
 {
-  "name": "@lvce-editor/status-bar-worker-monorepo",
+  "name": "@lvce-editor/preview-worker-monorepo",
   "version": "0.0.0-dev",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "build": "node packages/build/src/build.js",
     "build:static": "node packages/build/src/build-static.ts",
-    "build:watch": "./packages/build/node_modules/.bin/esbuild --format=esm --bundle --external:node:buffer --external:electron --external:ws --external:node:worker_threads --watch packages/status-bar-worker/src/statusBarWorkerMain.ts --outfile=.tmp/dist/dist/statusBarWorkerMain.js",
+    "build:watch": "./packages/build/node_modules/.bin/esbuild --format=esm --bundle --external:node:buffer --external:electron --external:ws --external:node:worker_threads --watch packages/preview-worker/src/statusBarWorkerMain.ts --outfile=.tmp/dist/dist/statusBarWorkerMain.js",
     "dev": "node packages/build/src/dev.js",
     "e2e": "cd packages/e2e && npm run e2e",
     "format": "prettier --write .",

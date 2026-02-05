@@ -9,7 +9,7 @@ const sharedProcessUrl = pathToFileURL(sharedProcessPath).toString()
 
 const sharedProcess = await import(sharedProcessUrl)
 
-process.env.PATH_PREFIX = '/status-bar-worker'
+process.env.PATH_PREFIX = '/preview-worker'
 const { commitHash } = await sharedProcess.exportStatic({
   root,
   extensionPath: '',
@@ -27,9 +27,9 @@ const content = await readFile(rendererWorkerPath, 'utf8')
 const workerPath = join(root, '.tmp/dist/dist/statusBarWorkerMain.js')
 const remoteUrl = getRemoteUrl(workerPath)
 
-const occurrence = `// const statusBarWorkerUrl = \`\${assetDir}/packages/status-bar-worker/dist/statusBarWorkerMain.js\`
+const occurrence = `// const statusBarWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/statusBarWorkerMain.js\`
 const statusBarWorkerUrl = \`${remoteUrl}\``
-const replacement = `const statusBarWorkerUrl = \`\${assetDir}/packages/status-bar-worker/dist/statusBarWorkerMain.js\``
+const replacement = `const statusBarWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/statusBarWorkerMain.js\``
 if (!content.includes(occurrence)) {
   throw new Error('occurrence not found')
 }

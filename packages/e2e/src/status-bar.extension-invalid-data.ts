@@ -1,6 +1,6 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
 
-export const name = 'status-bar.extension-invalid-data'
+export const name = 'preview.extension-invalid-data'
 
 export const skip = 1
 

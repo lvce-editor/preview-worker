@@ -56,7 +56,7 @@ await bundleJs()
 
 const version = await getVersion()
 
-const packageJson = await readJson(join(root, 'packages', 'status-bar-worker', 'package.json'))
+const packageJson = await readJson(join(root, 'packages', 'preview-worker', 'package.json'))
 
 delete packageJson.scripts
 delete packageJson.devDependencies

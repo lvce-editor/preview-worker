@@ -1,5 +1,5 @@
 {
-  "name": "@lvce-editor/status-bar-worker-memory",
+  "name": "@lvce-editor/preview-worker-memory",
   "version": "0.0.0-dev",
   "type": "module",
   "scripts": {
