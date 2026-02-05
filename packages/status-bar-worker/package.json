@@ -1,0 +1,58 @@
+{
+  "name": "@lvce-editor/status-bar-worker",
+  "version": "0.0.0-dev",
+  "description": "Status Bar Worker",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lvce-editor/status-bar-worker.git"
+  },
+  "license": "MIT",
+  "author": "Lvce Editor",
+  "type": "module",
+  "main": "src/statusBarWorkerMain.ts",
+  "scripts": {
+    "test": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --detectOpenHandles --forceExit",
+    "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch"
+  },
+  "jest": {
+    "injectGlobals": false,
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "transform": {
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
+    },
+    "testMatch": [
+      "**/test/**"
+    ],
+    "collectCoverage": true,
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80
+      }
+    }
+  },
+  "dependencies": {
+    "@lvce-editor/virtual-dom-worker": "^6.8.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.2.0",
+    "@lvce-editor/assert": "^1.5.1",
+    "@lvce-editor/rpc": "^5.5.0",
+    "@lvce-editor/rpc-registry": "^8.1.0",
+    "@lvce-editor/verror": "^1.7.0",
+    "@lvce-editor/viewlet-registry": "^3.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6"
+  }
+}
