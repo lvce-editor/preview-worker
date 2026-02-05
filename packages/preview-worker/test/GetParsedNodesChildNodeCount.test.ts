@@ -48,7 +48,10 @@ test('getParsedNodesChildNodeCount should handle self-closing tags', () => {
   const parsed = ParseHtml.parseHtml('<br><hr><img>', [])
   // debug: inspect parsed structure
   // eslint-disable-next-line no-console
-  console.log('DEBUG parsed self-closing:', parsed.map(p => ({ type: p.type, childCount: p.childCount })))
+  console.log(
+    'DEBUG parsed self-closing:',
+    parsed.map((p) => ({ childCount: p.childCount, type: p.type })),
+  )
   const result = getParsedNodesChildNodeCount(parsed)
   expect(result).toBe(3)
 })
