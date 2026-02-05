@@ -228,8 +228,14 @@ test('parseHtml should parse list structure', () => {
 })
 
 test('parseHtml should parse table structure', () => {
+  const expectedArray = [
+    { childCount: 1, type: VirtualDomElements.Table },
+    { childCount: 1, type: VirtualDomElements.Tr },
+    { childCount: 1, type: VirtualDomElements.Td },
+    { childCount: 0, text: 'Cell', type: VirtualDomElements.Text },
+  ]
   const result = parseHtml('<table><tr><td>Cell</td></tr></table>', [])
-  expect(result.length).toBeGreaterThan(0)
+  expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse heading with content', () => {
@@ -525,11 +531,20 @@ test('parseHtml should parse full card structure', () => {
       </div>
     </div>
   `
+  const expectedArray = [
+    { childCount: 3, className: 'card', type: VirtualDomElements.Div },
+    { childCount: 1, className: 'card-header', type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.H2 },
+    { childCount: 0, text: 'Title', type: VirtualDomElements.Text },
+    { childCount: 1, className: 'card-body', type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.P },
+    { childCount: 0, text: 'Content', type: VirtualDomElements.Text },
+    { childCount: 1, className: 'card-footer', type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.Button },
+    { childCount: 0, text: 'Action', type: VirtualDomElements.Text },
+  ]
   const result = parseHtml(html, ['class'])
-  // Check that the structure contains the main card div and expected content
-  const cardElement = result.find((node: any) => node.className === 'card')
-  expect(cardElement).toBeDefined()
-  expect(cardElement.childCount).toBeGreaterThan(0)
+  expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse navigation menu', () => {
@@ -542,10 +557,21 @@ test('parseHtml should parse navigation menu', () => {
       </ul>
     </nav>
   `
+  const expectedArray = [
+    { childCount: 1, className: 'navbar', type: VirtualDomElements.Nav },
+    { childCount: 3, className: 'nav-list', type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.Li },
+    { childCount: 1, href: '/', type: VirtualDomElements.A },
+    { childCount: 0, text: 'Home', type: VirtualDomElements.Text },
+    { childCount: 1, type: VirtualDomElements.Li },
+    { childCount: 1, href: '/about', type: VirtualDomElements.A },
+    { childCount: 0, text: 'About', type: VirtualDomElements.Text },
+    { childCount: 1, type: VirtualDomElements.Li },
+    { childCount: 1, href: '/contact', type: VirtualDomElements.A },
+    { childCount: 0, text: 'Contact', type: VirtualDomElements.Text },
+  ]
   const result = parseHtml(html, ['class', 'href'])
-  const navElement = result.find((node: any) => node.className === 'navbar')
-  expect(navElement).toBeDefined()
-  expect(navElement.childCount).toBeGreaterThan(0)
+  expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse article with metadata', () => {
@@ -560,10 +586,18 @@ test('parseHtml should parse article with metadata', () => {
       </main>
     </article>
   `
+  const expectedArray = [
+    { childCount: 2, className: 'post', 'data-id': '123', type: VirtualDomElements.Article },
+    { childCount: 2, type: VirtualDomElements.Header },
+    { childCount: 1, type: VirtualDomElements.H1 },
+    { childCount: 0, text: 'Article Title', type: VirtualDomElements.Text },
+    { childCount: 0, text: '2024-01-15', type: VirtualDomElements.Text },
+    { childCount: 1, type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.P },
+    { childCount: 0, text: 'Article content goes here.', type: VirtualDomElements.Text },
+  ]
   const result = parseHtml(html, ['class', 'data-id'])
-  const articleElement = result.find((node: any) => node.className === 'post')
-  expect(articleElement).toBeDefined()
-  expect(articleElement['data-id']).toBe('123')
+  expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should maintain childCount property', () => {
@@ -609,11 +643,20 @@ test('parseHtml should handle semantic HTML5 elements', () => {
       <footer>Meta</footer>
     </article>
   `
+  const expectedArray = [
+    { childCount: 4, type: VirtualDomElements.Article },
+    { childCount: 1, type: VirtualDomElements.Header },
+    { childCount: 1, type: VirtualDomElements.H1 },
+    { childCount: 0, text: 'Topic', type: VirtualDomElements.Text },
+    { childCount: 1, type: VirtualDomElements.Section },
+    { childCount: 0, text: 'Content', type: VirtualDomElements.Text },
+    { childCount: 1, type: VirtualDomElements.Aside },
+    { childCount: 0, text: 'Related', type: VirtualDomElements.Text },
+    { childCount: 1, type: VirtualDomElements.Footer },
+    { childCount: 0, text: 'Meta', type: VirtualDomElements.Text },
+  ]
   const result = parseHtml(html, [])
-  const articleElement = result.find((node: any) => node.type === VirtualDomElements.Article)
-  expect(articleElement).toBeDefined()
-  const headerElement = result.find((node: any) => node.type === VirtualDomElements.Header)
-  expect(headerElement).toBeDefined()
+  expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle data attributes', () => {
