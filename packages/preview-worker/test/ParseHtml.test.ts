@@ -615,3 +615,12 @@ test('parseHtml should parse button with disabled attribute', () => {
   const result = parseHtml('<button disabled>test button</button>', ['disabled'])
   expect(result).toEqual(expectedArray)
 })
+
+test('parseHtml should parse button with disabled=false attribute', () => {
+  const expectedArray = [
+    { childCount: 1, disabled: 'false', type: VirtualDomElements.Button },
+    { childCount: 0, text: 'button', type: VirtualDomElements.Text },
+  ]
+  const result = parseHtml('<button disabled=false>button</button>', ['disabled'])
+  expect(result).toEqual(expectedArray)
+})
