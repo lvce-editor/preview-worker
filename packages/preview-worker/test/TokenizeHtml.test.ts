@@ -7,11 +7,6 @@ const getTokens = (html: string) => {
   return TokenizeHtml.tokenizeHtml(html).map((t) => ({ text: t.text, type: t.type }))
 }
 
-// Helper to extract just token types
-const getTokenTypes = (html: string) => {
-  return TokenizeHtml.tokenizeHtml(html).map((t) => t.type)
-}
-
 // Basic script tag tokenization
 test('tokenizeHtml should tokenize empty script tag', () => {
   const tokens = getTokens('<script></script>')
