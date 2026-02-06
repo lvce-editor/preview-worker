@@ -13,7 +13,7 @@ test('renderEventListeners should return array with HandleClick and HandleInput 
     {
       capture: true,
       name: DomEventListenersFunctions.HandleInput,
-      params: ['handleInput', 'event.target.dataset.id'],
+      params: ['handleInput', 'event.target.dataset.id', 'event.target.value'],
     },
   ])
 })

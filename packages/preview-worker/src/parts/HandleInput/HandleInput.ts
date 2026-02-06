@@ -4,8 +4,8 @@ import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/G
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
-export const handleInput = (state: PreviewState, hdId: string): PreviewState => {
-  // console.log('input,', hdId)
+export const handleInput = (state: PreviewState, hdId: string, value: string): PreviewState => {
+  // console.log('input,', hdId, value)
   if (!hdId) {
     return state
   }
@@ -19,6 +19,8 @@ export const handleInput = (state: PreviewState, hdId: string): PreviewState => 
   }
 
   // console.log({ element })
+  // Update the element's value from the preview
+  element.value = value
   // Dispatch input event in happy-dom so event listeners fire
   DispatchInputEvent.dispatchInputEvent(element, happyDomInstance.window)
 

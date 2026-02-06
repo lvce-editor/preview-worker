@@ -43,13 +43,13 @@ beforeEach(() => {
 
 test('handleInput returns state when hdId is empty', () => {
   const state = createState(1)
-  const result = HandleInput.handleInput(state, '')
+  const result = HandleInput.handleInput(state, '', '')
   expect(result).toEqual(state)
 })
 
 test('handleInput returns state when happyDomInstance is not found', () => {
   const state = createState(999)
-  const result = HandleInput.handleInput(state, 'some-id')
+  const result = HandleInput.handleInput(state, 'some-id', 'value')
   expect(result).toEqual(state)
 })
 
@@ -57,7 +57,7 @@ test('handleInput returns state when element is not found', () => {
   const html = '<input id="input" type="text">'
   setupHappyDom(1, html)
   const state = createState(1)
-  const result = HandleInput.handleInput(state, 'non-existent-id')
+  const result = HandleInput.handleInput(state, 'non-existent-id', 'value')
   expect(result).toEqual(state)
 })
 
@@ -76,7 +76,11 @@ test('handleInput fires input event listener on element', () => {
   }
 
   const state = createState(1)
-  HandleInput.handleInput(state, [...happyDomInstance.elementMap.keys()].find((id) => happyDomInstance.elementMap.get(id)!.id === 'input')!)
+  HandleInput.handleInput(
+    state,
+    [...happyDomInstance.elementMap.keys()].find((id) => happyDomInstance.elementMap.get(id)!.id === 'input')!,
+    'test value',
+  )
 
   expect(inputFired).toBe(true)
 })
@@ -97,9 +101,31 @@ test('handleInput returns new state with updated parsedDom', () => {
   }
 
   const state = createState(1)
-  const result = HandleInput.handleInput(state, inputHdId)
+  const result = HandleInput.handleInput(state, inputHdId, 'updated value')
 
   expect(result).not.toEqual(state)
   expect(result.parsedDom).toEqual(expect.anything())
   expect(result.css).toEqual(expect.anything())
+})
+
+test('handleInput updates element value from input parameter', () => {
+  const html = '<input id="input" type="text" value="initial">'
+  setupHappyDom(1, html)
+
+  const happyDomInstance = HappyDomState.get(1)!
+  let inputHdId = ''
+  let valueInListener = ''
+  for (const [hdId, element] of happyDomInstance.elementMap) {
+    if (element.id === 'input') {
+      inputHdId = hdId
+      element.addEventListener('input', function () {
+        valueInListener = this.value
+      })
+    }
+  }
+
+  const state = createState(1)
+  HandleInput.handleInput(state, inputHdId, 'new input value')
+
+  expect(valueInListener).toBe('new input value')
 })
