@@ -7,8 +7,8 @@ import * as ExecuteScripts from '../ExecuteScripts/ExecuteScripts.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as OverrideRequestAnimationFrame from '../OverrideRequestAnimationFrame/OverrideRequestAnimationFrame.ts'
-import * as PatchCanvasElements from '../PatchCanvasElements/PatchCanvasElements.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
+import * as PatchCanvasElements from '../PatchCanvasElements/PatchCanvasElements.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
 export const updateContent = async (

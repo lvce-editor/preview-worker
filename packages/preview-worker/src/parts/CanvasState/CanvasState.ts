@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
 interface CanvasInstance {
+  readonly dataId: string
   readonly element: any
   readonly offscreenCanvas: OffscreenCanvas
-  readonly dataId: string
 }
 
 interface CanvasStateEntry {
-  readonly instances: CanvasInstance[]
   readonly animationFrameHandles: number[]
+  readonly instances: CanvasInstance[]
 }
 
 const states: Map<number, CanvasStateEntry> = new Map()

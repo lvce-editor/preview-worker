@@ -15,19 +15,19 @@ class MockOffscreenCanvas {
 
   getContext(_type: string): any {
     return {
-      fillRect: () => {},
-      clearRect: () => {},
       arc: () => {},
       beginPath: () => {},
-      fill: () => {},
-      fillText: () => {},
-      stroke: () => {},
-      moveTo: () => {},
-      lineTo: () => {},
+      clearRect: () => {},
       closePath: () => {},
+      fill: () => {},
+      fillRect: () => {},
       fillStyle: '',
-      strokeStyle: '',
+      fillText: () => {},
       font: '',
+      lineTo: () => {},
+      moveTo: () => {},
+      stroke: () => {},
+      strokeStyle: '',
     }
   }
 
@@ -37,7 +37,7 @@ class MockOffscreenCanvas {
 }
 
 beforeAll(() => {
-  if (typeof globalThis.OffscreenCanvas === 'undefined') {
+  if (globalThis.OffscreenCanvas === undefined) {
     // @ts-ignore
     globalThis.OffscreenCanvas = MockOffscreenCanvas
   }

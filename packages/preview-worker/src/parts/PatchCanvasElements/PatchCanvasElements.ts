@@ -19,7 +19,7 @@ export const patchCanvasElements = (document: any, uid: number): void => {
       }
       return undefined
     }
-    instances.push({ element, offscreenCanvas, dataId })
+    instances.push({ dataId, element, offscreenCanvas })
   }
-  CanvasState.set(uid, { instances, animationFrameHandles: [] })
+  CanvasState.set(uid, { animationFrameHandles: [], instances })
 }

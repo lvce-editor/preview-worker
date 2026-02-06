@@ -10,7 +10,7 @@ afterEach(() => {
 
 test('overrideRequestAnimationFrame should replace window.requestAnimationFrame', () => {
   const window = new Window({ url: 'https://localhost:3000' })
-  CanvasState.set(1, { instances: [], animationFrameHandles: [] })
+  CanvasState.set(1, { animationFrameHandles: [], instances: [] })
   const originalRaf = window.requestAnimationFrame
   OverrideRequestAnimationFrame.overrideRequestAnimationFrame(window as any, 1)
   expect(window.requestAnimationFrame).not.toBe(originalRaf)
@@ -18,7 +18,7 @@ test('overrideRequestAnimationFrame should replace window.requestAnimationFrame'
 
 test('overrideRequestAnimationFrame should replace window.cancelAnimationFrame', () => {
   const window = new Window({ url: 'https://localhost:3000' })
-  CanvasState.set(1, { instances: [], animationFrameHandles: [] })
+  CanvasState.set(1, { animationFrameHandles: [], instances: [] })
   const originalCaf = window.cancelAnimationFrame
   OverrideRequestAnimationFrame.overrideRequestAnimationFrame(window as any, 1)
   expect(window.cancelAnimationFrame).not.toBe(originalCaf)
@@ -26,7 +26,7 @@ test('overrideRequestAnimationFrame should replace window.cancelAnimationFrame',
 
 test('requestAnimationFrame should return an incrementing id', () => {
   const window = new Window({ url: 'https://localhost:3000' }) as any
-  CanvasState.set(1, { instances: [], animationFrameHandles: [] })
+  CanvasState.set(1, { animationFrameHandles: [], instances: [] })
   OverrideRequestAnimationFrame.overrideRequestAnimationFrame(window, 1)
   const id1 = window.requestAnimationFrame(() => {})
   const id2 = window.requestAnimationFrame(() => {})
@@ -35,7 +35,7 @@ test('requestAnimationFrame should return an incrementing id', () => {
 
 test('requestAnimationFrame callback should be called with a timestamp', async () => {
   const window = new Window({ url: 'https://localhost:3000' }) as any
-  CanvasState.set(1, { instances: [], animationFrameHandles: [] })
+  CanvasState.set(1, { animationFrameHandles: [], instances: [] })
   OverrideRequestAnimationFrame.overrideRequestAnimationFrame(window, 1)
   const callback = jest.fn()
   window.requestAnimationFrame(callback)
@@ -48,7 +48,7 @@ test('requestAnimationFrame callback should be called with a timestamp', async (
 
 test('cancelAnimationFrame should prevent callback from firing', async () => {
   const window = new Window({ url: 'https://localhost:3000' }) as any
-  CanvasState.set(1, { instances: [], animationFrameHandles: [] })
+  CanvasState.set(1, { animationFrameHandles: [], instances: [] })
   OverrideRequestAnimationFrame.overrideRequestAnimationFrame(window, 1)
   const callback = jest.fn()
   const id = window.requestAnimationFrame(callback)
