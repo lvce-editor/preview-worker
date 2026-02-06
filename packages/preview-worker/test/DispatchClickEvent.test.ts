@@ -25,7 +25,7 @@ test('dispatchClickEvent fires direct onclick handler', () => {
   document.body.innerHTML = '<button id="btn">Click</button>'
   const button = document.querySelector('#btn')
   let clicked = false
-  button.onclick = () => {
+  button.onclick = (): void => {
     clicked = true
   }
   DispatchClickEvent.dispatchClickEvent(button, window)
@@ -38,10 +38,10 @@ test('dispatchClickEvent fires both addEventListener and onclick', () => {
   document.body.innerHTML = '<button id="btn">Click</button>'
   const button = document.querySelector('#btn')
   const calls: string[] = []
-  button.addEventListener('click', () => {
+  button.addEventListener('click', (): void => {
     calls.push('addEventListener')
   })
-  button.onclick = () => {
+  button.onclick = (): void => {
     calls.push('onclick')
   }
   DispatchClickEvent.dispatchClickEvent(button, window)
@@ -79,7 +79,7 @@ test('dispatchClickEvent passes MouseEvent to onclick handler', () => {
   document.body.innerHTML = '<button id="btn">Click</button>'
   const button = document.querySelector('#btn')
   let receivedEvent: any = null
-  button.onclick = (event: any) => {
+  button.onclick = (event: any): void => {
     receivedEvent = event
   }
   DispatchClickEvent.dispatchClickEvent(button, window)

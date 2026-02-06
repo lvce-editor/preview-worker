@@ -26,7 +26,7 @@ test('dispatchEvent fires direct on* handler', () => {
   document.body.innerHTML = '<button id="btn">Click</button>'
   const button = document.querySelector('#btn')
   let fired = false
-  button.onclick = () => {
+  button.onclick = (): void => {
     fired = true
   }
   const event = new window.MouseEvent('click', { bubbles: true })
@@ -40,10 +40,10 @@ test('dispatchEvent fires both addEventListener and on* handler', () => {
   document.body.innerHTML = '<button id="btn">Click</button>'
   const button = document.querySelector('#btn')
   const calls: string[] = []
-  button.addEventListener('click', () => {
+  button.addEventListener('click', (): void => {
     calls.push('addEventListener')
   })
-  button.onclick = () => {
+  button.onclick = (): void => {
     calls.push('onclick')
   }
   const event = new window.MouseEvent('click', { bubbles: true })
@@ -81,7 +81,7 @@ test('dispatchEvent passes event to on* handler', () => {
   document.body.innerHTML = '<button id="btn">Click</button>'
   const button = document.querySelector('#btn')
   let receivedEvent: any = null
-  button.onclick = (event: any) => {
+  button.onclick = (event: any): void => {
     receivedEvent = event
   }
   const event = new window.MouseEvent('click', { bubbles: true })
