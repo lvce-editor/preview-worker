@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-implied-eval */
+import * as Alert from '../Alert/Alert.ts'
 import { getTopLevelFunctionNames } from '../GetTopLevelFunctionNames/GetTopLevelFunctionNames.ts'
 
 export const executeScripts = (window: any, document: any, scripts: readonly string[]): void => {
+  window.alert = Alert.alert
+  // @ts-ignore
+  globalThis.alert = Alert.alert
   // Execute each script with the happy-dom window and document as context
   for (const scriptContent of scripts) {
     try {
