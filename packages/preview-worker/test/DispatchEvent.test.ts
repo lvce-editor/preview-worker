@@ -10,7 +10,7 @@ test('dispatchEvent fires addEventListener listener', () => {
   const window = createWindow()
   const { document } = window
   document.body.innerHTML = '<button id="btn">Click</button>'
-  const button = document.getElementById('btn')
+  const button = document.querySelector('#btn')
   let fired = false
   button.addEventListener('click', () => {
     fired = true
@@ -24,7 +24,7 @@ test('dispatchEvent fires direct on* handler', () => {
   const window = createWindow()
   const { document } = window
   document.body.innerHTML = '<button id="btn">Click</button>'
-  const button = document.getElementById('btn')
+  const button = document.querySelector('#btn')
   let fired = false
   button.onclick = () => {
     fired = true
@@ -38,7 +38,7 @@ test('dispatchEvent fires both addEventListener and on* handler', () => {
   const window = createWindow()
   const { document } = window
   document.body.innerHTML = '<button id="btn">Click</button>'
-  const button = document.getElementById('btn')
+  const button = document.querySelector('#btn')
   const calls: string[] = []
   button.addEventListener('click', () => {
     calls.push('addEventListener')
@@ -56,7 +56,7 @@ test('dispatchEvent does not throw when element has no listeners', () => {
   const window = createWindow()
   const { document } = window
   document.body.innerHTML = '<button id="btn">Click</button>'
-  const button = document.getElementById('btn')
+  const button = document.querySelector('#btn')
   const event = new window.MouseEvent('click', { bubbles: true })
   expect(() => {
     DispatchEvent.dispatchEvent(button, event)
@@ -67,7 +67,7 @@ test('dispatchEvent does not call on* handler when it is not a function', () => 
   const window = createWindow()
   const { document } = window
   document.body.innerHTML = '<button id="btn">Click</button>'
-  const button = document.getElementById('btn')
+  const button = document.querySelector('#btn')
   button.onclick = 'not a function'
   const event = new window.MouseEvent('click', { bubbles: true })
   expect(() => {
@@ -79,7 +79,7 @@ test('dispatchEvent passes event to on* handler', () => {
   const window = createWindow()
   const { document } = window
   document.body.innerHTML = '<button id="btn">Click</button>'
-  const button = document.getElementById('btn')
+  const button = document.querySelector('#btn')
   let receivedEvent: any = null
   button.onclick = (event: any) => {
     receivedEvent = event
@@ -94,8 +94,8 @@ test('dispatchEvent event bubbles to parent', () => {
   const window = createWindow()
   const { document } = window
   document.body.innerHTML = '<div id="parent"><button id="child">Click</button></div>'
-  const parent = document.getElementById('parent')
-  const child = document.getElementById('child')
+  const parent = document.querySelector('#parent')
+  const child = document.querySelector('#child')
   let bubbled = false
   parent.addEventListener('click', () => {
     bubbled = true
