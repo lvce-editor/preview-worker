@@ -13,6 +13,7 @@ describe('isDefaultAllowedAttribute', () => {
   test('should allow aria-* attributes', () => {
     expect(isDefaultAllowedAttribute('aria-label', [])).toBe(true)
     expect(isDefaultAllowedAttribute('aria-hidden', [])).toBe(true)
+    // cspell: disable-next-line
     expect(isDefaultAllowedAttribute('aria-describedby', [])).toBe(true)
   })
 
@@ -62,6 +63,7 @@ describe('isDefaultAllowedAttribute', () => {
 
   // Test partial matches should not work
   test('should not match partial patterns', () => {
+    // cspell: disable-next-line
     expect(isDefaultAllowedAttribute('xdata-test', [])).toBe(false)
     expect(isDefaultAllowedAttribute('aria', [])).toBe(false)
     expect(isDefaultAllowedAttribute('roles', [])).toBe(false)

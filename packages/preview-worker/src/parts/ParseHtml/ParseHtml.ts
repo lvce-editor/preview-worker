@@ -8,11 +8,15 @@ import * as IsSelfClosingTag from '../IsSelfClosingTag/IsSelfClosingTag.ts'
 import * as ParseText from '../ParseText/ParseText.ts'
 import * as TokenizeHtml from '../TokenizeHtml/TokenizeHtml.ts'
 
-export const parseHtml = (html: string, allowedAttributes: readonly string[] = [], defaultAllowedAttributes: readonly string[] = []): readonly VirtualDomNode[] => {
+export const parseHtml = (
+  html: string,
+  allowedAttributes: readonly string[] = [],
+  defaultAllowedAttributes: readonly string[] = [],
+): readonly VirtualDomNode[] => {
   Assert.string(html)
   Assert.array(allowedAttributes)
   Assert.array(defaultAllowedAttributes)
-  
+
   // Combine default allowed attributes with any additional ones provided
   const allAllowedAttributes = new Set([...defaultAllowedAttributes, ...allowedAttributes])
   const tokens = TokenizeHtml.tokenizeHtml(html)
@@ -39,7 +43,10 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
         break
       case HtmlTokenType.ClosingAngleBracket:
         // Handle boolean attributes (attributes without values)
-        if (attributeName && (allAllowedAttributes.has(attributeName) || IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes))) {
+        if (
+          attributeName &&
+          (allAllowedAttributes.has(attributeName) || IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes))
+        ) {
           const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
           current[finalAttributeName] = attributeName
         }
@@ -75,7 +82,10 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
         break
       case HtmlTokenType.WhitespaceInsideOpeningTag:
         // Handle boolean attributes (attributes without values)
-        if (attributeName && (allAllowedAttributes.has(attributeName) || IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes))) {
+        if (
+          attributeName &&
+          (allAllowedAttributes.has(attributeName) || IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes))
+        ) {
           const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
           current[finalAttributeName] = attributeName
         }
