@@ -4,7 +4,7 @@ export const dispatchEvent = (element: any, event: any): void => {
   // Also invoke direct on* handler if set (e.g. element.onclick = function(){})
   const handlerName = `on${event.type}`
   const handler = element[handlerName]
-  
+
   if (typeof handler === 'function') {
     handler.call(element, event)
   } else if (handler === null || handler === undefined) {
