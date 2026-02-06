@@ -33,7 +33,9 @@ const options = {
       presets: [pluginTypeScript],
     }),
     nodeResolve(),
+    // @ts-ignore
     commonjs(),
+    // @ts-ignore
     json(),
   ],
 }
