@@ -22,12 +22,13 @@ const createState = (uid: number, overrides: Partial<PreviewState> = {}): Previe
   ...overrides,
 })
 
-const setupHappyDom = (uid: number, html: string, scripts: string[]): void => {
+const setupHappyDom = (uid: number, html: string, scripts: readonly string[]): void => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
   document.documentElement.innerHTML = html
 
   for (const scriptContent of scripts) {
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
     const fn = new Function('window', 'document', 'console', scriptContent)
     fn(window, document, console)
   }

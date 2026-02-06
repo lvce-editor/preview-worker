@@ -22,6 +22,7 @@ interface SerializeContext {
   nextId: number
 }
 
+// eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
 const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly string[], context: SerializeContext): number => {
   const { nodeType } = node
 
@@ -111,6 +112,7 @@ const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly 
   return 1
 }
 
+// eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
 export const serialize = (document: any, elementMap?: Map<string, any>): SerializeResult => {
   const dom: VirtualDomNode[] = []
   const css: string[] = []
