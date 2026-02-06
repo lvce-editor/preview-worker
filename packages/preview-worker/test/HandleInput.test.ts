@@ -10,15 +10,15 @@ const createWindow = (): any => {
 
 const createState = (uid: number): any => {
   return {
-    uid,
-    initial: false,
-    uri: '',
-    parsedDom: [],
     css: [],
-    zoom: 1,
-    scrollTop: 0,
-    scrollLeft: 0,
+    initial: false,
+    parsedDom: [],
     parsedNodesChildNodeCount: [],
+    scrollLeft: 0,
+    scrollTop: 0,
+    uid,
+    uri: '',
+    zoom: 1,
   }
 }
 
@@ -76,9 +76,7 @@ test('handleInput fires input event listener on element', () => {
   }
 
   const state = createState(1)
-  HandleInput.handleInput(state, Array.from(happyDomInstance.elementMap.keys()).find(
-    (id) => happyDomInstance.elementMap.get(id)!.id === 'input'
-  )!)
+  HandleInput.handleInput(state, [...happyDomInstance.elementMap.keys()].find((id) => happyDomInstance.elementMap.get(id)!.id === 'input')!)
 
   expect(inputFired).toBe(true)
 })
