@@ -17,9 +17,13 @@ const TAGS_TO_SKIP_TAG_ONLY = new Set(['html', 'head'])
 // Tags where we capture content as CSS
 const TAGS_TO_CAPTURE_AS_CSS = new Set(['style'])
 
+// Tags where we capture content as JavaScript
+const TAGS_TO_CAPTURE_AS_JS = new Set(['script'])
+
 export interface ParseResult {
   readonly css: readonly string[]
   readonly dom: readonly VirtualDomNode[]
+  readonly scripts: readonly string[]
 }
 
 export const parseHtml = (html: string, allowedAttributes: readonly string[] = [], defaultAllowedAttributes: readonly string[] = []): ParseResult => {
@@ -33,6 +37,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
   const tokens = TokenizeHtml.tokenizeHtml(html)
   const dom: VirtualDomNode[] = []
   const css: string[] = []
+  const scripts: string[] = []
   const root: VirtualDomNode = {
     childCount: 0,
     type: 0,
@@ -45,11 +50,13 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
   let skipDepth = 0 // Track how many levels deep we are in skipped content
   let captureCss = false // Track if we're inside a style tag
   let cssContent = '' // Accumulate CSS content
+  let captureJs = false // Track if we're inside a script tag
+  let jsContent = '' // Accumulate JavaScript content
 
   for (const token of tokens) {
     switch (token.type) {
       case HtmlTokenType.AttributeName:
-        if (skipDepth === 0 && !captureCss) {
+        if (skipDepth === 0 && !captureCss && !captureJs) {
           attributeName = token.text
         }
         break
@@ -57,6 +64,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
         if (
           skipDepth === 0 &&
           !captureCss &&
+          !captureJs &&
           (allAllowedAttributes.has(attributeName) ||
             (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
         ) {
@@ -68,7 +76,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
         attributeName = ''
         break
       case HtmlTokenType.ClosingAngleBracket:
-        if (skipDepth === 0 && !captureCss) {
+        if (skipDepth === 0 && !captureCss && !captureJs) {
           // Handle boolean attributes (attributes without values)
           if (
             attributeName &&
@@ -91,6 +99,8 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
       case HtmlTokenType.Content:
         if (captureCss) {
           cssContent += token.text
+        } else if (captureJs) {
+          jsContent += token.text
         } else if (skipDepth === 0) {
           current.childCount++
           dom.push(text(ParseText.parseText(token.text)))
@@ -109,6 +119,13 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
           }
           cssContent = ''
           captureCss = false
+        } else if (TAGS_TO_CAPTURE_AS_JS.has(tagNameToClose)) {
+          // Finished capturing JavaScript
+          if (jsContent.trim()) {
+            scripts.push(jsContent)
+          }
+          jsContent = ''
+          captureJs = false
         } else if (TAGS_TO_SKIP_COMPLETELY.has(tagNameToClose)) {
           // We were skipping this content, so decrement skipDepth
           skipDepth--
@@ -130,6 +147,12 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
         if (TAGS_TO_CAPTURE_AS_CSS.has(tagNameLower)) {
           captureCss = true
           cssContent = ''
+          tagStack.push(token.text)
+        }
+        // Check if this tag captures JavaScript content
+        else if (TAGS_TO_CAPTURE_AS_JS.has(tagNameLower)) {
+          captureJs = true
+          jsContent = ''
           tagStack.push(token.text)
         }
         // Check if this tag should be completely skipped (meta, title)
@@ -166,7 +189,8 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
       case HtmlTokenType.WhitespaceInsideOpeningTag:
         if (
           skipDepth === 0 &&
-          !captureCss && // Handle boolean attributes (attributes without values)
+          !captureCss &&
+          !captureJs && // Handle boolean attributes (attributes without values)
           attributeName &&
           (allAllowedAttributes.has(attributeName) ||
             (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
@@ -192,7 +216,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
     ;(dom as any).rootChildCount = root.childCount
   }
 
-  return { css, dom }
+  return { css, dom, scripts }
 }
 
 // Test helper: returns just the DOM array for backward compatibility with existing tests
