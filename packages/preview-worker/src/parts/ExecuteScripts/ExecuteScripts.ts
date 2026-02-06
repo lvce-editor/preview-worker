@@ -17,4 +17,3 @@ export const executeScripts = (window: any, document: any, scripts: readonly str
     }
   }
 }
-
