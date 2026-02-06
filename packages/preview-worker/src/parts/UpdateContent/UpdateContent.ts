@@ -22,7 +22,7 @@ export const updateContent = async (
     // Parse the content into virtual DOM and CSS
     const parseResult = ParseHtml.parseHtml(content)
     const parsedDom = parseResult.dom
-    const {css} = parseResult
+    const { css } = parseResult
     const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
 
     return {
