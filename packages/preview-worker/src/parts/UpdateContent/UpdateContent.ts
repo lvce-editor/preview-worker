@@ -33,7 +33,8 @@ export const updateContent = async (
     // If scripts are present, execute them via happy-dom and re-serialize the DOM
     if (scripts.length > 0) {
       try {
-        const { document: happyDomDocument, window: happyDomWindow } = ExecuteScripts.executeScripts(content, scripts)
+        const { document: happyDomDocument, window: happyDomWindow } = ExecuteScripts.createWindow(content)
+        ExecuteScripts.executeScripts(happyDomWindow, happyDomDocument, scripts)
         const elementMap = new Map<string, any>()
         const serialized = SerializeHappyDom.serialize(happyDomDocument, elementMap)
         parsedDom = serialized.dom
