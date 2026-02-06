@@ -4,7 +4,7 @@ import { Window } from 'happy-dom-without-node'
 import * as SerializeHappyDom from '../src/parts/SerializeHappyDom/SerializeHappyDom.ts'
 
 // Helper to create a happy-dom document from HTML
-const createDocument = (html: string) => {
+const createDocument = (html: string): any => {
   const window = new Window({ url: 'https://localhost:3000' })
   window.document.documentElement.innerHTML = html
   return window.document
