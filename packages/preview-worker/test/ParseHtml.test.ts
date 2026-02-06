@@ -426,8 +426,8 @@ test('parseHtml should ignore attributes not in allowedAttributes', () => {
   expect(result).toEqual(expectedArray)
 })
 
-test('parseHtml should handle empty allowedAttributes array', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+test('parseHtml should handle empty allowedAttributes array with default common attributes', () => {
+  const expectedArray = [{ childCount: 0, className: 'cls', id: 'test', type: VirtualDomElements.Div }]
   const result = parseHtml('<div id="test" class="cls"></div>', [])
   expect(result).toEqual(expectedArray)
 })
@@ -566,8 +566,8 @@ test('parseHtml should parse style attributes when allowed', () => {
   expect(result).toEqual(expectedArray)
 })
 
-test('parseHtml should not parse style attributes when not allowed', () => {
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+test('parseHtml should parse style attributes by default', () => {
+  const expectedArray = [{ childCount: 0, style: 'color: red;', type: VirtualDomElements.Div }]
   const result = parseHtml('<div style="color: red;"></div>', [])
   expect(result).toEqual(expectedArray)
 })

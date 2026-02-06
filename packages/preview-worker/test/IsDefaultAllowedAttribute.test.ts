@@ -29,16 +29,18 @@ test('should allow attributes in defaultAllowedAttributes list', () => {
   expect(isDefaultAllowedAttribute('style', defaultAllowedAttributes)).toBe(true)
 })
 
-// Test attributes not in list
+// Test attributes not in list (testing event handlers which are not in common attributes)
 test('should disallow attributes not in list', () => {
   expect(isDefaultAllowedAttribute('onclick', [])).toBe(false)
   expect(isDefaultAllowedAttribute('onerror', [])).toBe(false)
-  expect(isDefaultAllowedAttribute('href', [])).toBe(false)
+  expect(isDefaultAllowedAttribute('onload', [])).toBe(false)
 })
 
 // Test combination: attribute in list and also matches pattern
 test('should allow role attribute even with empty defaultAllowedAttributes', () => {
   expect(isDefaultAllowedAttribute('role', [])).toBe(true)
+  expect(isDefaultAllowedAttribute('id', [])).toBe(true)
+  expect(isDefaultAllowedAttribute('href', [])).toBe(true)
 })
 
 // Test edge cases
@@ -51,6 +53,8 @@ test('should handle empty defaultAllowedAttributes list', () => {
   expect(isDefaultAllowedAttribute('data-test', [])).toBe(true)
   expect(isDefaultAllowedAttribute('aria-label', [])).toBe(true)
   expect(isDefaultAllowedAttribute('role', [])).toBe(true)
+  expect(isDefaultAllowedAttribute('id', [])).toBe(true)
+  expect(isDefaultAllowedAttribute('href', [])).toBe(true)
 })
 
 // Test case sensitivity
@@ -70,9 +74,12 @@ test('should not match partial patterns', () => {
 
 // Test with multiple items in defaultAllowedAttributes
 test('should check all items in defaultAllowedAttributes', () => {
-  const defaultAllowedAttributes = ['id', 'class', 'title', 'alt']
+  const defaultAllowedAttributes = ['custom-1', 'custom-2', 'custom-attr']
+  expect(isDefaultAllowedAttribute('custom-1', defaultAllowedAttributes)).toBe(true)
+  expect(isDefaultAllowedAttribute('custom-2', defaultAllowedAttributes)).toBe(true)
+  expect(isDefaultAllowedAttribute('custom-attr', defaultAllowedAttributes)).toBe(true)
+  expect(isDefaultAllowedAttribute('onclick', defaultAllowedAttributes)).toBe(false)
+  // Common attributes should still work
   expect(isDefaultAllowedAttribute('id', defaultAllowedAttributes)).toBe(true)
-  expect(isDefaultAllowedAttribute('title', defaultAllowedAttributes)).toBe(true)
-  expect(isDefaultAllowedAttribute('alt', defaultAllowedAttributes)).toBe(true)
-  expect(isDefaultAllowedAttribute('href', defaultAllowedAttributes)).toBe(false)
+  expect(isDefaultAllowedAttribute('href', defaultAllowedAttributes)).toBe(true)
 })
