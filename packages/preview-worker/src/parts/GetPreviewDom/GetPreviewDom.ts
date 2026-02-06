@@ -32,7 +32,7 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
       type: VirtualDomElements.H1,
     },
     {
-      text: 'hello from preview',
+      text: 'Edit the file on the left to get started.',
       type: VirtualDomElements.Text,
     },
   ]
