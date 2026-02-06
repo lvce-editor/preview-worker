@@ -48,10 +48,6 @@ test('getRenderer should throw error for other known diff types not implemented'
   expect(() => {
     GetRenderer.getRenderer(DiffType.RenderSelection)
   }).toThrow('unknown renderer')
-
-  expect(() => {
-    GetRenderer.getRenderer(DiffType.RenderCss)
-  }).toThrow('unknown renderer')
 })
 
 test('getRenderer should return a function that can be called with state', () => {

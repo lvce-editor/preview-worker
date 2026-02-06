@@ -1,4 +1,4 @@
-import { VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
+import { VirtualDomElements } from '@lvce-editor/constants'
 import * as ElementTags from '../ElementTags/ElementTags.ts'
 
 export const getVirtualDomTag = (text: string): number => {
@@ -103,6 +103,10 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.Tr
     case ElementTags.Ul:
       return VirtualDomElements.Ul
+    case 'html':
+      return VirtualDomElements.Html
+    case 'style':
+      return VirtualDomElements.Style
     default:
       return VirtualDomElements.Div
   }

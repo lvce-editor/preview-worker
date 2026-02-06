@@ -33,13 +33,14 @@ export const handleEditorChanged = async (): Promise<void> => {
     if (matchingEditorUid !== null) {
       try {
         const content = await EditorWorker.invoke('Editor.getText', matchingEditorUid)
-        const parsedDom = ParseHtml.parseHtml(content, [])
+        const parseResult = ParseHtml.parseHtml(content, [])
 
         const updatedState = {
           ...state,
           content,
+          css: parseResult.css,
           errorMessage: '',
-          parsedDom,
+          parsedDom: parseResult.dom,
         }
 
         PreviewStates.set(previewUid, state, updatedState)
@@ -49,6 +50,7 @@ export const handleEditorChanged = async (): Promise<void> => {
         const updatedState = {
           ...state,
           content: '',
+          css: [],
           errorMessage,
           parsedDom: [],
         }
