@@ -46,14 +46,13 @@ export const parseHtml = (
         }
         break
       case HtmlTokenType.AttributeValue:
-        if (skipDepth === 0) {
-          if (
-            allAllowedAttributes.has(attributeName) ||
-            (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes))
-          ) {
-            const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
-            current[finalAttributeName] = token.text
-          }
+        if (
+          skipDepth === 0 &&
+          (allAllowedAttributes.has(attributeName) ||
+            (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
+        ) {
+          const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
+          current[finalAttributeName] = token.text
         }
         attributeName = ''
         break
@@ -87,7 +86,7 @@ export const parseHtml = (
         break
       case HtmlTokenType.TagNameEnd:
         const tagNameToClose = tagStack.pop()?.toLowerCase() || ''
-        
+
         if (TAGS_TO_SKIP_COMPLETELY.has(tagNameToClose)) {
           // We were skipping this content, so decrement skipDepth
           skipDepth--
@@ -104,7 +103,7 @@ export const parseHtml = (
       case HtmlTokenType.TagNameStart:
         const tagNameLower = token.text.toLowerCase()
         lastTagWasSelfClosing = IsSelfClosingTag.isSelfClosingTag(token.text)
-        
+
         // Check if this tag should be completely skipped (meta, title)
         if (TAGS_TO_SKIP_COMPLETELY.has(tagNameLower)) {
           if (!lastTagWasSelfClosing) {
@@ -137,16 +136,14 @@ export const parseHtml = (
         }
         break
       case HtmlTokenType.WhitespaceInsideOpeningTag:
-        if (skipDepth === 0) {
-          // Handle boolean attributes (attributes without values)
-          if (
-            attributeName &&
-            (allAllowedAttributes.has(attributeName) ||
-              (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
-          ) {
-            const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
-            current[finalAttributeName] = attributeName
-          }
+        if (
+          skipDepth === 0 && // Handle boolean attributes (attributes without values)
+          attributeName &&
+          (allAllowedAttributes.has(attributeName) ||
+            (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
+        ) {
+          const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
+          current[finalAttributeName] = attributeName
         }
         attributeName = ''
         break
