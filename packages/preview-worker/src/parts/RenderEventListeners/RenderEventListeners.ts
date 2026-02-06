@@ -4,6 +4,7 @@ import * as DomEventListenersFunctions from '../DomEventListenerFunctions/DomEve
 export const renderEventListeners = (): readonly DomEventListener[] => {
   return [
     {
+      capture: true,
       name: DomEventListenersFunctions.HandleClick,
       params: ['handleClick', 'event.target.dataset.id'],
     },

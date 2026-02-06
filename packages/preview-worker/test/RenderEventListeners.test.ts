@@ -6,6 +6,7 @@ test('renderEventListeners should return array with HandleClick event listener',
   const result = RenderEventListeners.renderEventListeners()
   expect(result).toEqual([
     {
+      capture: true,
       name: DomEventListenersFunctions.HandleClick,
       params: ['handleClick', 'event.target.dataset.id'],
     },
