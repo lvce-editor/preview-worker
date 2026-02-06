@@ -26,6 +26,7 @@ test('rerender should return a new parsedDom array reference', () => {
 
 test('rerender should preserve all state properties', () => {
   const state: PreviewState = {
+    ...createDefaultState(),
     assetDir: '/assets',
     content: '<div>test</div>',
     errorCount: 2,

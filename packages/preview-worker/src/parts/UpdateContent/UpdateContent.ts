@@ -7,7 +7,13 @@ import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 export const updateContent = async (
   state: PreviewState,
   uri: string,
-): Promise<{ content: string; css: readonly string[]; parsedDom: readonly VirtualDomNode[]; parsedNodesChildNodeCount: number; errorMessage: string }> => {
+): Promise<{
+  content: string
+  css: readonly string[]
+  parsedDom: readonly VirtualDomNode[]
+  parsedNodesChildNodeCount: number
+  errorMessage: string
+}> => {
   try {
     // Read the file content using RendererWorker RPC
     // @ts-ignore

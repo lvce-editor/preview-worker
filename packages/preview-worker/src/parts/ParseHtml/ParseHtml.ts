@@ -18,15 +18,11 @@ const TAGS_TO_SKIP_TAG_ONLY = new Set(['html', 'head'])
 const TAGS_TO_CAPTURE_AS_CSS = new Set(['style'])
 
 export interface ParseResult {
-  readonly dom: readonly VirtualDomNode[]
   readonly css: readonly string[]
+  readonly dom: readonly VirtualDomNode[]
 }
 
-export const parseHtml = (
-  html: string,
-  allowedAttributes: readonly string[] = [],
-  defaultAllowedAttributes: readonly string[] = [],
-): ParseResult => {
+export const parseHtml = (html: string, allowedAttributes: readonly string[] = [], defaultAllowedAttributes: readonly string[] = []): ParseResult => {
   Assert.string(html)
   Assert.array(allowedAttributes)
   Assert.array(defaultAllowedAttributes)
@@ -194,7 +190,7 @@ export const parseHtml = (
 }
 
 // Test helper: returns just the DOM array for backward compatibility with existing tests
-export const parseHtmlDom = (
+export con css,st ptmlDom = (
   html: string,
   allowedAttributes: readonly string[] = [],
   defaultAllowedAttributes: readonly string[] = [],
