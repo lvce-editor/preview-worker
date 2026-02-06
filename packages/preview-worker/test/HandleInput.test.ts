@@ -1,0 +1,107 @@
+import { expect, test, beforeEach } from '@jest/globals'
+import { Window } from 'happy-dom-without-node'
+import * as HandleInput from '../src/parts/HandleInput/HandleInput.ts'
+import * as HappyDomState from '../src/parts/HappyDomState/HappyDomState.ts'
+import * as SerializeHappyDom from '../src/parts/SerializeHappyDom/SerializeHappyDom.ts'
+
+const createWindow = (): any => {
+  return new Window({ url: 'https://localhost:3000' })
+}
+
+const createState = (uid: number): any => {
+  return {
+    uid,
+    initial: false,
+    uri: '',
+    parsedDom: [],
+    css: [],
+    zoom: 1,
+    scrollTop: 0,
+    scrollLeft: 0,
+    parsedNodesChildNodeCount: [],
+  }
+}
+
+const setupHappyDom = (uid: number, html: string): void => {
+  const window = createWindow()
+  const { document } = window
+  document.body.innerHTML = html
+
+  const elementMap = new Map<string, any>()
+  const serialized = SerializeHappyDom.serialize(document, elementMap)
+
+  HappyDomState.set(uid, {
+    document,
+    elementMap,
+    window,
+  })
+}
+
+beforeEach(() => {
+  HappyDomState.clear?.()
+})
+
+test('handleInput returns state when hdId is empty', () => {
+  const state = createState(1)
+  const result = HandleInput.handleInput(state, '')
+  expect(result).toEqual(state)
+})
+
+test('handleInput returns state when happyDomInstance is not found', () => {
+  const state = createState(999)
+  const result = HandleInput.handleInput(state, 'some-id')
+  expect(result).toEqual(state)
+})
+
+test('handleInput returns state when element is not found', () => {
+  const html = '<input id="input" type="text">'
+  setupHappyDom(1, html)
+  const state = createState(1)
+  const result = HandleInput.handleInput(state, 'non-existent-id')
+  expect(result).toEqual(state)
+})
+
+test('handleInput fires input event listener on element', () => {
+  const html = '<input id="input" type="text">'
+  setupHappyDom(1, html)
+
+  const happyDomInstance = HappyDomState.get(1)!
+  let inputFired = false
+  for (const [hdId, element] of happyDomInstance.elementMap) {
+    if (element.id === 'input') {
+      element.addEventListener('input', () => {
+        inputFired = true
+      })
+    }
+  }
+
+  const state = createState(1)
+  HandleInput.handleInput(state, Array.from(happyDomInstance.elementMap.keys()).find(
+    (id) => happyDomInstance.elementMap.get(id)!.id === 'input'
+  )!)
+
+  expect(inputFired).toBe(true)
+})
+
+test('handleInput returns new state with updated parsedDom', () => {
+  const html = '<input id="input" type="text" value="old">'
+  setupHappyDom(1, html)
+
+  const happyDomInstance = HappyDomState.get(1)!
+  let inputHdId = ''
+  for (const [hdId, element] of happyDomInstance.elementMap) {
+    if (element.id === 'input') {
+      inputHdId = hdId
+      element.addEventListener('input', function () {
+        this.value = 'new'
+      })
+    }
+  }
+
+  const state = createState(1)
+  const result = HandleInput.handleInput(state, inputHdId)
+
+  expect(result).not.toEqual(state)
+  expect(result.parsedDom).toEqual(expect.anything())
+  expect(result.css).toEqual(expect.anything())
+})
