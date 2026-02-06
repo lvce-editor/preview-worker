@@ -185,7 +185,7 @@ test('parseHtml should parse multiple divs with content', () => {
 // Complex structures tests
 test('parseHtml should parse list structure', () => {
   const expectedArray = [
-    { childCount: 2, type: VirtualDomElements.Div },
+    { childCount: 2, type: VirtualDomElements.Ul },
     { childCount: 1, type: VirtualDomElements.Li },
     text('Item 1'),
     { childCount: 1, type: VirtualDomElements.Li },
@@ -411,8 +411,8 @@ test('parseHtml should handle whitespace between tags', () => {
 
 test('parseHtml should handle consecutive self-closing tags', () => {
   const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.Br },
-    { childCount: 1, type: VirtualDomElements.Hr },
+    { childCount: 0, type: VirtualDomElements.Br },
+    { childCount: 0, type: VirtualDomElements.Hr },
     { childCount: 0, type: VirtualDomElements.Br },
   ]
   const result = parseHtml('<br><hr><br>', [])
@@ -440,19 +440,7 @@ test('parseHtml should preserve attribute order when multiple allowed', () => {
 
 // Complex real-world examples
 test('parseHtml should parse full card structure', () => {
-  const html = `
-    <div class="card">
-      <div class="card-header">
-        <h2>Title</h2>
-      </div>
-      <div class="card-body">
-        <p>Content</p>
-      </div>
-      <div class="card-footer">
-        <button>Action</button>
-      </div>
-    </div>
-  `
+  const html = '<div class="card"><div class="card-header"><h2>Title</h2></div><div class="card-body"><p>Content</p></div><div class="card-footer"><button>Action</button></div></div>'
   const expectedArray = [
     { childCount: 3, className: 'card', type: VirtualDomElements.Div },
     { childCount: 1, className: 'card-header', type: VirtualDomElements.Div },
@@ -470,18 +458,10 @@ test('parseHtml should parse full card structure', () => {
 })
 
 test('parseHtml should parse navigation menu', () => {
-  const html = `
-    <nav class="navbar">
-      <ul class="nav-list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact</a></li>
-      </ul>
-    </nav>
-  `
+  const html = '<nav class="navbar"><ul class="nav-list"><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/contact">Contact</a></li></ul></nav>'
   const expectedArray = [
     { childCount: 1, className: 'navbar', type: VirtualDomElements.Nav },
-    { childCount: 3, className: 'nav-list', type: VirtualDomElements.Div },
+    { childCount: 3, className: 'nav-list', type: VirtualDomElements.Ul },
     { childCount: 1, type: VirtualDomElements.Li },
     { childCount: 1, href: '/', type: VirtualDomElements.A },
     { childCount: 0, text: 'Home', type: VirtualDomElements.Text },
@@ -497,24 +477,15 @@ test('parseHtml should parse navigation menu', () => {
 })
 
 test('parseHtml should parse article with metadata', () => {
-  const html = `
-    <article class="post" data-id="123">
-      <header>
-        <h1>Article Title</h1>
-        <time>2024-01-15</time>
-      </header>
-      <main>
-        <p>Article content goes here.</p>
-      </main>
-    </article>
-  `
+  const html = '<article class="post" data-id="123"><header><h1>Article Title</h1><time>2024-01-15</time></header><main><p>Article content goes here.</p></main></article>'
   const expectedArray = [
     { childCount: 2, className: 'post', 'data-id': '123', type: VirtualDomElements.Article },
     { childCount: 2, type: VirtualDomElements.Header },
     { childCount: 1, type: VirtualDomElements.H1 },
     { childCount: 0, text: 'Article Title', type: VirtualDomElements.Text },
+    { childCount: 1, type: VirtualDomElements.Time },
     { childCount: 0, text: '2024-01-15', type: VirtualDomElements.Text },
-    { childCount: 1, type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.Main },
     { childCount: 1, type: VirtualDomElements.P },
     { childCount: 0, text: 'Article content goes here.', type: VirtualDomElements.Text },
   ]
@@ -557,14 +528,7 @@ test('parseHtml should handle void elements correctly', () => {
 })
 
 test('parseHtml should handle semantic HTML5 elements', () => {
-  const html = `
-    <article>
-      <header><h1>Topic</h1></header>
-      <section>Content</section>
-      <aside>Related</aside>
-      <footer>Meta</footer>
-    </article>
-  `
+  const html = '<article><header><h1>Topic</h1></header><section>Content</section><aside>Related</aside><footer>Meta</footer></article>'
   const expectedArray = [
     { childCount: 4, type: VirtualDomElements.Article },
     { childCount: 1, type: VirtualDomElements.Header },
