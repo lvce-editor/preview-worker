@@ -1,7 +1,7 @@
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 
 export const renderCss = (oldState: PreviewState, newState: PreviewState): any => {
-  const { uid, css } = newState
+  const { css, uid } = newState
 
   // Combine all CSS strings into a single string
   const cssString = css.join('\n')
