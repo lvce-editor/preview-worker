@@ -2,6 +2,7 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
+import { createWindow } from '../CreateWindow/CreateWindow.ts'
 import * as ExecuteScripts from '../ExecuteScripts/ExecuteScripts.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
@@ -33,7 +34,7 @@ export const updateContent = async (
     // If scripts are present, execute them via happy-dom and re-serialize the DOM
     if (scripts.length > 0) {
       try {
-        const { document: happyDomDocument, window: happyDomWindow } = ExecuteScripts.createWindow(content)
+        const { document: happyDomDocument, window: happyDomWindow } = createWindow(content)
         ExecuteScripts.executeScripts(happyDomWindow, happyDomDocument, scripts)
         const elementMap = new Map<string, any>()
         const serialized = SerializeHappyDom.serialize(happyDomDocument, elementMap)
