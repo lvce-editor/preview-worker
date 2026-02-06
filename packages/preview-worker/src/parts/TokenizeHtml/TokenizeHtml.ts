@@ -16,8 +16,12 @@ const State = {
   InsideComment: 17,
   InsideOpeningTag: 3,
   InsideOpeningTagAfterWhitespace: 6,
+  InsideRawTextElement: 18,
   TopLevelContent: 1,
 }
+
+// Raw-text elements whose content should not be parsed as HTML
+const RAW_TEXT_ELEMENTS = new Set(['script', 'style'])
 
 const RE_ANGLE_BRACKET_OPEN = /^</
 const RE_ANGLE_BRACKET_OPEN_TAG = /^<(?![\s%])/
@@ -49,6 +53,7 @@ export const tokenizeHtml = (text: string): readonly HtmlToken[] => {
   let next
   const tokens: HtmlToken[] = []
   let token = TokenType.None
+  let rawTextTagName = '' // Track which raw-text element we're inside
   while (index < text.length) {
     const part = text.slice(index)
     switch (state) {
@@ -147,6 +152,10 @@ export const tokenizeHtml = (text: string): readonly HtmlToken[] => {
         if ((next = part.match(RE_TAGNAME))) {
           token = TokenType.TagNameStart
           state = State.InsideOpeningTag
+          // Track raw-text elements so we can switch to raw content mode after >
+          if (RAW_TEXT_ELEMENTS.has(next[0].toLowerCase())) {
+            rawTextTagName = next[0].toLowerCase()
+          }
         } else if ((next = part.match(RE_SLASH))) {
           token = TokenType.ClosingTagSlash
           state = State.AfterClosingTagSlash
@@ -223,6 +232,55 @@ export const tokenizeHtml = (text: string): readonly HtmlToken[] => {
           throw new UnexpectedTokenError()
         }
         break
+      case State.InsideRawTextElement: {
+        // Match everything up to the closing tag for the current raw-text element
+        const closingTagPattern = new RegExp(`^([\\s\\S]*?)(<\\/${rawTextTagName}>)`, 'i')
+        const rawMatch = part.match(closingTagPattern)
+        if (rawMatch) {
+          // Emit content before the closing tag (if any)
+          if (rawMatch[1].length > 0) {
+            tokens.push({
+              text: rawMatch[1],
+              type: TokenType.Content,
+            })
+            index += rawMatch[1].length
+          }
+          // Now emit the closing tag tokens: <, /, tagname, >
+          // < token
+          tokens.push({
+            text: '<',
+            type: TokenType.OpeningAngleBracket,
+          })
+          index += 1
+          // / token
+          tokens.push({
+            text: '/',
+            type: TokenType.ClosingTagSlash,
+          })
+          index += 1
+          // tagname token
+          tokens.push({
+            text: rawTextTagName,
+            type: TokenType.TagNameEnd,
+          })
+          index += rawTextTagName.length
+          // > token
+          tokens.push({
+            text: '>',
+            type: TokenType.ClosingAngleBracket,
+          })
+          index += 1
+          rawTextTagName = ''
+          state = State.TopLevelContent
+          continue
+        }
+        // No closing tag found — consume everything as content
+        next = [part]
+        token = TokenType.Content
+        rawTextTagName = ''
+        state = State.TopLevelContent
+        break
+      }
       case State.TopLevelContent:
         if ((next = part.match(RE_ANGLE_BRACKET_OPEN_TAG))) {
           token = TokenType.OpeningAngleBracket
@@ -247,6 +305,11 @@ export const tokenizeHtml = (text: string): readonly HtmlToken[] => {
         throw new UnexpectedTokenError()
     }
     const tokenText = next[0]
+    // After closing angle bracket of a raw-text element opening tag,
+    // switch to raw text content mode instead of top-level content
+    if (rawTextTagName && token === TokenType.ClosingAngleBracket && state === State.TopLevelContent) {
+      state = State.InsideRawTextElement
+    }
     tokens.push({
       text: tokenText,
       type: token,
