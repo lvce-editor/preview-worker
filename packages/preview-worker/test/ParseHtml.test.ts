@@ -747,9 +747,9 @@ test('parseHtml should handle DOCTYPE with html and head tags', () => {
   expect(result).toEqual(expectedArray)
 })
 
-test('parseHtml should skip head but preserve script tag children', () => {
-  // script tag is not recognized (treated as unknown tag like div), but it's empty so shows as empty Div
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+test('parseHtml should capture script in head as js content', () => {
+  // script tag content is now captured as JavaScript, not rendered as DOM
+  const expectedArray: any[] = []
   const result = parseHtmlDom('<head><script></script></head>', [])
   expect(result).toEqual(expectedArray)
 })

@@ -1,3 +1,5 @@
+export type HtmlTokenType = number
+
 export const None = 0
 export const OpeningAngleBracket = 1
 export const ClosingAngleBracket = 2
