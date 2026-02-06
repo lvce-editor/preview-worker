@@ -25,7 +25,6 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
         parsedNodesChildNodeCount: state.parsedNodesChildNodeCount,
       }
 
-  console.log({ parsedDom })
   return {
     ...state,
     content,
