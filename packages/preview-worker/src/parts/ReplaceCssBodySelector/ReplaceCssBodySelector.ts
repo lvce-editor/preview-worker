@@ -1,28 +1,28 @@
 const BODY_SELECTOR_REGEX = /\bbody\b/g
-const BUTTON_SELECTOR_REGEX = /\bbutton\b/g
-const UNIVERSAL_SELECTOR_REGEX = /(?:^|([,}]))\s*(\*(?=\s*[{:]|[\w.#:[-]))/gm
+const HTML_SELECTOR_REGEX = /\bhtml\b/g
 
 /**
- * Replaces the 'body' CSS selector with '.Preview' since the preview is rendered
- * inside a div element with the class 'Preview', not in a body element.
- * Also replaces the universal selector '*' with '.Preview *' to scope it to the preview div.
+ * Wraps CSS in a CSS nesting block (.Preview { ... }) and replaces 'html' and 'body'
+ * selectors with '&' (the parent selector in CSS nesting).
+ * This approach uses CSS nesting to automatically scope all selectors to the preview div.
+ * Other selectors like 'button' or '*' are automatically scoped within the nesting.
  *
  * @param css The CSS string to process
- * @returns The CSS string with 'body' selectors replaced with '.Preview' and '*' with '.Preview *'
+ * @returns The CSS string wrapped in .Preview nesting block with proper selector replacements
  */
 export const replaceCssBodySelector = (css: string): string => {
-  // Use word boundaries to ensure only the word 'body' is replaced,
-  // not parts of other words like 'tbody'
-  let result = css.replaceAll(BODY_SELECTOR_REGEX, '.Preview')
+  if (!css.trim()) {
+    return css
+  }
 
-  // Replace 'button' selector with '.Preview button' to scope it to the preview div
-  result = result.replaceAll(BUTTON_SELECTOR_REGEX, '.Preview button')
+  // Replace 'html' selector with '&' (CSS nesting parent selector)
+  let result = css.replaceAll(HTML_SELECTOR_REGEX, '&')
 
-  // Replace universal selectors at the start of a rule (beginning of string or after })
-  // with '.Preview *' to scope them to the preview div
-  result = result.replaceAll(UNIVERSAL_SELECTOR_REGEX, (match, prefix, star) => {
-    return (prefix ? prefix + ' ' : '') + '.Preview *'
-  })
+  // Replace 'body' selector with '&' (CSS nesting parent selector)
+  result = result.replaceAll(BODY_SELECTOR_REGEX, '&')
+
+  // Wrap the entire CSS in .Preview nesting block
+  result = `.Preview {\n${result}\n}`
 
   return result
 }
