@@ -144,6 +144,43 @@ test('parseHtml should convert class on nested elements', () => {
   expect(result).toEqual(expectedArray)
 })
 
+// Type to inputType conversion tests
+test('parseHtml should convert type attribute to inputType', () => {
+  const expectedArray = [{ childCount: 0, inputType: 'text', type: VirtualDomElements.Input }]
+  const result = parseHtmlDom('<input type="text">', ['type'])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should convert type to inputType for number input', () => {
+  const expectedArray = [{ childCount: 0, inputType: 'number', type: VirtualDomElements.Input }]
+  const result = parseHtmlDom('<input type="number">', ['type'])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should convert type to inputType for email input', () => {
+  const expectedArray = [{ childCount: 0, inputType: 'email', type: VirtualDomElements.Input }]
+  const result = parseHtmlDom('<input type="email">', ['type'])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should convert type to inputType for checkbox input', () => {
+  const expectedArray = [{ childCount: 0, inputType: 'checkbox', type: VirtualDomElements.Input }]
+  const result = parseHtmlDom('<input type="checkbox">', ['type'])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should include type converted to inputType by default', () => {
+  const expectedArray = [{ childCount: 0, inputType: 'text', type: VirtualDomElements.Input }]
+  const result = parseHtmlDom('<input type="text">', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should convert type with other attributes', () => {
+  const expectedArray = [{ childCount: 0, id: 'myInput', inputType: 'password', type: VirtualDomElements.Input }]
+  const result = parseHtmlDom('<input type="password" id="myInput">', ['type', 'id'])
+  expect(result).toEqual(expectedArray)
+})
+
 // Self-closing tags tests
 test('parseHtml should parse self-closing br tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Br }]
