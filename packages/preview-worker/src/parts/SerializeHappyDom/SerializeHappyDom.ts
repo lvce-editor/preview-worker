@@ -18,8 +18,8 @@ export interface SerializeResult {
 }
 
 interface SerializeContext {
-  nextId: number
   readonly elementMap: Map<string, any> | undefined
+  nextId: number
 }
 
 const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly string[], context: SerializeContext): number => {
@@ -114,7 +114,7 @@ const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly 
 export const serialize = (document: any, elementMap?: Map<string, any>): SerializeResult => {
   const dom: VirtualDomNode[] = []
   const css: string[] = []
-  const context: SerializeContext = { nextId: 0, elementMap }
+  const context: SerializeContext = { elementMap, nextId: 0 }
 
   // Start from document.documentElement (the <html> element)
   const root = document.documentElement || document.body

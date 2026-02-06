@@ -39,9 +39,9 @@ export const updateContent = async (
         parsedDom = serialized.dom
         css = serialized.css
         HappyDomState.set(state.uid, {
-          window: happyDomWindow,
           document: happyDomDocument,
           elementMap,
+          window: happyDomWindow,
         })
       } catch {
         // If script execution fails, fall back to static HTML parsing

@@ -1,9 +1,9 @@
 import { afterEach, expect, test } from '@jest/globals'
 import { Window } from 'happy-dom-without-node'
+import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import * as HandleClick from '../src/parts/HandleClick/HandleClick.ts'
 import * as HappyDomState from '../src/parts/HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../src/parts/SerializeHappyDom/SerializeHappyDom.ts'
-import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 
 const createState = (uid: number, overrides: Partial<PreviewState> = {}): PreviewState => ({
   assetDir: '',
@@ -34,7 +34,7 @@ const setupHappyDom = (uid: number, html: string, scripts: string[]): void => {
 
   const elementMap = new Map<string, any>()
   SerializeHappyDom.serialize(document, elementMap)
-  HappyDomState.set(uid, { window, document, elementMap })
+  HappyDomState.set(uid, { document, elementMap, window })
 }
 
 afterEach(() => {

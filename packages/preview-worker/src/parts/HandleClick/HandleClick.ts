@@ -26,13 +26,13 @@ export const handleClick = (state: PreviewState, hdId: string): PreviewState => 
 
   // Update happy-dom state with new element map
   HappyDomState.set(state.uid, {
-    window: happyDomInstance.window,
     document: happyDomInstance.document,
     elementMap,
+    window: happyDomInstance.window,
   })
 
   const parsedDom = serialized.dom
-  const css = serialized.css
+  const {css} = serialized
   const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
 
   return {

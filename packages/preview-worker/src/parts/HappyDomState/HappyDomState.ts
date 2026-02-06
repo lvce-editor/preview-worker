@@ -1,7 +1,7 @@
 interface HappyDomInstance {
-  readonly window: any
   readonly document: any
   readonly elementMap: Map<string, any>
+  readonly window: any
 }
 
 const states: Map<number, HappyDomInstance> = new Map()
