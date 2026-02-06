@@ -17,14 +17,14 @@ export interface SerializeResult {
   readonly dom: readonly VirtualDomNode[]
 }
 
-const serializeNode = (node: any, dom: VirtualDomNode[], css: string[]): number => {
+const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly string[]): number => {
   const { nodeType } = node
 
   // Text node
   if (nodeType === 3) {
     const textContent = node.textContent || ''
     if (textContent) {
-      dom.push(text(textContent))
+      ;(dom as VirtualDomNode[]).push(text(textContent))
       return 1
     }
     return 0
@@ -41,7 +41,7 @@ const serializeNode = (node: any, dom: VirtualDomNode[], css: string[]): number 
   if (CSS_TAGS.has(tagName)) {
     const styleContent = node.textContent || ''
     if (styleContent.trim()) {
-      css.push(styleContent)
+      ;(css as string[]).push(styleContent)
     }
     return 0
   }
@@ -86,7 +86,7 @@ const serializeNode = (node: any, dom: VirtualDomNode[], css: string[]): number 
   }
 
   // Reserve position in dom array for this node
-  dom.push(newNode)
+  ;(dom as VirtualDomNode[]).push(newNode)
 
   // Serialize children
   let childCount = 0
