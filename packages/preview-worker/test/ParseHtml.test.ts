@@ -1,18 +1,18 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import { expect, test } from '@jest/globals'
 import { VirtualDomElements, text } from '@lvce-editor/virtual-dom-worker'
-import { parseHtml } from '../src/parts/ParseHtml/ParseHtml.ts'
+import { parseHtmlDom } from '../src/parts/ParseHtml/ParseHtml.ts'
 
 // Basic HTML parsing tests
 test('parseHtml should parse empty string', () => {
   const expectedArray: typeof result = []
-  const result = parseHtml('', [])
+  const result = parseHtmlDom('', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse <!DOCTYPE html> and ignore it', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
-  const result = parseHtml('<!DOCTYPE html><div></div>', [])
+  const result = parseHtmlDom('<!DOCTYPE html><div></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -21,43 +21,43 @@ test('parseHtml should parse DOCTYPE with content after it', () => {
     { childCount: 1, type: VirtualDomElements.Div },
     { childCount: 0, text: 'Hello', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('<!DOCTYPE html><div>Hello</div>', [])
+  const result = parseHtmlDom('<!DOCTYPE html><div>Hello</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse simple div tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
-  const result = parseHtml('<div></div>', [])
+  const result = parseHtmlDom('<div></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse simple span tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Span }]
-  const result = parseHtml('<span></span>', [])
+  const result = parseHtmlDom('<span></span>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse paragraph tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.P }]
-  const result = parseHtml('<p></p>', [])
+  const result = parseHtmlDom('<p></p>', [])
   expect(result).toEqual(expectedArray)
 })
 
 // Text content tests
 test('parseHtml should parse text content', () => {
   const expectedArray = [text('Hello World')]
-  const result = parseHtml('Hello World', [])
+  const result = parseHtmlDom('Hello World', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse text inside div', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Hello')]
-  const result = parseHtml('<div>Hello</div>', [])
+  const result = parseHtmlDom('<div>Hello</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse multiple text nodes', () => {
-  const result = parseHtml('<div>Hello</div><div>World</div>', [])
+  const result = parseHtmlDom('<div>Hello</div><div>World</div>', [])
   const expectedArray = [
     { childCount: 1, type: VirtualDomElements.Div },
     text('Hello'),
@@ -73,7 +73,7 @@ test('parseHtml should parse nested tags', () => {
     { childCount: 1, type: VirtualDomElements.Div },
     { childCount: 0, type: VirtualDomElements.Span },
   ]
-  const result = parseHtml('<div><span></span></div>', [])
+  const result = parseHtmlDom('<div><span></span></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -83,7 +83,7 @@ test('parseHtml should parse deeply nested tags', () => {
     { childCount: 1, type: VirtualDomElements.P },
     { childCount: 0, type: VirtualDomElements.Span },
   ]
-  const result = parseHtml('<div><p><span></span></p></div>', [])
+  const result = parseHtmlDom('<div><p><span></span></p></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -93,45 +93,45 @@ test('parseHtml should handle multiple levels of nesting', () => {
     { childCount: 1, type: VirtualDomElements.Div },
     { childCount: 0, type: VirtualDomElements.Div },
   ]
-  const result = parseHtml('<div><div><div></div></div></div>', [])
+  const result = parseHtmlDom('<div><div><div></div></div></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 // Attributes tests
 test('parseHtml should allow specified attributes', () => {
   const expectedArray = [{ childCount: 0, 'data-id': '123', type: VirtualDomElements.Div }]
-  const result = parseHtml('<div data-id="123"></div>', ['data-id'])
+  const result = parseHtmlDom('<div data-id="123"></div>', ['data-id'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should not allow unspecified attributes', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
-  const result = parseHtml('<div onclick="alert()"></div>', [])
+  const result = parseHtmlDom('<div onclick="alert()"></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should allow multiple attributes when specified', () => {
   const expectedArray = [{ childCount: 0, 'data-id': '123', title: 'test', type: VirtualDomElements.Div }]
-  const result = parseHtml('<div data-id="123" title="test"></div>', ['data-id', 'title'])
+  const result = parseHtmlDom('<div data-id="123" title="test"></div>', ['data-id', 'title'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should allow only specified attributes from multiple', () => {
   const expectedArray = [{ childCount: 0, 'data-id': '123', type: VirtualDomElements.Div }]
-  const result = parseHtml('<div data-id="123" onclick="alert()"></div>', ['data-id'])
+  const result = parseHtmlDom('<div data-id="123" onclick="alert()"></div>', ['data-id'])
   expect(result).toEqual(expectedArray)
 })
 
 // Class to className conversion tests
 test('parseHtml should convert class attribute to className', () => {
   const expectedArray = [{ childCount: 0, className: 'container', type: VirtualDomElements.Div }]
-  const result = parseHtml('<div class="container"></div>', ['class'])
+  const result = parseHtmlDom('<div class="container"></div>', ['class'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should convert class with multiple values', () => {
   const expectedArray = [{ childCount: 0, className: 'container primary active', type: VirtualDomElements.Div }]
-  const result = parseHtml('<div class="container primary active"></div>', ['class'])
+  const result = parseHtmlDom('<div class="container primary active"></div>', ['class'])
   expect(result).toEqual(expectedArray)
 })
 
@@ -140,38 +140,38 @@ test('parseHtml should convert class on nested elements', () => {
     { childCount: 1, className: 'outer', type: VirtualDomElements.Div },
     { childCount: 0, className: 'inner', type: VirtualDomElements.Span },
   ]
-  const result = parseHtml('<div class="outer"><span class="inner"></span></div>', ['class'])
+  const result = parseHtmlDom('<div class="outer"><span class="inner"></span></div>', ['class'])
   expect(result).toEqual(expectedArray)
 })
 
 // Self-closing tags tests
 test('parseHtml should parse self-closing br tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Br }]
-  const result = parseHtml('<br>', [])
+  const result = parseHtmlDom('<br>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse self-closing img tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Img }]
-  const result = parseHtml('<img>', [])
+  const result = parseHtmlDom('<img>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse self-closing hr tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Hr }]
-  const result = parseHtml('<hr>', [])
+  const result = parseHtmlDom('<hr>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse self-closing input tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Input }]
-  const result = parseHtml('<input>', [])
+  const result = parseHtmlDom('<input>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle attributes on self-closing tags', () => {
   const expectedArray = [{ childCount: 0, src: 'test.jpg', type: VirtualDomElements.Img }]
-  const result = parseHtml('<img src="test.jpg">', ['src'])
+  const result = parseHtmlDom('<img src="test.jpg">', ['src'])
   expect(result).toEqual(expectedArray)
 })
 
@@ -182,7 +182,7 @@ test('parseHtml should parse multiple sibling elements', () => {
     { childCount: 0, type: VirtualDomElements.Span },
     { childCount: 0, type: VirtualDomElements.P },
   ]
-  const result = parseHtml('<div></div><span></span><p></p>', [])
+  const result = parseHtmlDom('<div></div><span></span><p></p>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -193,7 +193,7 @@ test('parseHtml should parse multiple divs with content', () => {
     { childCount: 1, type: VirtualDomElements.Div },
     text('Second'),
   ]
-  const result = parseHtml('<div>First</div><div>Second</div>', [])
+  const result = parseHtmlDom('<div>First</div><div>Second</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -206,7 +206,7 @@ test('parseHtml should parse list structure', () => {
     { childCount: 1, type: VirtualDomElements.Li },
     text('Item 2'),
   ]
-  const result = parseHtml('<ul><li>Item 1</li><li>Item 2</li></ul>', [])
+  const result = parseHtmlDom('<ul><li>Item 1</li><li>Item 2</li></ul>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -217,13 +217,13 @@ test('parseHtml should parse table structure', () => {
     { childCount: 1, type: VirtualDomElements.Td },
     text('Cell'),
   ]
-  const result = parseHtml('<table><tr><td>Cell</td></tr></table>', [])
+  const result = parseHtmlDom('<table><tr><td>Cell</td></tr></table>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse heading with content', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.H1 }, text('Title')]
-  const result = parseHtml('<h1>Title</h1>', [])
+  const result = parseHtmlDom('<h1>Title</h1>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -236,19 +236,19 @@ test('parseHtml should parse multiple heading levels', () => {
     { childCount: 1, type: VirtualDomElements.H3 },
     text('H3'),
   ]
-  const result = parseHtml('<h1>H1</h1><h2>H2</h2><h3>H3</h3>', [])
+  const result = parseHtmlDom('<h1>H1</h1><h2>H2</h2><h3>H3</h3>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse h1 with hello world content', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.H1 }, text('hello world')]
-  const result = parseHtml('<h1>hello world</h1>', [])
+  const result = parseHtmlDom('<h1>hello world</h1>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse h2 with live updating html content', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.H2 }, text('this is live updating html')]
-  const result = parseHtml('<h2>this is live updating html</h2>', [])
+  const result = parseHtmlDom('<h2>this is live updating html</h2>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -260,7 +260,7 @@ test('parseHtml should parse combined h1 and h2 elements', () => {
     { childCount: 1, type: VirtualDomElements.H2 },
     text('this is live updating html'),
   ]
-  const result = parseHtml('<h1>hello world</h1>\n<h2>this is live updating html</h2>', [])
+  const result = parseHtmlDom('<h1>hello world</h1>\n<h2>this is live updating html</h2>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -271,81 +271,81 @@ test('parseHtml should parse form structure', () => {
     { childCount: 1, type: VirtualDomElements.Button },
     text('Submit'),
   ]
-  const result = parseHtml('<form><input><button>Submit</button></form>', [])
+  const result = parseHtmlDom('<form><input><button>Submit</button></form>', [])
   expect(result).toEqual(expectedArray)
 })
 
 // Text with special characters tests
 test('parseHtml should handle text with spaces', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Hello   World')]
-  const result = parseHtml('<div>Hello   World</div>', [])
+  const result = parseHtmlDom('<div>Hello   World</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle text with newlines', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Line1\nLine2')]
-  const result = parseHtml('<div>Line1\nLine2</div>', [])
+  const result = parseHtmlDom('<div>Line1\nLine2</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle text with tabs', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Text\twith\ttabs')]
-  const result = parseHtml('<div>Text\twith\ttabs</div>', [])
+  const result = parseHtmlDom('<div>Text\twith\ttabs</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 // Element-specific tests
 test('parseHtml should parse anchor tag', () => {
   const expectedArray = [{ childCount: 1, href: 'https://example.com', type: VirtualDomElements.A }, text('Link')]
-  const result = parseHtml('<a href="https://example.com">Link</a>', ['href'])
+  const result = parseHtmlDom('<a href="https://example.com">Link</a>', ['href'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse article tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Article }]
-  const result = parseHtml('<article></article>', [])
+  const result = parseHtmlDom('<article></article>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse aside tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Aside }]
-  const result = parseHtml('<aside></aside>', [])
+  const result = parseHtmlDom('<aside></aside>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse button tag', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Button }, text('Click')]
-  const result = parseHtml('<button>Click</button>', [])
+  const result = parseHtmlDom('<button>Click</button>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse header tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Header }]
-  const result = parseHtml('<header></header>', [])
+  const result = parseHtmlDom('<header></header>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse footer tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Footer }]
-  const result = parseHtml('<footer></footer>', [])
+  const result = parseHtmlDom('<footer></footer>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse main tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
-  const result = parseHtml('<main></main>', [])
+  const result = parseHtmlDom('<main></main>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse nav tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Nav }]
-  const result = parseHtml('<nav></nav>', [])
+  const result = parseHtmlDom('<nav></nav>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse section tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Section }]
-  const result = parseHtml('<section></section>', [])
+  const result = parseHtmlDom('<section></section>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -355,7 +355,7 @@ test('parseHtml should parse strong tag', () => {
     { childCount: 1, type: VirtualDomElements.Div },
     { childCount: 0, text: 'Bold', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('<strong>Bold</strong>', [])
+  const result = parseHtmlDom('<strong>Bold</strong>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -364,7 +364,7 @@ test('parseHtml should parse em tag', () => {
     { childCount: 1, type: VirtualDomElements.Div },
     { childCount: 0, text: 'Italic', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('<em>Italic</em>', [])
+  const result = parseHtmlDom('<em>Italic</em>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -373,7 +373,7 @@ test('parseHtml should parse code tag', () => {
     { childCount: 1, type: VirtualDomElements.Code },
     { childCount: 0, text: 'const x = 1;', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('<code>const x = 1;</code>', [])
+  const result = parseHtmlDom('<code>const x = 1;</code>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -382,7 +382,7 @@ test('parseHtml should parse pre tag', () => {
     { childCount: 1, type: VirtualDomElements.Pre },
     { childCount: 0, text: 'Preformatted', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('<pre>Preformatted</pre>', [])
+  const result = parseHtmlDom('<pre>Preformatted</pre>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -394,7 +394,7 @@ test('parseHtml should parse mixed text and elements', () => {
     { childCount: 0, text: 'Inside', type: VirtualDomElements.Text },
     { childCount: 0, text: 'More text', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('Text<div>Inside</div>More text', [])
+  const result = parseHtmlDom('Text<div>Inside</div>More text', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -404,14 +404,14 @@ test('parseHtml should parse inline and block elements', () => {
     { childCount: 1, type: VirtualDomElements.Span },
     { childCount: 0, text: 'text', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('<div><span>text</span></div>', [])
+  const result = parseHtmlDom('<div><span>text</span></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 // Edge cases
 test('parseHtml should handle tag case insensitivity', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
-  const result = parseHtml('<DIV></DIV>', [])
+  const result = parseHtmlDom('<DIV></DIV>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -420,7 +420,7 @@ test('parseHtml should handle whitespace between tags', () => {
     { childCount: 1, type: VirtualDomElements.Div },
     { childCount: 0, text: '  ', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('<div>  </div>', [])
+  const result = parseHtmlDom('<div>  </div>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -430,26 +430,26 @@ test('parseHtml should handle consecutive self-closing tags', () => {
     { childCount: 0, type: VirtualDomElements.Hr },
     { childCount: 0, type: VirtualDomElements.Br },
   ]
-  const result = parseHtml('<br><hr><br>', [])
+  const result = parseHtmlDom('<br><hr><br>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should ignore attributes not in allowedAttributes', () => {
   const expectedArray = [{ childCount: 0, 'data-valid': 'yes', type: VirtualDomElements.Div }]
   const allowedAttributes = ['data-valid']
-  const result = parseHtml('<div data-valid="yes" data-invalid="no"></div>', allowedAttributes)
+  const result = parseHtmlDom('<div data-valid="yes" data-invalid="no"></div>', allowedAttributes)
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle empty allowedAttributes array with default common attributes', () => {
   const expectedArray = [{ childCount: 0, className: 'cls', id: 'test', type: VirtualDomElements.Div }]
-  const result = parseHtml('<div id="test" class="cls"></div>', [])
+  const result = parseHtmlDom('<div id="test" class="cls"></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should preserve attribute order when multiple allowed', () => {
   const expectedArray = [{ childCount: 0, 'data-first': '1', 'data-second': '2', 'data-third': '3', type: VirtualDomElements.Div }]
-  const result = parseHtml('<div data-first="1" data-second="2" data-third="3"></div>', ['data-first', 'data-second', 'data-third'])
+  const result = parseHtmlDom('<div data-first="1" data-second="2" data-third="3"></div>', ['data-first', 'data-second', 'data-third'])
   expect(result).toEqual(expectedArray)
 })
 
@@ -469,7 +469,7 @@ test('parseHtml should parse full card structure', () => {
     { childCount: 1, type: VirtualDomElements.Button },
     { childCount: 0, text: 'Action', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml(html, ['class'])
+  const result = parseHtmlDom(html, ['class'])
   expect(result).toEqual(expectedArray)
 })
 
@@ -489,7 +489,7 @@ test('parseHtml should parse navigation menu', () => {
     { childCount: 1, href: '/contact', type: VirtualDomElements.A },
     { childCount: 0, text: 'Contact', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml(html, ['class', 'href'])
+  const result = parseHtmlDom(html, ['class', 'href'])
   expect(result).toEqual(expectedArray)
 })
 
@@ -507,7 +507,7 @@ test('parseHtml should parse article with metadata', () => {
     { childCount: 1, type: VirtualDomElements.P },
     { childCount: 0, text: 'Article content goes here.', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml(html, ['class', 'data-id'])
+  const result = parseHtmlDom(html, ['class', 'data-id'])
   expect(result).toEqual(expectedArray)
 })
 
@@ -517,7 +517,7 @@ test('parseHtml should maintain childCount property', () => {
     { childCount: 0, type: VirtualDomElements.Span },
     { childCount: 0, type: VirtualDomElements.Span },
   ]
-  const result = parseHtml('<div><span></span><span></span></div>', [])
+  const result = parseHtmlDom('<div><span></span><span></span></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -537,13 +537,13 @@ test('parseHtml should handle void elements correctly', () => {
     ['<wbr>', VirtualDomElements.Div],
   ]
   for (const [elem, expectedType] of testCases) {
-    const result = parseHtml(elem, [])
+    const result = parseHtmlDom(elem, [])
     const expectedArray = [{ childCount: 0, type: expectedType }]
     expect(result).toEqual(expectedArray)
   }
 
   // meta tag is now skipped
-  const metaResult = parseHtml('<meta>', [])
+  const metaResult = parseHtmlDom('<meta>', [])
   expect(metaResult).toEqual([])
 })
 
@@ -561,38 +561,38 @@ test('parseHtml should handle semantic HTML5 elements', () => {
     { childCount: 1, type: VirtualDomElements.Footer },
     { childCount: 0, text: 'Meta', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml(html, [])
+  const result = parseHtmlDom(html, [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle data attributes', () => {
   const expectedArray = [{ childCount: 0, 'data-role': 'admin', 'data-user-id': '42', type: VirtualDomElements.Div }]
-  const result = parseHtml('<div data-user-id="42" data-role="admin"></div>', ['data-user-id', 'data-role'])
+  const result = parseHtmlDom('<div data-user-id="42" data-role="admin"></div>', ['data-user-id', 'data-role'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle aria attributes', () => {
   const expectedArray = [{ 'aria-hidden': 'true', 'aria-label': 'Close', childCount: 0, type: VirtualDomElements.Div }]
-  const result = parseHtml('<div aria-label="Close" aria-hidden="true"></div>', ['aria-label', 'aria-hidden'])
+  const result = parseHtmlDom('<div aria-label="Close" aria-hidden="true"></div>', ['aria-label', 'aria-hidden'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse style attributes when allowed', () => {
   const expectedArray = [{ childCount: 0, style: 'color: red;', type: VirtualDomElements.Div }]
-  const result = parseHtml('<div style="color: red;"></div>', ['style'])
+  const result = parseHtmlDom('<div style="color: red;"></div>', ['style'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should parse style attributes by default', () => {
   const expectedArray = [{ childCount: 0, style: 'color: red;', type: VirtualDomElements.Div }]
-  const result = parseHtml('<div style="color: red;"></div>', [])
+  const result = parseHtmlDom('<div style="color: red;"></div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle very long attribute values', () => {
   const longValue = 'x'.repeat(1000)
   const expectedArray = [{ childCount: 0, 'data-long': longValue, type: VirtualDomElements.Div }]
-  const result = parseHtml(`<div data-long="${longValue}"></div>`, ['data-long'])
+  const result = parseHtmlDom(`<div data-long="${longValue}"></div>`, ['data-long'])
   expect(result).toEqual(expectedArray)
 })
 
@@ -604,7 +604,7 @@ test('parseHtml should handle many siblings', () => {
     expectedArray.push({ childCount: 1, type: VirtualDomElements.Div })
     expectedArray.push({ childCount: 0, text: `Item ${i}`, type: VirtualDomElements.Text })
   }
-  const result = parseHtml(html, [])
+  const result = parseHtmlDom(html, [])
   expect(result).toEqual(expectedArray)
 })
 
@@ -621,7 +621,7 @@ test('parseHtml should handle deeply nested structure', () => {
     html += '</div>'
   }
   html += '</div>'
-  const result = parseHtml(html, [])
+  const result = parseHtmlDom(html, [])
   expect(result).toEqual(expectedArrayItems)
 })
 test('parseHtml should parse button with disabled attribute', () => {
@@ -629,7 +629,7 @@ test('parseHtml should parse button with disabled attribute', () => {
     { childCount: 1, disabled: 'disabled', type: VirtualDomElements.Button },
     { childCount: 0, text: 'test button', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('<button disabled>test button</button>', ['disabled'])
+  const result = parseHtmlDom('<button disabled>test button</button>', ['disabled'])
   expect(result).toEqual(expectedArray)
 })
 
@@ -638,64 +638,64 @@ test('parseHtml should parse button with disabled=false attribute', () => {
     { childCount: 1, disabled: 'false', type: VirtualDomElements.Button },
     { childCount: 0, text: 'button', type: VirtualDomElements.Text },
   ]
-  const result = parseHtml('<button disabled=false>button</button>', ['disabled'])
+  const result = parseHtmlDom('<button disabled=false>button</button>', ['disabled'])
   expect(result).toEqual(expectedArray)
 })
 // Tests for skipped tags (html, head, meta, title)
 test('parseHtml should skip html tag but process children', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Hello')]
-  const result = parseHtml('<html><div>Hello</div></html>', [])
+  const result = parseHtmlDom('<html><div>Hello</div></html>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should skip head tag but process children', () => {
-  // style tag is not recognized, so it becomes a Div
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
-  const result = parseHtml('<head><style></style></head>', [])
+  // style tag is captured as CSS and not rendered, so head/style produce no DOM output
+  const expectedArray: any[] = []
+  const result = parseHtmlDom('<head><style></style></head>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should skip head tag and process style inside', () => {
-  // style tag is not recognized, so it becomes a Div
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }, { childCount: 1, type: VirtualDomElements.Div }, text('Body')]
-  const result = parseHtml('<head><style></style></head><div>Body</div>', [])
+  // style tag is captured as CSS and not rendered, only div with Body renders
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Body')]
+  const result = parseHtmlDom('<head><style></style></head><div>Body</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should completely skip meta tags', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Content')]
-  const result = parseHtml('<meta charset="utf-8"><div>Content</div>', ['charset'])
+  const result = parseHtmlDom('<meta charset="utf-8"><div>Content</div>', ['charset'])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should completely skip title tags and content', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Content')]
-  const result = parseHtml('<title>Page Title</title><div>Content</div>', [])
+  const result = parseHtmlDom('<title>Page Title</title><div>Content</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should skip html and head tags with style and body', () => {
-  // style and body tags are not recognized, so they become Div
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }, { childCount: 1, type: VirtualDomElements.Div }, text('Hello')]
-  const result = parseHtml('<html><head><style></style></head><body>Hello</body></html>', [])
+  // style is captured as CSS, body tag is treated as unknown tag (like div), so only the Div wrapper + text renders
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Hello')]
+  const result = parseHtmlDom('<html><head><style></style></head><body>Hello</body></html>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should skip nested html tags', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, { childCount: 1, type: VirtualDomElements.Span }, text('Text')]
-  const result = parseHtml('<html><div><span>Text</span></div></html>', [])
+  const result = parseHtmlDom('<html><div><span>Text</span></div></html>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle title with multiple words', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Content')]
-  const result = parseHtml('<title>This is a long page title</title><div>Content</div>', [])
+  const result = parseHtmlDom('<title>This is a long page title</title><div>Content</div>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should handle multiple meta tags', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Content')]
-  const result = parseHtml('<meta charset="utf-8"><meta name="viewport" content="width=device-width"><div>Content</div>', [
+  const result = parseHtmlDom('<meta charset="utf-8"><meta name="viewport" content="width=device-width"><div>Content</div>', [
     'charset',
     'name',
     'content',
@@ -704,15 +704,15 @@ test('parseHtml should handle multiple meta tags', () => {
 })
 
 test('parseHtml should handle DOCTYPE with html and head tags', () => {
-  // style tag is not recognized, so it becomes a Div
-  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }, { childCount: 1, type: VirtualDomElements.Div }, text('Content')]
-  const result = parseHtml('<!DOCTYPE html><html><head><style></style></head><div>Content</div></html>', [])
+  // style is captured as CSS and not rendered, only div with Content renders
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Content')]
+  const result = parseHtmlDom('<!DOCTYPE html><html><head><style></style></head><div>Content</div></html>', [])
   expect(result).toEqual(expectedArray)
 })
 
 test('parseHtml should skip head but preserve script tag children', () => {
-  // script tag is not recognized, so it becomes a Div
+  // script tag is not recognized (treated as unknown tag like div), but it's empty so shows as empty Div
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
-  const result = parseHtml('<head><script></script></head>', [])
+  const result = parseHtmlDom('<head><script></script></head>', [])
   expect(result).toEqual(expectedArray)
 })

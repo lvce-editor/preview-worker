@@ -6,6 +6,7 @@ export const isEqual = (oldState: PreviewState, newState: PreviewState): boolean
     oldState.initial === newState.initial &&
     oldState.content === newState.content &&
     oldState.parsedDom === newState.parsedDom &&
-    oldState.parsedNodesChildNodeCount === newState.parsedNodesChildNodeCount
+    oldState.parsedNodesChildNodeCount === newState.parsedNodesChildNodeCount &&
+    oldState.css === newState.css
   )
 }
