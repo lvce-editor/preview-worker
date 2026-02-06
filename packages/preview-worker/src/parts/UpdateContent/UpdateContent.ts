@@ -25,7 +25,7 @@ export const updateContent = async (
     // Parse the content into virtual DOM and CSS
     const parseResult = ParseHtml.parseHtml(content)
     let parsedDom = parseResult.dom
-    let {css} = parseResult
+    let { css } = parseResult
     const { scripts } = parseResult
 
     // If scripts are present, execute them via happy-dom and re-serialize the DOM
