@@ -41,12 +41,12 @@ test('getPreviewDom should return Text element as third item with "No URI has be
   expect(thirdElement.text).toBe('No URI has been specified')
 })
 
-test('getPreviewDom should return Text element with "hello from preview" when uri is provided', () => {
+test('getPreviewDom should return Text element with "Edit the file on the left to get started." when uri is provided', () => {
   const state: PreviewState = { ...createDefaultState(), uri: 'file:///example.html' }
   const result = GetStatusBarVirtualDom.getPreviewDom(state)
   const thirdElement = result[2]
   expect(thirdElement.type).toBe(VirtualDomElements.Text)
-  expect(thirdElement.text).toBe('hello from preview')
+  expect(thirdElement.text).toBe('Edit the file on the left to get started.')
 })
 
 test('getPreviewDom should return consistent results', () => {
