@@ -66,6 +66,9 @@ export const parseHtml = (
         current.childCount++
         dom.push(text(ParseText.parseText(token.text)))
         break
+      case HtmlTokenType.Doctype:
+        // Ignore DOCTYPE - it's parsed but not rendered since we're in a div
+        break
       case HtmlTokenType.TagNameEnd:
         if (stack.length > 1) {
           stack.pop()

@@ -20,7 +20,7 @@ const State = {
 }
 
 const RE_ANGLE_BRACKET_OPEN = /^</
-const RE_ANGLE_BRACKET_OPEN_TAG = /^<(?![\s!%])/
+const RE_ANGLE_BRACKET_OPEN_TAG = /^<(?![\s%])/
 const RE_ANGLE_BRACKET_CLOSE = /^>/
 const RE_SLASH = /^\//
 const RE_TAGNAME = /^[a-zA-Z\d$]+/

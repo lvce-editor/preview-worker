@@ -10,6 +10,21 @@ test('parseHtml should parse empty string', () => {
   expect(result).toEqual(expectedArray)
 })
 
+test('parseHtml should parse <!DOCTYPE html> and ignore it', () => {
+  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+  const result = parseHtml('<!DOCTYPE html><div></div>', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should parse DOCTYPE with content after it', () => {
+  const expectedArray = [
+    { childCount: 1, type: VirtualDomElements.Div },
+    { childCount: 0, text: 'Hello', type: VirtualDomElements.Text },
+  ]
+  const result = parseHtml('<!DOCTYPE html><div>Hello</div>', [])
+  expect(result).toEqual(expectedArray)
+})
+
 test('parseHtml should parse simple div tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
   const result = parseHtml('<div></div>', [])
