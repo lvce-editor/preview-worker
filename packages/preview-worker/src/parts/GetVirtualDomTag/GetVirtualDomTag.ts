@@ -23,16 +23,22 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.Data
     case ElementTags.Dd:
       return VirtualDomElements.Dd
+    case ElementTags.Del:
+      return VirtualDomElements.Del
     case ElementTags.Div:
       return VirtualDomElements.Div
     case ElementTags.Dl:
       return VirtualDomElements.Dl
+    case ElementTags.Dt:
+      return VirtualDomElements.Dt
     case ElementTags.Figcaption:
       return VirtualDomElements.Figcaption
     case ElementTags.Figure:
       return VirtualDomElements.Figure
     case ElementTags.Footer:
       return VirtualDomElements.Footer
+    case ElementTags.Form:
+      return VirtualDomElements.Div
     case ElementTags.H1:
       return VirtualDomElements.H1
     case ElementTags.H2:
@@ -43,20 +49,28 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.H4
     case ElementTags.H5:
       return VirtualDomElements.H5
+    case ElementTags.H6:
+      return VirtualDomElements.H6
     case ElementTags.Header:
       return VirtualDomElements.Header
     case ElementTags.Hr:
       return VirtualDomElements.Hr
+    case ElementTags.Iframe:
+      return VirtualDomElements.Iframe
     case ElementTags.Img:
       return VirtualDomElements.Img
     case ElementTags.Input:
       return VirtualDomElements.Input
+    case ElementTags.Label:
+      return VirtualDomElements.Label
     case ElementTags.Li:
       return VirtualDomElements.Li
     case ElementTags.Nav:
       return VirtualDomElements.Nav
     case ElementTags.Ol:
       return VirtualDomElements.Ol
+    case ElementTags.Option:
+      return VirtualDomElements.Option
     case ElementTags.P:
       return VirtualDomElements.P
     case ElementTags.Pre:
@@ -65,28 +79,10 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.Search
     case ElementTags.Section:
       return VirtualDomElements.Section
-    case ElementTags.Span:
-      return VirtualDomElements.Span
-    case ElementTags.Tfoot:
-      return VirtualDomElements.Tfoot
-    case ElementTags.Time:
-      return VirtualDomElements.Time
-    case ElementTags.Del:
-      return VirtualDomElements.Del
-    case ElementTags.Dt:
-      return VirtualDomElements.Dt
-    case ElementTags.Form:
-      return VirtualDomElements.Div
-    case ElementTags.H6:
-      return VirtualDomElements.H6
-    case ElementTags.Iframe:
-      return VirtualDomElements.Iframe
-    case ElementTags.Label:
-      return VirtualDomElements.Label
-    case ElementTags.Option:
-      return VirtualDomElements.Option
     case ElementTags.Select:
       return VirtualDomElements.Select
+    case ElementTags.Span:
+      return VirtualDomElements.Span
     case ElementTags.Table:
       return VirtualDomElements.Table
     case ElementTags.TBody:
@@ -95,10 +91,14 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.Td
     case ElementTags.TextArea:
       return VirtualDomElements.TextArea
-    case ElementTags.THead:
-      return VirtualDomElements.THead
+    case ElementTags.Tfoot:
+      return VirtualDomElements.Tfoot
     case ElementTags.Th:
       return VirtualDomElements.Th
+    case ElementTags.THead:
+      return VirtualDomElements.THead
+    case ElementTags.Time:
+      return VirtualDomElements.Time
     case ElementTags.Tr:
       return VirtualDomElements.Tr
     case ElementTags.Ul:
