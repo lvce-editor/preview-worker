@@ -12,8 +12,8 @@ const UNIVERSAL_SELECTOR_REGEX = /^\s*\*/gm
 export const replaceCssBodySelector = (css: string): string => {
   // Use word boundaries to ensure only the word 'body' is replaced,
   // not parts of other words like 'tbody'
-  let result = css.replace(BODY_SELECTOR_REGEX, '.Preview')
+  let result = css.replaceAll(BODY_SELECTOR_REGEX, '.Preview')
   // Replace universal selectors at the start of a selector with '.Preview *'
-  result = result.replace(UNIVERSAL_SELECTOR_REGEX, '.Preview *')
+  result = result.replaceAll(UNIVERSAL_SELECTOR_REGEX, '.Preview *')
   return result
 }
