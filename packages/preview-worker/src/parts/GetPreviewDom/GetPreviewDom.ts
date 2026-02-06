@@ -17,6 +17,7 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
         childCount: parsedNodesChildNodeCount,
         className: 'Viewlet Preview',
         onClick: DomEventListenerFunctions.HandleClick,
+        onInput: DomEventListenerFunctions.HandleInput,
         type: VirtualDomElements.Div,
       },
       ...parsedDom,
@@ -28,6 +29,7 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
       childCount: 1,
       className: 'Viewlet Preview',
       onClick: DomEventListenerFunctions.HandleClick,
+      onInput: DomEventListenerFunctions.HandleInput,
       type: VirtualDomElements.Div,
     },
     {

@@ -18,3 +18,7 @@ export const set = (uid: number, instance: HappyDomInstance): void => {
 export const remove = (uid: number): void => {
   states.delete(uid)
 }
+
+export const clear = (): void => {
+  states.clear()
+}

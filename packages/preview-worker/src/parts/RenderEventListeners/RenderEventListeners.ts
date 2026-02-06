@@ -8,5 +8,10 @@ export const renderEventListeners = (): readonly DomEventListener[] => {
       name: DomEventListenersFunctions.HandleClick,
       params: ['handleClick', 'event.target.dataset.id'],
     },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleInput,
+      params: ['handleInput', 'event.target.dataset.id', 'event.target.value'],
+    },
   ]
 }
