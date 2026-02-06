@@ -60,7 +60,9 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
           (allAllowedAttributes.has(attributeName) ||
             (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
         ) {
-          const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
+          let finalAttributeName = attributeName
+          if (attributeName === 'class') finalAttributeName = 'className'
+          else if (attributeName === 'type') finalAttributeName = 'inputType'
           current[finalAttributeName] = token.text
         }
         attributeName = ''
@@ -73,7 +75,9 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
             (allAllowedAttributes.has(attributeName) ||
               (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
           ) {
-            const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
+            let finalAttributeName = attributeName
+            if (attributeName === 'class') finalAttributeName = 'className'
+            else if (attributeName === 'type') finalAttributeName = 'inputType'
             current[finalAttributeName] = attributeName
           }
           attributeName = ''
@@ -167,7 +171,9 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
           (allAllowedAttributes.has(attributeName) ||
             (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
         ) {
-          const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
+          let finalAttributeName = attributeName
+          if (attributeName === 'class') finalAttributeName = 'className'
+          else if (attributeName === 'type') finalAttributeName = 'inputType'
           current[finalAttributeName] = attributeName
         }
         attributeName = ''
