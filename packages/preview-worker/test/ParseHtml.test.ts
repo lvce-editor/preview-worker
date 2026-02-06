@@ -485,7 +485,7 @@ test('parseHtml should parse article with metadata', () => {
     { childCount: 0, text: 'Article Title', type: VirtualDomElements.Text },
     { childCount: 1, type: VirtualDomElements.Time },
     { childCount: 0, text: '2024-01-15', type: VirtualDomElements.Text },
-    { childCount: 1, type: VirtualDomElements.Main },
+    { childCount: 1, type: VirtualDomElements.Div },
     { childCount: 1, type: VirtualDomElements.P },
     { childCount: 0, text: 'Article content goes here.', type: VirtualDomElements.Text },
   ]
