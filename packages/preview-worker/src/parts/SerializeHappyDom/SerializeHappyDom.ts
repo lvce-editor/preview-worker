@@ -86,7 +86,6 @@ const serializeNode = (node: any, dom: VirtualDomNode[], css: string[]): number 
   }
 
   // Reserve position in dom array for this node
-  const nodeIndex = dom.length
   dom.push(newNode)
 
   // Serialize children

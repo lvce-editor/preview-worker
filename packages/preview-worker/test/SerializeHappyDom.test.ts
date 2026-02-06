@@ -213,7 +213,10 @@ test('serialize should correctly serialize DOM modified by script execution', ()
   doc.documentElement.innerHTML = '<body><div id="target">before</div></body>'
 
   // Simulate script execution
-  doc.querySelector('#target').textContent = 'after'
+  const target = doc.querySelector('#target')
+  if (target) {
+    target.textContent = 'after'
+  }
 
   const result = SerializeHappyDom.serialize(doc)
   const textNode = result.dom.find((n) => n.text === 'after')
@@ -230,10 +233,12 @@ test('serialize should handle DOM with added children', () => {
 
   // Add items dynamically
   const list = doc.querySelector('#list')
-  for (let i = 0; i < 3; i++) {
-    const li = doc.createElement('li')
-    li.textContent = `Item ${i}`
-    list.append(li)
+  if (list) {
+    for (let i = 0; i < 3; i++) {
+      const li = doc.createElement('li')
+      li.textContent = `Item ${i}`
+      list.append(li)
+    }
   }
 
   const result = SerializeHappyDom.serialize(doc)
