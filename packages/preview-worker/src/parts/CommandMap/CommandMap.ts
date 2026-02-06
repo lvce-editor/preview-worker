@@ -14,11 +14,11 @@ import { saveState } from '../SaveState/SaveState.ts'
 import { setUri } from '../SetUri/SetUri.ts'
 
 export const commandMap = {
-  handleClick: wrapCommand(HandleClick.handleClick),
   handleEditorChanged: handleEditorChanged,
   'Preview.create': Preview.create,
   'Preview.diff2': diff2,
   'Preview.getCommandIds': getCommandIds,
+  'Preview.handleClick': wrapCommand(HandleClick.handleClick),
   'Preview.handleFileEdited': wrapCommand(handleFileEdited),
   'Preview.loadContent': wrapCommand(LoadContent.loadContent),
   'Preview.render2': render2,
