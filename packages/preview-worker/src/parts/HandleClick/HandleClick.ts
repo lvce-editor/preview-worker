@@ -1,4 +1,5 @@
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
+import * as DispatchClickEvent from '../DispatchClickEvent/DispatchClickEvent.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
@@ -17,9 +18,9 @@ export const handleClick = (state: PreviewState, hdId: string): PreviewState => 
     return state
   }
 
+  // console.log({ element })
   // Dispatch click event in happy-dom so event listeners fire
-  const clickEvent = new happyDomInstance.window.MouseEvent('click', { bubbles: true })
-  element.dispatchEvent(clickEvent)
+  DispatchClickEvent.dispatchClickEvent(element, happyDomInstance.window)
 
   // Re-serialize the (potentially mutated) DOM
   const elementMap = new Map<string, any>()
