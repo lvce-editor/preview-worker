@@ -5,6 +5,7 @@ export const create = (uid: number, uri: string, x: number, y: number, width: nu
   const state: PreviewState = {
     assetDir,
     content: '',
+    css: [],
     errorCount: 0,
     errorMessage: '',
     initial: true,

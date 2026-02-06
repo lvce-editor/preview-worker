@@ -3,6 +3,7 @@ import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 export interface PreviewState {
   readonly assetDir: string
   readonly content: string
+  readonly css: readonly string[]
   readonly errorCount: number
   readonly errorMessage: string
   readonly initial: boolean
