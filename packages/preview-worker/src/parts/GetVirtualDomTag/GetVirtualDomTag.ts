@@ -15,6 +15,8 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.Br
     case ElementTags.Button:
       return VirtualDomElements.Button
+    case ElementTags.Canvas:
+      return VirtualDomElements.Canvas
     case ElementTags.Cite:
       return VirtualDomElements.Cite
     case ElementTags.Code:
