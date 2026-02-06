@@ -15,18 +15,18 @@ class MockOffscreenCanvas {
 
   getContext(_type: string): any {
     return {
-      arc: () => {},
-      beginPath: () => {},
-      clearRect: () => {},
-      closePath: () => {},
-      fill: () => {},
-      fillRect: () => {},
+      arc: (): void => {},
+      beginPath: (): void => {},
+      clearRect: (): void => {},
+      closePath: (): void => {},
+      fill: (): void => {},
+      fillRect: (): void => {},
       fillStyle: '',
-      fillText: () => {},
+      fillText: (): void => {},
       font: '',
-      lineTo: () => {},
-      moveTo: () => {},
-      stroke: () => {},
+      lineTo: (): void => {},
+      moveTo: (): void => {},
+      stroke: (): void => {},
       strokeStyle: '',
     }
   }
