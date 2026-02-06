@@ -19,6 +19,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
   let current: any = root
   const stack: VirtualDomNode[] = [root]
   let attributeName = ''
+  let lastTagWasSelfClosing = false
   for (const token of tokens) {
     switch (token.type) {
       case HtmlTokenType.AttributeName:
@@ -31,28 +32,63 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
         }
         attributeName = ''
         break
+      case HtmlTokenType.ClosingAngleBracket:
+        // Handle boolean attributes (attributes without values)
+        if (attributeName && allowedAttributes.includes(attributeName)) {
+          const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
+          current[finalAttributeName] = attributeName
+        }
+        attributeName = ''
+        // Return to parent if the current tag is self-closing
+        if (lastTagWasSelfClosing) {
+          current = stack.at(-1) || root
+          lastTagWasSelfClosing = false
+        }
+        break
       case HtmlTokenType.Content:
         current.childCount++
         dom.push(text(ParseText.parseText(token.text)))
         break
       case HtmlTokenType.TagNameEnd:
-        stack.pop()
+        if (stack.length > 1) {
+          stack.pop()
+        }
         current = stack.at(-1) || root
         break
       case HtmlTokenType.TagNameStart:
         current.childCount++
-        current = {
+        const newNode: VirtualDomNode = {
           childCount: 0,
           type: GetVirtualDomTag.getVirtualDomTag(token.text),
         }
-        dom.push(current)
-        if (!IsSelfClosingTag.isSelfClosingTag(token.text)) {
+        dom.push(newNode)
+        current = newNode
+        lastTagWasSelfClosing = IsSelfClosingTag.isSelfClosingTag(token.text)
+        if (!lastTagWasSelfClosing) {
           stack.push(current)
         }
+        break
+      case HtmlTokenType.WhitespaceInsideOpeningTag:
+        // Handle boolean attributes (attributes without values)
+        if (attributeName && allowedAttributes.includes(attributeName)) {
+          const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
+          current[finalAttributeName] = attributeName
+        }
+        attributeName = ''
         break
       default:
         break
     }
   }
+  try {
+    Object.defineProperty(dom, 'rootChildCount', {
+      configurable: true,
+      enumerable: false,
+      value: root.childCount,
+    })
+  } catch {
+    ;(dom as any).rootChildCount = root.childCount
+  }
+
   return dom
 }
