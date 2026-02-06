@@ -1,7 +1,6 @@
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 
 export const iEqual = (oldState: PreviewState, newState: PreviewState): boolean => {
-  // Return true if CSS hasn't changed, false if it has changed
   if (oldState.css.length !== newState.css.length) {
     return false
   }
