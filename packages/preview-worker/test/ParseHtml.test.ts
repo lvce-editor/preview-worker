@@ -531,8 +531,6 @@ test('parseHtml should handle void elements correctly', () => {
     ['<hr>', VirtualDomElements.Hr],
     ['<img>', VirtualDomElements.Img],
     ['<input>', VirtualDomElements.Input],
-    ['<link>', VirtualDomElements.Div],
-    ['<meta>', VirtualDomElements.Div],
     ['<param>', VirtualDomElements.Div],
     ['<source>', VirtualDomElements.Div],
     ['<track>', VirtualDomElements.Div],
@@ -543,6 +541,10 @@ test('parseHtml should handle void elements correctly', () => {
     const expectedArray = [{ childCount: 0, type: expectedType }]
     expect(result).toEqual(expectedArray)
   }
+
+  // meta tag is now skipped
+  const metaResult = parseHtml('<meta>', [])
+  expect(metaResult).toEqual([])
 })
 
 test('parseHtml should handle semantic HTML5 elements', () => {
@@ -630,6 +632,7 @@ test('parseHtml should parse button with disabled attribute', () => {
   const result = parseHtml('<button disabled>test button</button>', ['disabled'])
   expect(result).toEqual(expectedArray)
 })
+<<<<<<< Updated upstream
 
 test('parseHtml should parse button with disabled=false attribute', () => {
   const expectedArray = [
@@ -639,3 +642,95 @@ test('parseHtml should parse button with disabled=false attribute', () => {
   const result = parseHtml('<button disabled=false>button</button>', ['disabled'])
   expect(result).toEqual(expectedArray)
 })
+=======
+// Tests for skipped tags (html, head, meta, title)
+test('parseHtml should skip html tag but process children', () => {
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Hello')]
+  const result = parseHtml('<html><div>Hello</div></html>', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should skip head tag but process children', () => {
+  // style tag is not recognized, so it becomes a Div
+  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+  const result = parseHtml('<head><style></style></head>', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should skip head tag and process style inside', () => {
+  // style tag is not recognized, so it becomes a Div
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.Div },
+    text('Body'),
+  ]
+  const result = parseHtml('<head><style></style></head><div>Body</div>', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should completely skip meta tags', () => {
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Content')]
+  const result = parseHtml('<meta charset="utf-8"><div>Content</div>', ['charset'])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should completely skip title tags and content', () => {
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Content')]
+  const result = parseHtml('<title>Page Title</title><div>Content</div>', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should skip html and head tags with style and body', () => {
+  // style and body tags are not recognized, so they become Div
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.Div },
+    text('Hello'),
+  ]
+  const result = parseHtml('<html><head><style></style></head><body>Hello</body></html>', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should skip nested html tags', () => {
+  const expectedArray = [
+    { childCount: 1, type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.Span },
+    text('Text'),
+  ]
+  const result = parseHtml('<html><div><span>Text</span></div></html>', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should handle title with multiple words', () => {
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Content')]
+  const result = parseHtml('<title>This is a long page title</title><div>Content</div>', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should handle multiple meta tags', () => {
+  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Content')]
+  const result = parseHtml(
+    '<meta charset="utf-8"><meta name="viewport" content="width=device-width"><div>Content</div>',
+    ['charset', 'name', 'content'],
+  )
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should handle DOCTYPE with html and head tags', () => {
+  // style tag is not recognized, so it becomes a Div
+  const expectedArray = [
+    { childCount: 0, type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.Div },
+    text('Content'),
+  ]
+  const result = parseHtml('<!DOCTYPE html><html><head><style></style></head><div>Content</div></html>', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should skip head but preserve script tag children', () => {
+  // script tag is not recognized, so it becomes a Div
+  const expectedArray = [{ childCount: 0, type: VirtualDomElements.Div }]
+  const result = parseHtml('<head><script></script></head>', [])
+  expect(result).toEqual(expectedArray)
+})
+>>>>>>> Stashed changes
