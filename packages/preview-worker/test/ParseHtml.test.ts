@@ -440,7 +440,8 @@ test('parseHtml should preserve attribute order when multiple allowed', () => {
 
 // Complex real-world examples
 test('parseHtml should parse full card structure', () => {
-  const html = '<div class="card"><div class="card-header"><h2>Title</h2></div><div class="card-body"><p>Content</p></div><div class="card-footer"><button>Action</button></div></div>'
+  const html =
+    '<div class="card"><div class="card-header"><h2>Title</h2></div><div class="card-body"><p>Content</p></div><div class="card-footer"><button>Action</button></div></div>'
   const expectedArray = [
     { childCount: 3, className: 'card', type: VirtualDomElements.Div },
     { childCount: 1, className: 'card-header', type: VirtualDomElements.Div },
@@ -458,7 +459,8 @@ test('parseHtml should parse full card structure', () => {
 })
 
 test('parseHtml should parse navigation menu', () => {
-  const html = '<nav class="navbar"><ul class="nav-list"><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/contact">Contact</a></li></ul></nav>'
+  const html =
+    '<nav class="navbar"><ul class="nav-list"><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/contact">Contact</a></li></ul></nav>'
   const expectedArray = [
     { childCount: 1, className: 'navbar', type: VirtualDomElements.Nav },
     { childCount: 3, className: 'nav-list', type: VirtualDomElements.Ul },
@@ -477,7 +479,8 @@ test('parseHtml should parse navigation menu', () => {
 })
 
 test('parseHtml should parse article with metadata', () => {
-  const html = '<article class="post" data-id="123"><header><h1>Article Title</h1><time>2024-01-15</time></header><main><p>Article content goes here.</p></main></article>'
+  const html =
+    '<article class="post" data-id="123"><header><h1>Article Title</h1><time>2024-01-15</time></header><main><p>Article content goes here.</p></main></article>'
   const expectedArray = [
     { childCount: 2, className: 'post', 'data-id': '123', type: VirtualDomElements.Article },
     { childCount: 2, type: VirtualDomElements.Header },
