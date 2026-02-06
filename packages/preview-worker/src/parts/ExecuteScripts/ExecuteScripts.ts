@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-implied-eval */
 import { Window } from 'happy-dom-without-node'
 
-export const executeScripts = (rawHtml: string, scripts: readonly string[]): any => {
+export interface ExecuteScriptsResult {
+  readonly document: any
+  readonly window: any
+}
+
+export const executeScripts = (rawHtml: string, scripts: readonly string[]): ExecuteScriptsResult => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
 
@@ -18,5 +23,5 @@ export const executeScripts = (rawHtml: string, scripts: readonly string[]): any
     }
   }
 
-  return document
+  return { document, window }
 }

@@ -4,6 +4,7 @@ import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as ExecuteScripts from '../ExecuteScripts/ExecuteScripts.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
+import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
@@ -32,10 +33,16 @@ export const updateContent = async (
     // If scripts are present, execute them via happy-dom and re-serialize the DOM
     if (scripts.length > 0) {
       try {
-        const happyDomDocument = ExecuteScripts.executeScripts(content, scripts)
-        const serialized = SerializeHappyDom.serialize(happyDomDocument)
+        const { document: happyDomDocument, window: happyDomWindow } = ExecuteScripts.executeScripts(content, scripts)
+        const elementMap = new Map<string, any>()
+        const serialized = SerializeHappyDom.serialize(happyDomDocument, elementMap)
         parsedDom = serialized.dom
         css = serialized.css
+        HappyDomState.set(state.uid, {
+          document: happyDomDocument,
+          elementMap,
+          window: happyDomWindow,
+        })
       } catch {
         // If script execution fails, fall back to static HTML parsing
       }
