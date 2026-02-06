@@ -15,7 +15,7 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
   }
 
   // Read and parse file contents if we have a URI
-  const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount } = state.uri
+  const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = state.uri
     ? await updateContent(state, state.uri)
     : {
         content: state.content,
@@ -23,6 +23,7 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
         errorMessage: state.errorMessage,
         parsedDom: state.parsedDom,
         parsedNodesChildNodeCount: state.parsedNodesChildNodeCount,
+        scripts: state.scripts,
       }
 
   return {
@@ -34,6 +35,7 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
     initial: false,
     parsedDom,
     parsedNodesChildNodeCount,
+    scripts,
     warningCount: 1,
   }
 }

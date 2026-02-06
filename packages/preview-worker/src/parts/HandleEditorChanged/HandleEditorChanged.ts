@@ -41,6 +41,7 @@ export const handleEditorChanged = async (): Promise<void> => {
           css: parseResult.css,
           errorMessage: '',
           parsedDom: parseResult.dom,
+          scripts: parseResult.scripts,
         }
 
         PreviewStates.set(previewUid, state, updatedState)
@@ -53,6 +54,7 @@ export const handleEditorChanged = async (): Promise<void> => {
           css: [],
           errorMessage,
           parsedDom: [],
+          scripts: [],
         }
 
         PreviewStates.set(previewUid, state, updatedState)
