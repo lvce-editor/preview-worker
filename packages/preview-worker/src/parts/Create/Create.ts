@@ -12,6 +12,7 @@ export const create = (uid: number, uri: string, x: number, y: number, width: nu
     parsedDom: [],
     parsedNodesChildNodeCount: 0,
     platform,
+    scripts: [],
     uid,
     uri,
     warningCount: 0,
