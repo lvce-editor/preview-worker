@@ -17,7 +17,12 @@ export interface SerializeResult {
   readonly dom: readonly VirtualDomNode[]
 }
 
-const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly string[]): number => {
+interface SerializeContext {
+  nextId: number
+  readonly elementMap: Map<string, any> | undefined
+}
+
+const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly string[], context: SerializeContext): number => {
   const { nodeType } = node
 
   // Text node
@@ -56,7 +61,7 @@ const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly 
     let childCount = 0
     const { childNodes } = node
     for (let i = 0; i < childNodes.length; i++) {
-      childCount += serializeNode(childNodes[i], dom, css)
+      childCount += serializeNode(childNodes[i], dom, css, context)
     }
     return childCount
   }
@@ -85,6 +90,13 @@ const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly 
     }
   }
 
+  // Assign element tracking ID for interactivity
+  if (context.elementMap) {
+    const hdId = String(context.nextId++)
+    newNode['data-id'] = hdId
+    context.elementMap.set(hdId, node)
+  }
+
   // Reserve position in dom array for this node
   ;(dom as VirtualDomNode[]).push(newNode)
 
@@ -92,16 +104,17 @@ const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly 
   let childCount = 0
   const { childNodes } = node
   for (let i = 0; i < childNodes.length; i++) {
-    childCount += serializeNode(childNodes[i], dom, css)
+    childCount += serializeNode(childNodes[i], dom, css, context)
   }
   newNode.childCount = childCount
 
   return 1
 }
 
-export const serialize = (document: any): SerializeResult => {
+export const serialize = (document: any, elementMap?: Map<string, any>): SerializeResult => {
   const dom: VirtualDomNode[] = []
   const css: string[] = []
+  const context: SerializeContext = { nextId: 0, elementMap }
 
   // Start from document.documentElement (the <html> element)
   const root = document.documentElement || document.body
@@ -112,7 +125,7 @@ export const serialize = (document: any): SerializeResult => {
   let rootChildCount = 0
   const { childNodes } = root
   for (let i = 0; i < childNodes.length; i++) {
-    rootChildCount += serializeNode(childNodes[i], dom, css)
+    rootChildCount += serializeNode(childNodes[i], dom, css, context)
   }
 
   try {
