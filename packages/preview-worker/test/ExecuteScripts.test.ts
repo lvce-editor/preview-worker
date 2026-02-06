@@ -1,4 +1,5 @@
 import { expect, test } from '@jest/globals'
+import * as DispatchClickEvent from '../src/parts/DispatchClickEvent/DispatchClickEvent.ts'
 import * as ExecuteScripts from '../src/parts/ExecuteScripts/ExecuteScripts.ts'
 
 test('executeScripts should return a document and window', () => {
@@ -186,4 +187,26 @@ test('executeScripts should handle counter pattern', () => {
   ]
   const { document: doc } = ExecuteScripts.createWindowAndExecuteScripts(html, scripts)
   expect(doc.querySelector('#count').textContent).toBe('3')
+})
+
+test('executeScripts with dispatchClickEvent should execute onclick handler and update textContent', () => {
+  const html = '<html><body><button id="btn" onclick="someFunction(2)">Click me</button></body></html>'
+  const scripts = [
+    `
+    window.someFunction = function(value) {
+      document.getElementById("btn").textContent = value;
+    };
+    `,
+  ]
+  const { document: doc, window } = ExecuteScripts.createWindowAndExecuteScripts(html, scripts)
+  const button = doc.querySelector('#btn')
+
+  // Initial state
+  expect(button.textContent).toBe('Click me')
+
+  // Dispatch click event
+  DispatchClickEvent.dispatchClickEvent(button, window)
+
+  // Verify textContent was updated by the onclick handler
+  expect(button.textContent).toBe('2')
 })
