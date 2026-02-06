@@ -28,7 +28,7 @@ const setupHappyDom = (uid: number, html: string): void => {
   document.body.innerHTML = html
 
   const elementMap = new Map<string, any>()
-  const serialized = SerializeHappyDom.serialize(document, elementMap)
+  SerializeHappyDom.serialize(document, elementMap)
 
   HappyDomState.set(uid, {
     document,
@@ -38,7 +38,7 @@ const setupHappyDom = (uid: number, html: string): void => {
 }
 
 beforeEach(() => {
-  HappyDomState.clear?.()
+  HappyDomState.clear()
 })
 
 test('handleInput returns state when hdId is empty', () => {
@@ -67,7 +67,7 @@ test('handleInput fires input event listener on element', () => {
 
   const happyDomInstance = HappyDomState.get(1)!
   let inputFired = false
-  for (const [hdId, element] of happyDomInstance.elementMap) {
+  for (const [, element] of happyDomInstance.elementMap) {
     if (element.id === 'input') {
       element.addEventListener('input', () => {
         inputFired = true
@@ -94,7 +94,7 @@ test('handleInput returns new state with updated parsedDom', () => {
   for (const [hdId, element] of happyDomInstance.elementMap) {
     if (element.id === 'input') {
       inputHdId = hdId
-      element.addEventListener('input', function () {
+      element.addEventListener('input', function (this: any) {
         this.value = 'new'
       })
     }
@@ -118,7 +118,7 @@ test('handleInput updates element value from input parameter', () => {
   for (const [hdId, element] of happyDomInstance.elementMap) {
     if (element.id === 'input') {
       inputHdId = hdId
-      element.addEventListener('input', function () {
+      element.addEventListener('input', function (this: any) {
         valueInListener = this.value
       })
     }
