@@ -1,6 +1,6 @@
 const BODY_SELECTOR_REGEX = /\bbody\b/g
 const BUTTON_SELECTOR_REGEX = /\bbutton\b/g
-const UNIVERSAL_SELECTOR_REGEX = /(?:^|([,}]))\s*(\*(?=\s*[\{:]|[\w.#:\[\-]))/gm
+const UNIVERSAL_SELECTOR_REGEX = /(?:^|([,}]))\s*(\*(?=\s*[{:]|[\w.#:[-]))/gm
 
 /**
  * Replaces the 'body' CSS selector with '.Preview' since the preview is rendered
