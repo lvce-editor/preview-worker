@@ -1,18 +1,14 @@
 /* eslint-disable @typescript-eslint/no-implied-eval */
-import { Window } from 'happy-dom-without-node'
+import { createWindow } from '../CreateWindow/CreateWindow.ts'
 
 export interface ExecuteScriptsResult {
   readonly document: any
   readonly window: any
 }
 
-export const executeScripts = (rawHtml: string, scripts: readonly string[]): ExecuteScriptsResult => {
-  const window = new Window({ url: 'https://localhost:3000' })
-  const { document } = window
+export { createWindow } from '../CreateWindow/CreateWindow.ts'
 
-  // Parse the raw HTML into the happy-dom document
-  document.documentElement.innerHTML = rawHtml
-
+export const executeScripts = (window: any, document: any, scripts: readonly string[]): void => {
   // Execute each script with the happy-dom window and document as context
   for (const scriptContent of scripts) {
     try {
@@ -22,6 +18,10 @@ export const executeScripts = (rawHtml: string, scripts: readonly string[]): Exe
       console.warn('[preview-worker] Script execution error:', error)
     }
   }
+}
 
+export const createWindowAndExecuteScripts = (rawHtml: string, scripts: readonly string[]): ExecuteScriptsResult => {
+  const { document, window } = createWindow(rawHtml)
+  executeScripts(window, document, scripts)
   return { document, window }
 }
