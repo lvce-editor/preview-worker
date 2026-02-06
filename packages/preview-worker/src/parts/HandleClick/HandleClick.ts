@@ -4,7 +4,7 @@ import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
 export const handleClick = (state: PreviewState, hdId: string): PreviewState => {
-  console.log('click,', hdId)
+  // console.log('click,', hdId)
   if (!hdId) {
     return state
   }
