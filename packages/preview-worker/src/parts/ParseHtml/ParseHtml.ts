@@ -32,14 +32,6 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
         }
         attributeName = ''
         break
-      case HtmlTokenType.WhitespaceInsideOpeningTag:
-        // Handle boolean attributes (attributes without values)
-        if (attributeName && allowedAttributes.includes(attributeName)) {
-          const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
-          current[finalAttributeName] = attributeName
-        }
-        attributeName = ''
-        break
       case HtmlTokenType.ClosingAngleBracket:
         // Handle boolean attributes (attributes without values)
         if (attributeName && allowedAttributes.includes(attributeName)) {
@@ -75,6 +67,14 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[]): r
         if (!lastTagWasSelfClosing) {
           stack.push(current)
         }
+        break
+      case HtmlTokenType.WhitespaceInsideOpeningTag:
+        // Handle boolean attributes (attributes without values)
+        if (attributeName && allowedAttributes.includes(attributeName)) {
+          const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
+          current[finalAttributeName] = attributeName
+        }
+        attributeName = ''
         break
       default:
         break
