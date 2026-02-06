@@ -1,5 +1,6 @@
 import { VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
+import * as DomEventListenerFunctions from '../DomEventListenerFunctions/DomEventListenerFunctions.ts'
 import { getEmptyPreviewDom } from '../GetEmptyPreviewDom/GetEmptyPreviewDom.ts'
 
 export const getPreviewDom = (state: PreviewState): readonly any[] => {
@@ -15,6 +16,7 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
       {
         childCount: parsedNodesChildNodeCount,
         className: 'Viewlet Preview',
+        onClick: DomEventListenerFunctions.HandleClick,
         type: VirtualDomElements.Div,
       },
       ...parsedDom,
@@ -25,6 +27,7 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
     {
       childCount: 1,
       className: 'Viewlet Preview',
+      onClick: DomEventListenerFunctions.HandleClick,
       type: VirtualDomElements.Div,
     },
     {
