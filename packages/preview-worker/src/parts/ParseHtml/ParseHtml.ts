@@ -36,7 +36,10 @@ export const parseHtml = (
         attributeName = token.text
         break
       case HtmlTokenType.AttributeValue:
-        if (allAllowedAttributes.has(attributeName) || (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes))) {
+        if (
+          allAllowedAttributes.has(attributeName) ||
+          (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes))
+        ) {
           const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
           current[finalAttributeName] = token.text
         }
@@ -46,7 +49,8 @@ export const parseHtml = (
         // Handle boolean attributes (attributes without values)
         if (
           attributeName &&
-          (allAllowedAttributes.has(attributeName) || (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
+          (allAllowedAttributes.has(attributeName) ||
+            (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
         ) {
           const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
           current[finalAttributeName] = attributeName
@@ -85,7 +89,8 @@ export const parseHtml = (
         // Handle boolean attributes (attributes without values)
         if (
           attributeName &&
-          (allAllowedAttributes.has(attributeName) || (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
+          (allAllowedAttributes.has(attributeName) ||
+            (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
         ) {
           const finalAttributeName = attributeName === 'class' ? 'className' : attributeName
           current[finalAttributeName] = attributeName
