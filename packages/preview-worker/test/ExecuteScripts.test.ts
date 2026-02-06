@@ -26,10 +26,7 @@ test('executeScripts should execute script that modifies innerHTML', () => {
 
 test('executeScripts should execute multiple scripts in order', () => {
   const html = '<html><body><div id="result"></div></body></html>'
-  const scripts = [
-    'document.getElementById("result").textContent = "step1"',
-    'document.getElementById("result").textContent += ",step2"',
-  ]
+  const scripts = ['document.getElementById("result").textContent = "step1"', 'document.getElementById("result").textContent += ",step2"']
   const doc = ExecuteScripts.executeScripts(html, scripts)
   expect(doc.querySelector('#result').textContent).toBe('step1,step2')
 })
@@ -108,10 +105,7 @@ test('executeScripts should handle script with querySelectorAll', () => {
 
 test('executeScripts should survive script errors gracefully', () => {
   const html = '<html><body><div id="ok">original</div></body></html>'
-  const scripts = [
-    'throw new Error("intentional error")',
-    'document.getElementById("ok").textContent = "still works"',
-  ]
+  const scripts = ['throw new Error("intentional error")', 'document.getElementById("ok").textContent = "still works"']
   const doc = ExecuteScripts.executeScripts(html, scripts)
   // Second script should still run despite first throwing
   expect(doc.querySelector('#ok').textContent).toBe('still works')
