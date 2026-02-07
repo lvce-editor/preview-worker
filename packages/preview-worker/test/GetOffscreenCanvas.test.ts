@@ -6,10 +6,9 @@ test.skip('getOffscreenCanvas should invoke RendererWorker with correct paramete
   const mockOffscreenCanvas = {} as OffscreenCanvas
   using mockRpc = RendererWorker.registerMockRpc({ 'OffscreenCanvas.create': () => mockOffscreenCanvas })
 
-  const canvasId = 42
-  const result = await getOffscreenCanvas(canvasId)
+  const result = await getOffscreenCanvas()
 
-  expect(mockRpc.invocations).toEqual([['OffscreenCanvas.create', canvasId]])
+  expect(mockRpc.invocations).toEqual([['OffscreenCanvas.create']])
   expect(result).toBe(mockOffscreenCanvas)
 })
 
@@ -18,7 +17,7 @@ test.skip('getOffscreenCanvas should return the OffscreenCanvas from RendererWor
   // @ts-ignore
   using mockRpc = RendererWorker.registerMockRpc({ 'OffscreenCanvas.create': () => mockCanvas })
 
-  const result = await getOffscreenCanvas(1)
+  const result = await getOffscreenCanvas()
 
   expect(result).toBe(mockCanvas)
 })
@@ -32,5 +31,5 @@ test.skip('getOffscreenCanvas should propagate errors from RendererWorker', asyn
     },
   })
 
-  await expect(getOffscreenCanvas(1)).rejects.toThrow(testError)
+  await expect(getOffscreenCanvas()).rejects.toThrow(testError)
 })
