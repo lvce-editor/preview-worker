@@ -1,6 +1,7 @@
 import { terminate } from '@lvce-editor/viewlet-registry'
 import * as Preview from '../Create/Create.ts'
 import { diff2 } from '../Diff2/Diff2.ts'
+import { executeCallback } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
 import * as HandleClick from '../HandleClick/HandleClick.ts'
 import { handleEditorChanged } from '../HandleEditorChanged/HandleEditorChanged.ts'
 import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
@@ -18,6 +19,7 @@ export const commandMap = {
   handleEditorChanged: handleEditorChanged,
   'Preview.create': Preview.create,
   'Preview.diff2': diff2,
+  'Preview.executeCallback': executeCallback,
   'Preview.getCommandIds': getCommandIds,
   'Preview.handleClick': wrapCommand(HandleClick.handleClick),
   'Preview.handleFileEdited': wrapCommand(handleFileEdited),
