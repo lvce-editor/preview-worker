@@ -18,5 +18,10 @@ export const renderEventListeners = (): readonly DomEventListener[] => {
       name: DomEventListenersFunctions.HandleKeydown,
       params: ['handleKeyDown', 'event.target.dataset.id', 'event.key', 'event.code'],
     },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleKeyup,
+      params: ['handleKeyUp', 'event.target.dataset.id', 'event.key', 'event.code'],
+    },
   ]
 }
