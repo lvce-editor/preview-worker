@@ -2,8 +2,8 @@ import { afterEach, beforeAll, expect, test } from '@jest/globals'
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import { Window } from 'happy-dom-without-node'
 import * as CanvasState from '../src/parts/CanvasState/CanvasState.ts'
-import * as PatchCanvasElements from '../src/parts/PatchCanvasElements/PatchCanvasElements.ts'
 import { executeCallback } from '../src/parts/GetOffscreenCanvas/GetOffscreenCanvas.ts'
+import * as PatchCanvasElements from '../src/parts/PatchCanvasElements/PatchCanvasElements.ts'
 
 // OffscreenCanvas is a Web Worker API not available in Node.js
 // Provide a minimal mock for testing
