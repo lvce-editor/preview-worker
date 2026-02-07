@@ -13,5 +13,10 @@ export const renderEventListeners = (): readonly DomEventListener[] => {
       name: DomEventListenersFunctions.HandleInput,
       params: ['handleInput', 'event.target.dataset.id', 'event.target.value'],
     },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleKeydown,
+      params: ['handleKeyDown', 'event.target.dataset.id', 'event.key', 'event.code'],
+    },
   ]
 }

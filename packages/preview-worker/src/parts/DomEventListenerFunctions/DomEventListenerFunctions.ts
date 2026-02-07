@@ -9,3 +9,4 @@ export const HandleMouseOverAt = 8
 export const HandleWheel = 9
 export const HandleClickAction = 10
 export const HandleClick = 11
+export const HandleKeydown = 12
