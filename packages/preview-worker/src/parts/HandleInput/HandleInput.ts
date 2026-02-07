@@ -57,7 +57,7 @@ export const handleInput = (state: PreviewState, hdId: string, value: string): P
   if (!hdId) {
     return state
   }
-  if (state.useSandboxWorker && state.sandboxRpc) {
+  if (state.useSandboxWorker ) {
     return handleInputSandbox(state, hdId, value)
   }
   return handleInputLocal(state, hdId, value)

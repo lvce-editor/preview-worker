@@ -56,7 +56,7 @@ export const handleClick = (state: PreviewState, hdId: string): PreviewState | P
   if (!hdId) {
     return state
   }
-  if (state.useSandboxWorker && state.sandboxRpc) {
+  if (state.useSandboxWorker) {
     return handleClickSandbox(state, hdId)
   }
   return handleClickLocal(state, hdId)
