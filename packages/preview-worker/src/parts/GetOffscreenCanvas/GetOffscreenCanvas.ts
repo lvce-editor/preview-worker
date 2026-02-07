@@ -5,9 +5,11 @@ const callBacks = Object.create(null)
 
 let id = 0
 
+type OffscreenCanvasResultRaw = [OffscreenCanvas, number]
+
 const registerCallback = (): any => {
   const nextId = id++
-  const { promise, resolve } = Promise.withResolvers<OffscreenCanvas>()
+  const { promise, resolve } = Promise.withResolvers<OffscreenCanvasResultRaw>()
   callBacks[nextId] = resolve
   return {
     id: nextId,
@@ -15,10 +17,10 @@ const registerCallback = (): any => {
   }
 }
 
-export const executeCallback = (id: number, ...args: [OffscreenCanvas, number]): void => {
+export const executeCallback = (id: number, ...args: OffscreenCanvasResultRaw): void => {
   const callback = callBacks[id]
   if (callback) {
-    callback(...args)
+    callback(args)
     delete callBacks[id]
   } else {
     console.warn(`[preview-worker] No callback found for id ${id}`)
