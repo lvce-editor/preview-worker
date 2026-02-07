@@ -43,7 +43,7 @@
     }
   },
   "dependencies": {
-    "@lvce-editor/virtual-dom-worker": "^7.3.0",
+    "@lvce-editor/virtual-dom-worker": "^8.0.0",
     "happy-dom-without-node": "^14.12.3"
   },
   "devDependencies": {
