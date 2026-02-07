@@ -1,5 +1,8 @@
+const FUNCTION_REGEX = /(?:^|[\n;])\s*function\s+([a-zA-Z_$][\w$]*)/g
+
 export const getTopLevelFunctionNames = (script: string): readonly string[] => {
   const names: string[] = []
+<<<<<<< HEAD
   let braceDepth = 0
   let i = 0
 
@@ -85,6 +88,11 @@ export const getTopLevelFunctionNames = (script: string): readonly string[] => {
     }
 
     i++
+=======
+  let match
+  while ((match = FUNCTION_REGEX.exec(script)) !== null) {
+    names.push(match[1])
+>>>>>>> origin/main
   }
 
   return names
