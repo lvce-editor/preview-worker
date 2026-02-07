@@ -1,11 +1,13 @@
 import { afterEach, expect, test } from '@jest/globals'
 import { Window } from 'happy-dom-without-node'
 import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
+import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as HandleClick from '../src/parts/HandleClick/HandleClick.ts'
 import * as HappyDomState from '../src/parts/HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../src/parts/SerializeHappyDom/SerializeHappyDom.ts'
 
 const createState = (uid: number, overrides: Partial<PreviewState> = {}): PreviewState => ({
+  ...createDefaultState(),
   assetDir: '',
   content: '',
   css: [],
@@ -15,7 +17,6 @@ const createState = (uid: number, overrides: Partial<PreviewState> = {}): Previe
   parsedDom: [],
   parsedNodesChildNodeCount: 0,
   platform: 0,
-  sandboxRpc: null,
   scripts: [],
   uid,
   uri: '',
