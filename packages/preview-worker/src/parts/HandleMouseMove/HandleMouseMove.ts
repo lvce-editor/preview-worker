@@ -5,7 +5,7 @@ import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
 export const handleMouseMove = (state: PreviewState, hdId: string, clientX: number, clientY: number): PreviewState => {
-  // console.log('mousemove,', hdId, clientX, clientY)
+  console.log('mousemove,', hdId, clientX, clientY)
   if (!hdId) {
     return state
   }
