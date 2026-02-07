@@ -10,8 +10,8 @@ import * as PatchCanvasElements from '../src/parts/PatchCanvasElements/PatchCanv
 class MockOffscreenCanvas {
   width: number
   height: number
-  readonly oncontextlost: ((this: any, ev: Event) => any) | null = null
-  readonly oncontextrestored: ((this: any, ev: Event) => any) | null = null
+  readonly oncontextlost: ((this: any, ev: readonly Event) => any) | null = null
+  readonly oncontextrestored: ((this: any, ev: readonly Event) => any) | null = null
 
   constructor(width: number, height: number) {
     this.width = width
@@ -44,11 +44,19 @@ class MockOffscreenCanvas {
     return new Blob()
   }
 
-  addEventListener(_type: string, _listener: readonly any, _options?: boolean | AddEventListenerOptions): void {}
+  addEventListener(
+    _type: readonly string,
+    _listener: any,
+    _options?: boolean | AddEventListenerOptions,
+  ): void {}
 
-  removeEventListener(_type: string, _listener: readonly any, _options?: boolean | EventListenerOptions): void {}
+  removeEventListener(
+    _type: readonly string,
+    _listener: any,
+    _options?: boolean | EventListenerOptions,
+  ): void {}
 
-  dispatchEvent(_event: Event): boolean {
+  dispatchEvent(_event: readonly Event): boolean {
     return true
   }
 }
