@@ -3,7 +3,7 @@ import * as ExecuteScripts from '../ExecuteScripts/ExecuteScripts.ts'
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as PatchCanvasElements from '../PatchCanvasElements/PatchCanvasElements.ts'
 
-export const initializeSandbox = async (uri: string, uid: number, content: string, scripts: readonly string[]): Promise<void> => {
+export const initializeSandbox = async (uid: number, content: string, scripts: readonly string[]): Promise<void> => {
   if (scripts.length === 0) {
     return
   }
