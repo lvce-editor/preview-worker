@@ -45,8 +45,8 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspa
   await expect(output).toHaveText('No key pressed')
 
   // Type 'a' in the input field
-  await Command.execute('Preview.handleInput', '2', 'a')
+  await Command.execute('Preview.handleInput', '0', 'a')
 
   // Verify output has been updated with the key press
-  await expect(output).toContainText('Key pressed:')
+  await expect(output).toHaveText('Key pressed:')
 }
