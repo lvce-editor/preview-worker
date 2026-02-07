@@ -29,14 +29,14 @@ export const createLocalStorage = (): Storage => {
   }
 
   const localStorage: Storage = {
-    getItem,
-    setItem,
-    removeItem,
     clear,
+    getItem,
     key,
     get length(): number {
       return store.size
     },
+    removeItem,
+    setItem,
   }
 
   return localStorage

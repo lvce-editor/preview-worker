@@ -177,7 +177,7 @@ test('setItem - handles unicode characters', () => {
 
 test('setItem - handles very long values', () => {
   const storage = createLocalStorage()
-  const longValue = 'a'.repeat(10000)
+  const longValue = 'a'.repeat(10_000)
   storage.setItem('long', longValue)
   expect(storage.getItem('long')).toBe(longValue)
 })
