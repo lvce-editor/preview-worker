@@ -4,8 +4,8 @@ import { RendererWorker } from '@lvce-editor/rpc-registry'
 export const createSandboxRpc = async (): Promise<any> => {
   const sandboxRpc = await LazyTransferMessagePortRpcParent.create({
     commandMap: {},
-    send: (port: any) =>
-      RendererWorker.invokeAndTransfer(
+    send: async (port: any) =>
+      await RendererWorker.invokeAndTransfer(
         'SendMessagePortToExtensionHostWorker.sendMessagePortToPreviewSandBoxWorker',
         port,
         'SandBox.handleMessagePort',
