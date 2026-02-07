@@ -15,6 +15,7 @@ export const create = (uid: number, uri: string, x: number, y: number, width: nu
     scripts: [],
     uid,
     uri,
+    useSandboxWorker: false,
     warningCount: 0,
   }
   set(uid, state, state)
