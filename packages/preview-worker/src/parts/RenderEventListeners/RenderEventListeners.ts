@@ -31,14 +31,14 @@ export const renderEventListeners = (): readonly DomEventListener[] => {
     {
       capture: true,
       name: DomEventListenersFunctions.HandleDragOver,
-      preventDefault: true,
       params: ['handleDragOver', 'event.target.dataset.id'],
+      preventDefault: true,
     },
     {
       capture: true,
       name: DomEventListenersFunctions.HandleDrop,
-      preventDefault: true,
       params: ['handleDrop', 'event.target.dataset.id'],
+      preventDefault: true,
     },
     {
       capture: true,
