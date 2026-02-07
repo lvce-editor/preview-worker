@@ -23,5 +23,37 @@ export const renderEventListeners = (): readonly DomEventListener[] => {
       name: DomEventListenersFunctions.HandleKeyup,
       params: ['handleKeyUp', 'event.target.dataset.id', 'event.key', 'event.code'],
     },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleDragStart,
+      params: ['handleDragStart', 'event.target.dataset.id'],
+    },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleDragOver,
+      preventDefault: true,
+      params: ['handleDragOver', 'event.target.dataset.id'],
+    },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleDrop,
+      preventDefault: true,
+      params: ['handleDrop', 'event.target.dataset.id'],
+    },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleDragEnd,
+      params: ['handleDragEnd', 'event.target.dataset.id'],
+    },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleDragEnter,
+      params: ['handleDragEnter', 'event.target.dataset.id'],
+    },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleDragLeave,
+      params: ['handleDragLeave', 'event.target.dataset.id'],
+    },
   ]
 }
