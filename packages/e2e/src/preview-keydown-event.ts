@@ -1,13 +1,14 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
 
-export const skip = true
-
 export const name = 'preview.keydown-event'
 
-export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
+export const skip = 1
+
+export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspace }) => {
   // Create a temporary HTML file with keydown event handler
   const tmpDir = await FileSystem.getTmpDir()
-  const filePath = `${tmpDir}preview-test-keydown-${Date.now()}.html`
+  await Workspace.setPath(tmpDir)
+  const filePath = `${tmpDir}/preview-test-keydown.html`
   const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -27,10 +28,9 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
 </html>`
 
   await FileSystem.writeFile(filePath, html)
-  const uri = filePath.replaceAll(/^\//g, 'file:///')
 
   // Open the preview with the HTML file
-  await Command.execute('Layout.showPreview', uri)
+  await Command.execute('Layout.showPreview', filePath)
 
   // Wait for preview to render
   const previewArea = Locator('.Viewlet.Preview')
@@ -42,10 +42,10 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
 
   await expect(input).toBeVisible()
   await expect(output).toBeVisible()
-  await expect(output).toContainText('No key pressed')
+  await expect(output).toHaveText('No key pressed')
 
   // Type 'a' in the input field
-  await input.type('a')
+  await Command.execute('Preview.handleInput', '2', 'a')
 
   // Verify output has been updated with the key press
   await expect(output).toContainText('Key pressed:')
