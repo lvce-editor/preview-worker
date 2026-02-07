@@ -1,5 +1,4 @@
 import * as CanvasState from '../CanvasState/CanvasState.ts'
-import * as FlushCanvasFrame from '../FlushCanvasFrame/FlushCanvasFrame.ts'
 
 const FRAME_INTERVAL = 16
 
@@ -18,7 +17,6 @@ export const overrideRequestAnimationFrame = (window: any, uid: number): void =>
         console.warn('[preview-worker] requestAnimationFrame callback error:', error)
       }
     }
-    FlushCanvasFrame.flushCanvasFrame(uid)
   }
 
   window.requestAnimationFrame = (callback: (timestamp: number) => void): number => {
