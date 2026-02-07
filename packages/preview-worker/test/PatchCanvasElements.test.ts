@@ -1,4 +1,5 @@
 import { afterEach, beforeAll, expect, test } from '@jest/globals'
+import { RendererWorker } from '@lvce-editor/rpc-registry'
 import { Window } from 'happy-dom-without-node'
 import * as CanvasState from '../src/parts/CanvasState/CanvasState.ts'
 import * as PatchCanvasElements from '../src/parts/PatchCanvasElements/PatchCanvasElements.ts'
@@ -47,32 +48,34 @@ afterEach(() => {
   CanvasState.clear()
 })
 
-test('patchCanvasElements should do nothing when no canvas elements exist', () => {
+test('patchCanvasElements should do nothing when no canvas elements exist', async () => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
   document.documentElement.innerHTML = '<body><div>hello</div></body>'
-  PatchCanvasElements.patchCanvasElements(document, 1)
+  await PatchCanvasElements.patchCanvasElements(document, 1)
   expect(CanvasState.get(1)).toBeUndefined()
 })
 
-test('patchCanvasElements should create OffscreenCanvas for canvas element', () => {
+test('patchCanvasElements should create OffscreenCanvas for canvas element', async () => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
   document.documentElement.innerHTML = '<body><canvas id="game" width="320" height="480"></canvas></body>'
-  PatchCanvasElements.patchCanvasElements(document, 1)
+  const mockOffscreenCanvas = new MockOffscreenCanvas(320, 480)
+  using _mockRpc = RendererWorker.registerMockRpc({ 'OffscreenCanvas.create': () => mockOffscreenCanvas })
+  await PatchCanvasElements.patchCanvasElements(document, 1)
   const state = CanvasState.get(1)
   expect(state).toBeDefined()
   expect(state?.instances.length).toBe(1)
-  expect(state?.instances[0].offscreenCanvas).toBeInstanceOf(OffscreenCanvas)
-  expect(state?.instances[0].offscreenCanvas.width).toBe(320)
-  expect(state?.instances[0].offscreenCanvas.height).toBe(480)
+  expect(state?.instances[0].offscreenCanvas).toBe(mockOffscreenCanvas)
 })
 
-test('patchCanvasElements should make getContext return a real 2d context', () => {
+test('patchCanvasElements should make getContext return a real 2d context', async () => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
   document.documentElement.innerHTML = '<body><canvas id="game" width="320" height="480"></canvas></body>'
-  PatchCanvasElements.patchCanvasElements(document, 1)
+  const mockOffscreenCanvas = new MockOffscreenCanvas(320, 480)
+  using _mockRpc = RendererWorker.registerMockRpc({ 'OffscreenCanvas.create': () => mockOffscreenCanvas })
+  await PatchCanvasElements.patchCanvasElements(document, 1)
   const canvas = document.querySelector('canvas') as any
   const ctx = canvas.getContext('2d')
   expect(ctx).toBeDefined()
@@ -83,33 +86,42 @@ test('patchCanvasElements should make getContext return a real 2d context', () =
   expect(typeof ctx.fillText).toBe('function')
 })
 
-test('patchCanvasElements should return undefined for non-2d context', () => {
+test('patchCanvasElements should return undefined for non-2d context', async () => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
   document.documentElement.innerHTML = '<body><canvas id="game" width="320" height="480"></canvas></body>'
-  PatchCanvasElements.patchCanvasElements(document, 1)
+  const mockOffscreenCanvas = new MockOffscreenCanvas(320, 480)
+  using _mockRpc = RendererWorker.registerMockRpc({ 'OffscreenCanvas.create': () => mockOffscreenCanvas })
+  await PatchCanvasElements.patchCanvasElements(document, 1)
   const canvas = document.querySelector('canvas') as any
   const ctx = canvas.getContext('webgl')
   expect(ctx).toBeUndefined()
 })
 
-test('patchCanvasElements should handle multiple canvas elements', () => {
+test('patchCanvasElements should handle multiple canvas elements', async () => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
   document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas><canvas width="200" height="200"></canvas></body>'
-  PatchCanvasElements.patchCanvasElements(document, 1)
+  const mockOffscreenCanvas1 = new MockOffscreenCanvas(100, 100)
+  const mockOffscreenCanvas2 = new MockOffscreenCanvas(200, 200)
+  const canvases = [mockOffscreenCanvas1, mockOffscreenCanvas2]
+  let callIndex = 0
+  using _mockRpc = RendererWorker.registerMockRpc({ 'OffscreenCanvas.create': () => canvases[callIndex++] })
+  await PatchCanvasElements.patchCanvasElements(document, 1)
   const state = CanvasState.get(1)
   expect(state?.instances.length).toBe(2)
-  expect(state?.instances[0].offscreenCanvas.width).toBe(100)
-  expect(state?.instances[1].offscreenCanvas.width).toBe(200)
+  expect(state?.instances[0].offscreenCanvas).toBe(mockOffscreenCanvas1)
+  expect(state?.instances[1].offscreenCanvas).toBe(mockOffscreenCanvas2)
 })
 
-test('patchCanvasElements should use default canvas dimensions when attributes not set', () => {
+test('patchCanvasElements should set __canvasId on canvas elements', async () => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
-  document.documentElement.innerHTML = '<body><canvas></canvas></body>'
-  PatchCanvasElements.patchCanvasElements(document, 1)
-  const state = CanvasState.get(1)
-  expect(state?.instances[0].offscreenCanvas.width).toBe(300)
-  expect(state?.instances[0].offscreenCanvas.height).toBe(150)
+  document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
+  const mockOffscreenCanvas = new MockOffscreenCanvas(100, 100)
+  using _mockRpc = RendererWorker.registerMockRpc({ 'OffscreenCanvas.create': () => mockOffscreenCanvas })
+  await PatchCanvasElements.patchCanvasElements(document, 1)
+  const canvas = document.querySelector('canvas') as any
+  expect(canvas.__canvasId).toBeDefined()
+  expect(typeof canvas.__canvasId).toBe('number')
 })

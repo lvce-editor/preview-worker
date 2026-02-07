@@ -37,7 +37,7 @@ export const updateContent = async (
     if (scripts.length > 0) {
       try {
         const { document: happyDomDocument, window: happyDomWindow } = createWindow(content)
-        PatchCanvasElements.patchCanvasElements(happyDomDocument, state.uid)
+        await PatchCanvasElements.patchCanvasElements(happyDomDocument, state.uid)
         OverrideRequestAnimationFrame.overrideRequestAnimationFrame(happyDomWindow, state.uid)
         ExecuteScripts.executeScripts(happyDomWindow, happyDomDocument, scripts)
         const elementMap = new Map<string, any>()
