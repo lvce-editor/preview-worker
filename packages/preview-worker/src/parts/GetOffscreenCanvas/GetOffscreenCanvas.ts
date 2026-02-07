@@ -27,7 +27,7 @@ export const executeCallback = (id: number, offscreenCanvas: OffscreenCanvas): v
 
 export const getOffscreenCanvas = async (canvasId: number): Promise<OffscreenCanvas> => {
   const { id, promise } = registerCallback()
-  await RendererWorker.invoke('OffscreenCanvas.create', canvasId, id)
+  await RendererWorker.invoke('OffscreenCanvas.createForPreview', canvasId, id)
   const offscreenCanvas = await promise
   return offscreenCanvas
 }
