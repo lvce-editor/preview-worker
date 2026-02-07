@@ -8,6 +8,9 @@ export const dispatchEvent = (element: any, event: any): void => {
   if (typeof handler === 'function') {
     handler.call(element, event)
   } else if (handler === null || handler === undefined) {
+    if (!element.getAttribute) {
+      return
+    }
     // Check if there's an inline HTML attribute that wasn't converted to a property
     const attrValue = element.getAttribute(handlerName)
     if (attrValue && typeof attrValue === 'string' && element.ownerDocument && element.ownerDocument.defaultView) {
