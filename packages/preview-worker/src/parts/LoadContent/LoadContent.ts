@@ -1,6 +1,5 @@
 import { EditorWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
-import { createSandboxRpc } from '../CreateSandboxRpc/CreateSandboxRpc.ts'
 import { updateContent } from '../UpdateContent/UpdateContent.ts'
 
 export const loadContent = async (state: PreviewState): Promise<PreviewState> => {
