@@ -4,11 +4,22 @@ import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/G
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
-export const handleClick = (state: PreviewState, hdId: string): PreviewState => {
-  // console.log('click,', hdId)
-  if (!hdId) {
-    return state
+const handleClickSandbox = async (state: PreviewState, hdId: string): Promise<PreviewState> => {
+  const { sandboxRpc, uid } = state
+  await sandboxRpc.invoke('SandBox.handleClick', uid, hdId)
+  const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', uid)
+  const parsedDom = serialized.dom
+  const { css } = serialized
+  const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
+  return {
+    ...state,
+    css,
+    parsedDom,
+    parsedNodesChildNodeCount,
   }
+}
+
+const handleClickLocal = (state: PreviewState, hdId: string): PreviewState => {
   const happyDomInstance = HappyDomState.get(state.uid)
   if (!happyDomInstance) {
     return state
@@ -18,15 +29,11 @@ export const handleClick = (state: PreviewState, hdId: string): PreviewState => 
     return state
   }
 
-  // console.log({ element })
-  // Dispatch click event in happy-dom so event listeners fire
   DispatchClickEvent.dispatchClickEvent(element, happyDomInstance.window)
 
-  // Re-serialize the (potentially mutated) DOM
   const elementMap = new Map<string, any>()
   const serialized = SerializeHappyDom.serialize(happyDomInstance.document, elementMap)
 
-  // Update happy-dom state with new element map
   HappyDomState.set(state.uid, {
     document: happyDomInstance.document,
     elementMap,
@@ -43,4 +50,14 @@ export const handleClick = (state: PreviewState, hdId: string): PreviewState => 
     parsedDom,
     parsedNodesChildNodeCount,
   }
+}
+
+export const handleClick = (state: PreviewState, hdId: string): PreviewState | Promise<PreviewState> => {
+  if (!hdId) {
+    return state
+  }
+  if (state.useSandboxWorker) {
+    return handleClickSandbox(state, hdId)
+  }
+  return handleClickLocal(state, hdId)
 }

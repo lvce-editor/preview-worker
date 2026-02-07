@@ -14,10 +14,12 @@ const createState = (uid: number): any => {
     initial: false,
     parsedDom: [],
     parsedNodesChildNodeCount: [],
+    sandboxRpc: null,
     scrollLeft: 0,
     scrollTop: 0,
     uid,
     uri: '',
+    useSandboxWorker: false,
     zoom: 1,
   }
 }
@@ -41,27 +43,27 @@ beforeEach(() => {
   HappyDomState.clear()
 })
 
-test('handleInput returns state when hdId is empty', () => {
+test('handleInput returns state when hdId is empty', async () => {
   const state = createState(1)
-  const result = HandleInput.handleInput(state, '', '')
+  const result = await HandleInput.handleInput(state, '', '')
   expect(result).toEqual(state)
 })
 
-test('handleInput returns state when happyDomInstance is not found', () => {
+test('handleInput returns state when happyDomInstance is not found', async () => {
   const state = createState(999)
-  const result = HandleInput.handleInput(state, 'some-id', 'value')
+  const result = await HandleInput.handleInput(state, 'some-id', 'value')
   expect(result).toEqual(state)
 })
 
-test('handleInput returns state when element is not found', () => {
+test('handleInput returns state when element is not found', async () => {
   const html = '<input id="input" type="text">'
   setupHappyDom(1, html)
   const state = createState(1)
-  const result = HandleInput.handleInput(state, 'non-existent-id', 'value')
+  const result = await HandleInput.handleInput(state, 'non-existent-id', 'value')
   expect(result).toEqual(state)
 })
 
-test('handleInput fires input event listener on element', () => {
+test('handleInput fires input event listener on element', async () => {
   const html = '<input id="input" type="text">'
   setupHappyDom(1, html)
 
@@ -76,7 +78,7 @@ test('handleInput fires input event listener on element', () => {
   }
 
   const state = createState(1)
-  HandleInput.handleInput(
+  await HandleInput.handleInput(
     state,
     [...happyDomInstance.elementMap.keys()].find((id) => happyDomInstance.elementMap.get(id)!.id === 'input')!,
     'test value',
@@ -85,7 +87,7 @@ test('handleInput fires input event listener on element', () => {
   expect(inputFired).toBe(true)
 })
 
-test('handleInput returns new state with updated parsedDom', () => {
+test('handleInput returns new state with updated parsedDom', async () => {
   const html = '<input id="input" type="text" value="old">'
   setupHappyDom(1, html)
 
@@ -101,14 +103,14 @@ test('handleInput returns new state with updated parsedDom', () => {
   }
 
   const state = createState(1)
-  const result = HandleInput.handleInput(state, inputHdId, 'updated value')
+  const result = await HandleInput.handleInput(state, inputHdId, 'updated value')
 
   expect(result).not.toEqual(state)
   expect(result.parsedDom).toEqual(expect.anything())
   expect(result.css).toEqual(expect.anything())
 })
 
-test('handleInput updates element value from input parameter', () => {
+test('handleInput updates element value from input parameter', async () => {
   const html = '<input id="input" type="text" value="initial">'
   setupHappyDom(1, html)
 
@@ -125,7 +127,7 @@ test('handleInput updates element value from input parameter', () => {
   }
 
   const state = createState(1)
-  HandleInput.handleInput(state, inputHdId, 'new input value')
+  await HandleInput.handleInput(state, inputHdId, 'new input value')
 
   expect(valueInListener).toBe('new input value')
 })

@@ -1,11 +1,13 @@
 import { afterEach, expect, test } from '@jest/globals'
 import { Window } from 'happy-dom-without-node'
 import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
+import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as HandleClick from '../src/parts/HandleClick/HandleClick.ts'
 import * as HappyDomState from '../src/parts/HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../src/parts/SerializeHappyDom/SerializeHappyDom.ts'
 
 const createState = (uid: number, overrides: Partial<PreviewState> = {}): PreviewState => ({
+  ...createDefaultState(),
   assetDir: '',
   content: '',
   css: [],
@@ -18,6 +20,7 @@ const createState = (uid: number, overrides: Partial<PreviewState> = {}): Previe
   scripts: [],
   uid,
   uri: '',
+  useSandboxWorker: false,
   warningCount: 0,
   ...overrides,
 })
@@ -42,26 +45,26 @@ afterEach(() => {
   HappyDomState.remove(1)
 })
 
-test('handleClick should return state unchanged when hdId is empty', () => {
+test('handleClick should return state unchanged when hdId is empty', async () => {
   const state = createState(1)
-  const result = HandleClick.handleClick(state, '')
+  const result = await HandleClick.handleClick(state, '')
   expect(result).toBe(state)
 })
 
-test('handleClick should return state unchanged when no happy-dom state exists', () => {
+test('handleClick should return state unchanged when no happy-dom state exists', async () => {
   const state = createState(1)
-  const result = HandleClick.handleClick(state, '0')
+  const result = await HandleClick.handleClick(state, '0')
   expect(result).toBe(state)
 })
 
-test('handleClick should return state unchanged when element not found in map', () => {
+test('handleClick should return state unchanged when element not found in map', async () => {
   setupHappyDom(1, '<body><div>hello</div></body>', [])
   const state = createState(1)
-  const result = HandleClick.handleClick(state, '999')
+  const result = await HandleClick.handleClick(state, '999')
   expect(result).toBe(state)
 })
 
-test('handleClick should dispatch click and update state for counter pattern', () => {
+test('handleClick should dispatch click and update state for counter pattern', async () => {
   const html = '<body><span id="count">0</span><button id="btn">Click</button></body>'
   const scripts = [
     `
@@ -88,18 +91,18 @@ test('handleClick should dispatch click and update state for counter pattern', (
   expect(buttonHdId).not.toBe('')
 
   const state = createState(1)
-  const result = HandleClick.handleClick(state, buttonHdId)
+  const result = await HandleClick.handleClick(state, buttonHdId)
 
   // parsedDom should have changed
   expect(result).not.toBe(state)
   expect(result.parsedDom).not.toBe(state.parsedDom)
 
   // Find the text node with the counter value
-  const textNode = result.parsedDom.find((n) => n.text === '1')
+  const textNode = result.parsedDom.find((n: any) => n.text === '1')
   expect(textNode).toBeDefined()
 })
 
-test('handleClick should handle multiple clicks incrementing counter', () => {
+test('handleClick should handle multiple clicks incrementing counter', async () => {
   const html = '<body><span id="count">0</span><button id="btn">Click</button></body>'
   const scripts = [
     `
@@ -126,7 +129,7 @@ test('handleClick should handle multiple clicks incrementing counter', () => {
   let state = createState(1)
 
   // Click 3 times
-  state = HandleClick.handleClick(state, buttonHdId)
+  state = await HandleClick.handleClick(state, buttonHdId)
   // After first click, need to get the NEW button hdId from the updated element map
   let instance = HappyDomState.get(1)!
   for (const [hdId, element] of instance.elementMap) {
@@ -135,7 +138,7 @@ test('handleClick should handle multiple clicks incrementing counter', () => {
       break
     }
   }
-  state = HandleClick.handleClick(state, buttonHdId)
+  state = await HandleClick.handleClick(state, buttonHdId)
   instance = HappyDomState.get(1)!
   for (const [hdId, element] of instance.elementMap) {
     if (element.id === 'btn') {
@@ -143,13 +146,13 @@ test('handleClick should handle multiple clicks incrementing counter', () => {
       break
     }
   }
-  state = HandleClick.handleClick(state, buttonHdId)
+  state = await HandleClick.handleClick(state, buttonHdId)
 
-  const textNode = state.parsedDom.find((n) => n.text === '3')
+  const textNode = state.parsedDom.find((n: any) => n.text === '3')
   expect(textNode).toBeDefined()
 })
 
-test('handleClick should handle click event bubbling', () => {
+test('handleClick should handle click event bubbling', async () => {
   const html = '<body><div id="parent"><button id="child">Click</button></div></body>'
   const scripts = [
     `
@@ -172,14 +175,14 @@ test('handleClick should handle click event bubbling', () => {
   }
 
   const state = createState(1)
-  const result = HandleClick.handleClick(state, childHdId)
+  const result = await HandleClick.handleClick(state, childHdId)
 
   // Parent should now have class="clicked"
-  const parentNode = result.parsedDom.find((n) => n.className === 'clicked')
+  const parentNode = result.parsedDom.find((n: any) => n.className === 'clicked')
   expect(parentNode).toBeDefined()
 })
 
-test('handleClick should handle toggle visibility', () => {
+test('handleClick should handle toggle visibility', async () => {
   const html = '<body><div id="content" class="hidden">Content</div><button id="toggle">Toggle</button></body>'
   const scripts = [
     `
@@ -208,16 +211,16 @@ test('handleClick should handle toggle visibility', () => {
   }
 
   const state = createState(1)
-  const result = HandleClick.handleClick(state, toggleHdId)
+  const result = await HandleClick.handleClick(state, toggleHdId)
 
   // Content should now have class="visible" instead of "hidden"
-  const contentNode = result.parsedDom.find((n) => n.className === 'visible')
+  const contentNode = result.parsedDom.find((n: any) => n.className === 'visible')
   expect(contentNode).toBeDefined()
-  const hiddenNode = result.parsedDom.find((n) => n.className === 'hidden')
+  const hiddenNode = result.parsedDom.find((n: any) => n.className === 'hidden')
   expect(hiddenNode).toBeUndefined()
 })
 
-test('handleClick should update parsedNodesChildNodeCount', () => {
+test('handleClick should update parsedNodesChildNodeCount', async () => {
   const html = '<body><ul id="list"></ul><button id="add">Add</button></body>'
   const scripts = [
     `
@@ -242,7 +245,7 @@ test('handleClick should update parsedNodesChildNodeCount', () => {
   }
 
   const state = createState(1)
-  const result = HandleClick.handleClick(state, addHdId)
+  const result = await HandleClick.handleClick(state, addHdId)
 
   expect(result.parsedNodesChildNodeCount).toBeGreaterThan(0)
 })

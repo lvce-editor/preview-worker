@@ -31,8 +31,8 @@ export const updateContent = async (
     let { css } = parseResult
     const { scripts } = parseResult
 
-    // If scripts are present, execute them via happy-dom and re-serialize the DOM
-    if (scripts.length > 0) {
+    // If scripts are present and not using sandbox worker, execute them via happy-dom and re-serialize the DOM
+    if (scripts.length > 0 && !state.useSandboxWorker) {
       try {
         const { document: happyDomDocument, window: happyDomWindow } = createWindow(content)
         await PatchCanvasElements.patchCanvasElements(happyDomDocument, state.uid)

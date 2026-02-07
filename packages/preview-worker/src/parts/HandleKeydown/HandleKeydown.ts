@@ -4,7 +4,22 @@ import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/G
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
-export const handleKeydown = (state: PreviewState, hdId: string, key: string, code: string): PreviewState => {
+const handleKeydownSandbox = async (state: PreviewState, hdId: string, key: string, code: string): Promise<PreviewState> => {
+  const { sandboxRpc, uid } = state
+  await sandboxRpc.invoke('SandBox.handleKeyDown', uid, hdId, key, code)
+  const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', uid)
+  const parsedDom = serialized.dom
+  const { css } = serialized
+  const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
+  return {
+    ...state,
+    css,
+    parsedDom,
+    parsedNodesChildNodeCount,
+  }
+}
+
+const handleKeydownLocal = (state: PreviewState, hdId: string, key: string, code: string): PreviewState => {
   const happyDomInstance = HappyDomState.get(state.uid)
   if (!happyDomInstance) {
     return state
@@ -14,14 +29,11 @@ export const handleKeydown = (state: PreviewState, hdId: string, key: string, co
     return state
   }
 
-  // Dispatch keydown event in happy-dom so event listeners fire
   DispatchKeydownEvent.dispatchKeydownEvent(element, happyDomInstance.window, key, code)
 
-  // Re-serialize the (potentially mutated) DOM
   const elementMap = new Map<string, any>()
   const serialized = SerializeHappyDom.serialize(happyDomInstance.document, elementMap)
 
-  // Update happy-dom state with new element map
   HappyDomState.set(state.uid, {
     document: happyDomInstance.document,
     elementMap,
@@ -38,4 +50,11 @@ export const handleKeydown = (state: PreviewState, hdId: string, key: string, co
     parsedDom,
     parsedNodesChildNodeCount,
   }
+}
+
+export const handleKeydown = (state: PreviewState, hdId: string, key: string, code: string): PreviewState | Promise<PreviewState> => {
+  if (state.useSandboxWorker) {
+    return handleKeydownSandbox(state, hdId, key, code)
+  }
+  return handleKeydownLocal(state, hdId, key, code)
 }
