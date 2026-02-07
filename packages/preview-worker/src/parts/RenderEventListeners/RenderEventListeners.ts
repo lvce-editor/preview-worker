@@ -18,5 +18,10 @@ export const renderEventListeners = (): readonly DomEventListener[] => {
       name: DomEventListenersFunctions.HandleKeydown,
       params: ['handleKeyDown', 'event.target.dataset.id', 'event.key', 'event.code'],
     },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleMousemove,
+      params: ['handleMousemove', 'event.target.dataset.id', 'event.clientX', 'event.clientY'],
+    },
   ]
 }
