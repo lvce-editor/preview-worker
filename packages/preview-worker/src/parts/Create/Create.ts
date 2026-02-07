@@ -27,7 +27,7 @@ export const create = async (
     scripts: [],
     uid,
     uri,
-    useSandboxWorker: true,
+    useSandboxWorker: false,
     warningCount: 0,
   }
   set(uid, state, state)
