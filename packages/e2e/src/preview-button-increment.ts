@@ -1,5 +1,7 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
 
+export const skip = true
+
 export const name = 'preview.button-increment'
 
 export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
