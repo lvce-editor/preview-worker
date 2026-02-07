@@ -10,7 +10,9 @@ export const patchCanvasElements = async (document: any, uid: number): Promise<v
 
   for (let i = 0; i < canvasElements.length; i++) {
     const element = canvasElements[i]
-    const { canvasId, offscreenCanvas } = await getOffscreenCanvas()
+    const width =  element.getAttribute('width')||300
+    const height =  element.getAttribute('height')||300
+    const { canvasId, offscreenCanvas } = await getOffscreenCanvas(width, height)
     const dataId = String(canvasId)
     element.__canvasId = canvasId
     const context = offscreenCanvas.getContext('2d')

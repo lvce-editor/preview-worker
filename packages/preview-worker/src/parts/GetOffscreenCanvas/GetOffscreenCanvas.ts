@@ -32,9 +32,9 @@ interface OffscreenCanvasResult {
   readonly offscreenCanvas: OffscreenCanvas
 }
 
-export const getOffscreenCanvas = async (): Promise<OffscreenCanvasResult> => {
+export const getOffscreenCanvas = async (width: number, height: number): Promise<OffscreenCanvasResult> => {
   const { id, promise } = registerCallback()
-  await RendererWorker.invoke('OffscreenCanvas.createForPreview', id)
+  await RendererWorker.invoke('OffscreenCanvas.createForPreview', id, width, height)
   const [offscreenCanvas, canvasId] = await promise
   return { canvasId, offscreenCanvas }
 }
