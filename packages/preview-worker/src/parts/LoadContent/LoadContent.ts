@@ -34,15 +34,12 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
 
   if (state.useSandboxWorker && scripts.length > 0) {
     sandboxRpc = await createSandboxRpc()
-    console.log({ sandboxRpc })
     await sandboxRpc.invoke('SandBox.initialize', state.uid, content, scripts)
-    console.log('after init')
     const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', state.uid)
     finalParsedDom = serialized.dom
     finalCss = serialized.css
     finalParsedNodesChildNodeCount = finalParsedDom.length > 0 ? finalParsedDom[0].childCount || 0 : 0
   }
-  console.log({ finalParsedDom })
 
   return {
     ...state,
