@@ -15,19 +15,24 @@ const registerCallback = (): any => {
   }
 }
 
-export const executeCallback = (id: number, offscreenCanvas: OffscreenCanvas): void => {
+export const executeCallback = (id: number, ...args: [OffscreenCanvas, number]): void => {
   const callback = callBacks[id]
   if (callback) {
-    callback(offscreenCanvas)
+    callback(...args)
     delete callBacks[id]
   } else {
     console.warn(`[preview-worker] No callback found for id ${id}`)
   }
 }
 
-export const getOffscreenCanvas = async (canvasId: number): Promise<OffscreenCanvas> => {
+interface OffscreenCanvasResult {
+  readonly canvasId: number
+  readonly offscreenCanvas: OffscreenCanvas
+}
+
+export const getOffscreenCanvas = async (): Promise<OffscreenCanvasResult> => {
   const { id, promise } = registerCallback()
-  await RendererWorker.invoke('OffscreenCanvas.createForPreview', canvasId, id)
-  const offscreenCanvas = await promise
-  return offscreenCanvas
+  await RendererWorker.invoke('OffscreenCanvas.createForPreview', id)
+  const [offscreenCanvas, canvasId] = await promise
+  return { canvasId, offscreenCanvas }
 }
