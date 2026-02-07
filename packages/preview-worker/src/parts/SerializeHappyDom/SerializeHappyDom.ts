@@ -1,4 +1,5 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
+import { VirtualDomElements } from '@lvce-editor/constants'
 import { text } from '@lvce-editor/virtual-dom-worker'
 import * as GetVirtualDomTag from '../GetVirtualDomTag/GetVirtualDomTag.ts'
 import * as IsDefaultAllowedAttribute from '../IsDefaultAllowedAttribute/IsDefaultAllowedAttribute.ts'
@@ -65,6 +66,17 @@ const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly 
       childCount += serializeNode(childNodes[i], dom, css, context)
     }
     return childCount
+  }
+
+  // Canvas element with transferred OffscreenCanvas — emit a Reference node
+  if (tagName === 'canvas' && node.__canvasId !== undefined) {
+    const refNode: any = {
+      childCount: 0,
+      type: VirtualDomElements.Reference,
+      uid: node.__canvasId,
+    }
+    ;(dom as VirtualDomNode[]).push(refNode)
+    return 1
   }
 
   // Normal element - create a VirtualDomNode
