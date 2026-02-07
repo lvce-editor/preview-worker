@@ -3,6 +3,7 @@ import * as Preview from '../Create/Create.ts'
 import { diff2 } from '../Diff2/Diff2.ts'
 import { executeCallback } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
 import * as HandleClick from '../HandleClick/HandleClick.ts'
+import * as HandleKeydown from '../HandleKeydown/HandleKeydown.ts'
 import { handleEditorChanged } from '../HandleEditorChanged/HandleEditorChanged.ts'
 import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
 import * as HandleInput from '../HandleInput/HandleInput.ts'
@@ -24,6 +25,7 @@ export const commandMap = {
   'Preview.handleClick': wrapCommand(HandleClick.handleClick),
   'Preview.handleFileEdited': wrapCommand(handleFileEdited),
   'Preview.handleInput': wrapCommand(HandleInput.handleInput),
+  'Preview.handleKeydown': wrapCommand(HandleKeydown.handleKeydown),
   'Preview.loadContent': wrapCommand(LoadContent.loadContent),
   'Preview.render2': render2,
   'Preview.renderEventListeners': renderEventListeners,

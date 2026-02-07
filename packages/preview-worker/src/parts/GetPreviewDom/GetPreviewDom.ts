@@ -18,6 +18,7 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
         className: 'Viewlet Preview',
         onClick: DomEventListenerFunctions.HandleClick,
         onInput: DomEventListenerFunctions.HandleInput,
+        onKeydown: DomEventListenerFunctions.HandleKeydown,
         type: VirtualDomElements.Div,
       },
       ...parsedDom,
@@ -30,6 +31,7 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
       className: 'Viewlet Preview',
       onClick: DomEventListenerFunctions.HandleClick,
       onInput: DomEventListenerFunctions.HandleInput,
+      onKeydown: DomEventListenerFunctions.HandleKeydown,
       type: VirtualDomElements.Div,
     },
     {
