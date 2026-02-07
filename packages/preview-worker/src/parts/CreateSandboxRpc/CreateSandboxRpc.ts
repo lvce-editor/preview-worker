@@ -7,8 +7,8 @@ export const createSandboxRpc = async (): Promise<any> => {
     send: (port: any) =>
       RendererWorker.invokeAndTransfer(
         'SendMessagePortToExtensionHostWorker.sendMessagePortToPreviewSandBoxWorker',
-        'SandBox.handleMessagePort',
         port,
+        'SandBox.handleMessagePort',
       ),
   })
   return sandboxRpc
