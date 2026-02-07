@@ -1,3 +1,12 @@
+interface Storage {
+  clear(): void
+  getItem(key: string): string | null
+  key(index: number): string | null
+  readonly length: number
+  removeItem(key: string): void
+  setItem(key: string, value: string): void
+}
+
 export const createLocalStorage = (): Storage => {
   const store: Map<string, string> = new Map()
 
