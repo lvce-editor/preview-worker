@@ -10,4 +10,4 @@ export const HandleWheel = 9
 export const HandleClickAction = 10
 export const HandleClick = 11
 export const HandleKeydown = 12
-export const HandleMousemove = 13
+export const HandleMouseMove = 13
