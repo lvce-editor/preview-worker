@@ -44,17 +44,9 @@ class MockOffscreenCanvas {
     return new Blob()
   }
 
-  addEventListener(
-    _type: readonly string,
-    _listener: any,
-    _options?: boolean | AddEventListenerOptions,
-  ): void {}
+  addEventListener(_type: readonly string, _listener: any, _options?: boolean | AddEventListenerOptions): void {}
 
-  removeEventListener(
-    _type: readonly string,
-    _listener: any,
-    _options?: boolean | EventListenerOptions,
-  ): void {}
+  removeEventListener(_type: readonly string, _listener: any, _options?: boolean | EventListenerOptions): void {}
 
   dispatchEvent(_event: readonly Event): boolean {
     return true
