@@ -58,3 +58,13 @@ test('createWindow should return fresh window instances for each call', () => {
   expect(result1.window).not.toBe(result2.window)
   expect(result1.document).not.toBe(result2.document)
 })
+
+test.skip('createWindow should handle canvas with id attribute', () => {
+  const html = '<html><body><canvas id="game" width="320" height="480"></canvas></body></html>'
+  const { document } = createWindow(html)
+  const canvas = document.querySelector('#game')
+  expect(canvas).toBeDefined()
+  expect(canvas?.getAttribute('id')).toBe('game')
+  expect(canvas?.getAttribute('width')).toBe('320')
+  expect(canvas?.getAttribute('height')).toBe('480')
+})
