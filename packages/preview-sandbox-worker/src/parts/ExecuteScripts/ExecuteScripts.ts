@@ -8,7 +8,6 @@ export const executeScripts = (window: any, document: any, scripts: readonly str
   // @ts-ignore
   globalThis.alert = Alert.alert
   const localStorage = createLocalStorage()
-  window.localStorage = localStorage
   // @ts-ignore
   globalThis.localStorage = localStorage
   // Execute each script with the happy-dom window and document as context
