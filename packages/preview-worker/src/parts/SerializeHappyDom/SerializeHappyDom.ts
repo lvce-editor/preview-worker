@@ -75,6 +75,9 @@ const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly 
       type: VirtualDomElements.Reference,
       uid: node.__canvasId,
     }
+    if (context.elementMap) {
+      context.elementMap.set(node.__canvasId + '', node)
+    }
     ;(dom as VirtualDomNode[]).push(refNode)
     return 1
   }
