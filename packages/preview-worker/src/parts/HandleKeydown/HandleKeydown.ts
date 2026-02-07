@@ -5,7 +5,7 @@ import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
 export const handleKeydown = (state: PreviewState, hdId: string, key: string, code: string): PreviewState => {
-  console.log('keydown,', hdId, key, code)
+  // console.log('keydown,', hdId, key, code)
   if (!hdId) {
     return state
   }
@@ -18,7 +18,7 @@ export const handleKeydown = (state: PreviewState, hdId: string, key: string, co
     return state
   }
 
-  console.log({ element })
+  // console.log({ element })
   // Dispatch keydown event in happy-dom so event listeners fire
   DispatchKeydownEvent.dispatchKeydownEvent(element, happyDomInstance.window, key, code)
 
