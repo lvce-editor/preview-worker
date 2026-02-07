@@ -6,7 +6,6 @@ import { createWindow } from '../CreateWindow/CreateWindow.ts'
 import * as ExecuteScripts from '../ExecuteScripts/ExecuteScripts.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
-import * as OverrideRequestAnimationFrame from '../OverrideRequestAnimationFrame/OverrideRequestAnimationFrame.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as PatchCanvasElements from '../PatchCanvasElements/PatchCanvasElements.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
@@ -24,7 +23,6 @@ export const updateContent = async (
 }> => {
   try {
     // Read the file content using RendererWorker RPC
-    // @ts-ignore
     const content = await RendererWorker.readFile(uri)
 
     // Parse the content into virtual DOM and CSS
@@ -38,7 +36,6 @@ export const updateContent = async (
       try {
         const { document: happyDomDocument, window: happyDomWindow } = createWindow(content)
         await PatchCanvasElements.patchCanvasElements(happyDomDocument, state.uid)
-        OverrideRequestAnimationFrame.overrideRequestAnimationFrame(happyDomWindow, state.uid)
         ExecuteScripts.executeScripts(happyDomWindow, happyDomDocument, scripts)
         const elementMap = new Map<string, any>()
         const serialized = SerializeHappyDom.serialize(happyDomDocument, elementMap)
@@ -49,7 +46,8 @@ export const updateContent = async (
           elementMap,
           window: happyDomWindow,
         })
-      } catch {
+      } catch (error) {
+        console.error(error)
         // If script execution fails, fall back to static HTML parsing
       }
     }
