@@ -2,16 +2,16 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const skip = true
 
-export const name = 'preview.mousemove-event'
+export const name = 'preview.mouseMove-event'
 
 export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
   // Create a temporary HTML file with mousemove event handler
   const tmpDir = await FileSystem.getTmpDir()
-  const filePath = `${tmpDir}preview-test-mousemove-${Date.now()}.html`
+  const filePath = `${tmpDir}preview-test-mouseMove-${Date.now()}.html`
   const html = `<!DOCTYPE html>
 <html>
 <head>
-  <title>Mousemove Event Test</title>
+  <title>MouseMove Event Test</title>
 </head>
 <body>
   <div id="area" style="width: 300px; height: 200px; border: 2px solid black; padding: 10px;">

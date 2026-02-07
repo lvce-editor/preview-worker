@@ -1,7 +1,7 @@
 import { afterEach, expect, test } from '@jest/globals'
 import { Window } from 'happy-dom-without-node'
 import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
-import * as HandleMousemove from '../src/parts/HandleMousemove/HandleMousemove.ts'
+import * as HandleMouseMove from '../src/parts/HandleMouseMove/HandleMouseMove.ts'
 import * as HappyDomState from '../src/parts/HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../src/parts/SerializeHappyDom/SerializeHappyDom.ts'
 
@@ -42,26 +42,26 @@ afterEach(() => {
   HappyDomState.remove(1)
 })
 
-test('handleMousemove should return state unchanged when hdId is empty', () => {
+test('handleMouseMove should return state unchanged when hdId is empty', () => {
   const state = createState(1)
-  const result = HandleMousemove.handleMousemove(state, '', 100, 200)
+  const result = HandleMouseMove.handleMouseMove(state, '', 100, 200)
   expect(result).toBe(state)
 })
 
-test('handleMousemove should return state unchanged when no happy-dom state exists', () => {
+test('handleMouseMove should return state unchanged when no happy-dom state exists', () => {
   const state = createState(1)
-  const result = HandleMousemove.handleMousemove(state, '0', 100, 200)
+  const result = HandleMouseMove.handleMouseMove(state, '0', 100, 200)
   expect(result).toBe(state)
 })
 
-test('handleMousemove should return state unchanged when element not found in map', () => {
+test('handleMouseMove should return state unchanged when element not found in map', () => {
   setupHappyDom(1, '<body><div>hello</div></body>')
   const state = createState(1)
-  const result = HandleMousemove.handleMousemove(state, '999', 100, 200)
+  const result = HandleMouseMove.handleMouseMove(state, '999', 100, 200)
   expect(result).toBe(state)
 })
 
-test('handleMousemove should dispatch mousemove and update state', () => {
+test('handleMouseMove should dispatch mousemove and update state', () => {
   const html = '<body><div id="area">Hover area</div></body>'
   const scripts = [
     `
@@ -86,7 +86,7 @@ test('handleMousemove should dispatch mousemove and update state', () => {
   expect(areaHdId).not.toBe('')
 
   const state = createState(1)
-  const result = HandleMousemove.handleMousemove(state, areaHdId, 150, 250)
+  const result = HandleMouseMove.handleMouseMove(state, areaHdId, 150, 250)
 
   // parsedDom should have changed
   expect(result).not.toBe(state)
@@ -99,7 +99,7 @@ test('handleMousemove should dispatch mousemove and update state', () => {
   expect(textNode?.text).toContain('Y:250')
 })
 
-test('handleMousemove should handle multiple mousemove events', () => {
+test('handleMouseMove should handle multiple mousemove events', () => {
   const html = '<body><div id="tracker">Last: -,-</div></body>'
   const scripts = [
     `
@@ -123,7 +123,7 @@ test('handleMousemove should handle multiple mousemove events', () => {
   let state = createState(1)
 
   // First mousemove
-  state = HandleMousemove.handleMousemove(state, trackerHdId, 100, 100)
+  state = HandleMouseMove.handleMouseMove(state, trackerHdId, 100, 100)
   let instance = HappyDomState.get(1)!
   for (const [hdId, element] of instance.elementMap) {
     if (element.id === 'tracker') {
@@ -135,7 +135,7 @@ test('handleMousemove should handle multiple mousemove events', () => {
   expect(textNode).toBeDefined()
 
   // Second mousemove
-  state = HandleMousemove.handleMousemove(state, trackerHdId, 200, 300)
+  state = HandleMouseMove.handleMouseMove(state, trackerHdId, 200, 300)
   instance = HappyDomState.get(1)!
   for (const [hdId, element] of instance.elementMap) {
     if (element.id === 'tracker') {
