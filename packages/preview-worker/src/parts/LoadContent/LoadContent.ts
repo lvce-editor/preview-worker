@@ -27,7 +27,7 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
         scripts: state.scripts,
       }
 
-  let {sandboxRpc} = state
+  let { sandboxRpc } = state
   let finalParsedDom = parsedDom
   let finalCss = css
   let finalParsedNodesChildNodeCount = parsedNodesChildNodeCount
