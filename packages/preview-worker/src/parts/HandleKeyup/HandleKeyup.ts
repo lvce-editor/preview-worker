@@ -53,7 +53,7 @@ const handleKeyupLocal = (state: PreviewState, hdId: string, key: string, code: 
 }
 
 export const handleKeyup = (state: PreviewState, hdId: string, key: string, code: string): PreviewState | Promise<PreviewState> => {
-  if (state.useSandboxWorker ) {
+  if (state.useSandboxWorker) {
     return handleKeyupSandbox(state, hdId, key, code)
   }
   return handleKeyupLocal(state, hdId, key, code)
