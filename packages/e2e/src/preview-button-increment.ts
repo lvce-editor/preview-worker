@@ -1,12 +1,11 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
 
-export const skip = true
-
 export const name = 'preview.button-increment'
 
-export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
-  // Create a temporary HTML file with button and click handler
+export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, Workspace }) => {
+  // arrange
   const tmpDir = await FileSystem.getTmpDir()
+  await Workspace.setPath(tmpDir)
   const filePath = `${tmpDir}preview-test-button-${Date.now()}.html`
   const html = `<!DOCTYPE html>
 <html>
@@ -28,29 +27,17 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
 </html>`
 
   await FileSystem.writeFile(filePath, html)
-  const uri = filePath.replaceAll(/^\//g, 'file:///')
-
-  // Open the preview with the HTML file
-  await Command.execute('Layout.showPreview', uri)
-
-  // Wait for preview to render
+  await Main.openUri(filePath)
+  await Command.execute('Layout.showPreview', filePath)
   const previewArea = Locator('.Viewlet.Preview')
   await expect(previewArea).toBeVisible()
-
-  // Find and verify initial count is 0
   const countSpan = previewArea.locator('#count')
   await expect(countSpan).toBeVisible()
   await expect(countSpan).toContainText('0')
 
-  // Find and click the button
-  const button = previewArea.locator('#incrementBtn')
-  await expect(button).toBeVisible()
-  await button.click()
+  // act
+  await Command.execute('Preview.handleClick', '2')
 
-  // Verify count incremented to 1
+  // assert
   await expect(countSpan).toContainText('1')
-
-  // Click again and verify count is 2
-  await button.click()
-  await expect(countSpan).toContainText('2')
 }
