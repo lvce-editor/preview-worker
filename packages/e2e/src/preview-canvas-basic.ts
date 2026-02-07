@@ -1,13 +1,12 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
 
-export const skip = true
-
 export const name = 'preview.canvas-basic'
 
-export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
+export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspace }) => {
   // Create a temporary HTML file with canvas element
   const tmpDir = await FileSystem.getTmpDir()
-  const filePath = `${tmpDir}preview-test-canvas-${Date.now()}.html`
+  await Workspace.setPath(tmpDir)
+  const filePath = `${tmpDir}/preview-test-canvas.html`
   const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -40,10 +39,9 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
 </html>`
 
   await FileSystem.writeFile(filePath, html)
-  const uri = filePath.replaceAll(/^\//g, 'file:///')
 
   // Open the preview with the HTML file
-  await Command.execute('Layout.showPreview', uri)
+  await Command.execute('Layout.showPreview', filePath)
 
   // Wait for preview to render
   const previewArea = Locator('.Viewlet.Preview')
@@ -55,8 +53,10 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
   await expect(heading).toContainText('Canvas Drawing Test')
 
   // Verify the canvas element is present and visible
-  const canvas = previewArea.locator('canvas#myCanvas')
+  const canvas = previewArea.locator('canvas')
   await expect(canvas).toBeVisible()
   await expect(canvas).toHaveAttribute('width', '200')
   await expect(canvas).toHaveAttribute('height', '200')
+
+  // TODO need to verify the elements are drawn
 }
