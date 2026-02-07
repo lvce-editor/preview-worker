@@ -7,7 +7,9 @@ export const executeScripts = (window: any, document: any, scripts: readonly str
   window.alert = Alert.alert
   // @ts-ignore
   globalThis.alert = Alert.alert
-  window.localStorage = createLocalStorage()
+  const localStorage = createLocalStorage()
+  // @ts-ignore
+  globalThis.localStorage = localStorage
   // Execute each script with the happy-dom window and document as context
   for (const scriptContent of scripts) {
     try {
