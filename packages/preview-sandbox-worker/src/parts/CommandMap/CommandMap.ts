@@ -1,0 +1,17 @@
+import { terminate } from '@lvce-editor/viewlet-registry'
+import * as HandleClick from '../HandleClick/HandleClick.ts'
+import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
+import * as HandleInput from '../HandleInput/HandleInput.ts'
+import * as HandleKeydown from '../HandleKeydown/HandleKeydown.ts'
+import * as HandleKeyup from '../HandleKeyup/HandleKeyup.ts'
+import { initializeSandbox } from '../InitializeSandbox/InitializeSandbox.ts'
+
+export const commandMap = {
+  'SandBox.handleClick': HandleClick.handleClick,
+  'SandBox.handleFileEdited': handleFileEdited,
+  'SandBox.handleInput': HandleInput.handleInput,
+  'SandBox.handleKeyDown': HandleKeydown.handleKeydown,
+  'SandBox.handleKeyUp': HandleKeyup.handleKeyup,
+  'SandBox.initialize': initializeSandbox,
+  'SandBox.terminate': terminate,
+}
