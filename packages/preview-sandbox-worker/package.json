@@ -1,7 +1,7 @@
 {
   "name": "@lvce-editor/preview-sandbox-worker",
   "version": "0.0.0-dev",
-  "description": "Preview Worker",
+  "description": "Preview Sandbox Worker",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lvce-editor/preview-worker.git"
@@ -9,7 +9,7 @@
   "license": "MIT",
   "author": "Lvce Editor",
   "type": "module",
-  "main": "src/previewWorkerMain.ts",
+  "main": "src/previewSandboxWorkerMain.ts",
   "scripts": {
     "test": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --detectOpenHandles --forceExit",
     "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch"
