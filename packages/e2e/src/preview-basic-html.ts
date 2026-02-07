@@ -1,15 +1,11 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
-import { writeFile } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-import { pathToFileURL } from 'node:url'
 
 export const name = 'preview.basic-html'
 
-export const test: Test = async ({ Command, expect, Locator }) => {
+export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
   // Create a temporary HTML file with basic content
-  const tmpDir = tmpdir()
-  const filePath = join(tmpDir, `preview-test-basic-${Date.now()}.html`)
+  const tmpDir = await FileSystem.getTmpDir()
+  const filePath = `${tmpDir}preview-test-basic-${Date.now()}.html`
   const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -20,8 +16,8 @@ export const test: Test = async ({ Command, expect, Locator }) => {
 </body>
 </html>`
 
-  await writeFile(filePath, html)
-  const uri = pathToFileURL(filePath).toString()
+  await FileSystem.writeFile(filePath, html)
+  const uri = filePath.replaceAll(/^\//, 'file:///')
 
   // Open the preview with the HTML file
   await Command.execute('Layout.showPreview', uri)

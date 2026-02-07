@@ -23,11 +23,11 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator }) => {
   <script>
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
-    
+
     // Draw a simple rectangle
     ctx.fillStyle = 'blue';
     ctx.fillRect(50, 50, 100, 100);
-    
+
     // Draw a circle
     ctx.fillStyle = 'red';
     ctx.beginPath();
