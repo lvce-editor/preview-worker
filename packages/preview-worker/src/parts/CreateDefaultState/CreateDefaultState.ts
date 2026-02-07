@@ -11,6 +11,7 @@ export const createDefaultState = (): PreviewState => {
     parsedDom: [],
     parsedNodesChildNodeCount: 0,
     platform: 0,
+    sandboxRpc: null,
     scripts: [],
     uid: 0,
     uri: '',

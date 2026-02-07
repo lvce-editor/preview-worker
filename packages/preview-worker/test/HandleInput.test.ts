@@ -14,10 +14,12 @@ const createState = (uid: number): any => {
     initial: false,
     parsedDom: [],
     parsedNodesChildNodeCount: [],
+    sandboxRpc: null,
     scrollLeft: 0,
     scrollTop: 0,
     uid,
     uri: '',
+    useSandboxWorker: false,
     zoom: 1,
   }
 }

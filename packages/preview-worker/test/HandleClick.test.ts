@@ -15,9 +15,11 @@ const createState = (uid: number, overrides: Partial<PreviewState> = {}): Previe
   parsedDom: [],
   parsedNodesChildNodeCount: 0,
   platform: 0,
+  sandboxRpc: null,
   scripts: [],
   uid,
   uri: '',
+  useSandboxWorker: false,
   warningCount: 0,
   ...overrides,
 })

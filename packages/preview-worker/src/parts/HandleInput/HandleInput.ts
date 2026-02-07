@@ -4,11 +4,22 @@ import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/G
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
-export const handleInput = (state: PreviewState, hdId: string, value: string): PreviewState => {
-  // console.log('input,', hdId, value)
-  if (!hdId) {
-    return state
+const handleInputSandbox = async (state: PreviewState, hdId: string, value: string): Promise<PreviewState> => {
+  const { sandboxRpc, uid } = state
+  await sandboxRpc.invoke('SandBox.handleInput', uid, hdId, value)
+  const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', uid)
+  const parsedDom = serialized.dom
+  const { css } = serialized
+  const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
+  return {
+    ...state,
+    css,
+    parsedDom,
+    parsedNodesChildNodeCount,
   }
+}
+
+const handleInputLocal = (state: PreviewState, hdId: string, value: string): PreviewState => {
   const happyDomInstance = HappyDomState.get(state.uid)
   if (!happyDomInstance) {
     return state
@@ -18,17 +29,12 @@ export const handleInput = (state: PreviewState, hdId: string, value: string): P
     return state
   }
 
-  // console.log({ element })
-  // Update the element's value from the preview
   element.value = value
-  // Dispatch input event in happy-dom so event listeners fire
   DispatchInputEvent.dispatchInputEvent(element, happyDomInstance.window)
 
-  // Re-serialize the (potentially mutated) DOM
   const elementMap = new Map<string, any>()
   const serialized = SerializeHappyDom.serialize(happyDomInstance.document, elementMap)
 
-  // Update happy-dom state with new element map
   HappyDomState.set(state.uid, {
     document: happyDomInstance.document,
     elementMap,
@@ -45,4 +51,14 @@ export const handleInput = (state: PreviewState, hdId: string, value: string): P
     parsedDom,
     parsedNodesChildNodeCount,
   }
+}
+
+export const handleInput = (state: PreviewState, hdId: string, value: string): PreviewState | Promise<PreviewState> => {
+  if (!hdId) {
+    return state
+  }
+  if (state.useSandboxWorker && state.sandboxRpc) {
+    return handleInputSandbox(state, hdId, value)
+  }
+  return handleInputLocal(state, hdId, value)
 }
