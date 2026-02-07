@@ -28,7 +28,7 @@ test('getOffscreenCanvas should return the OffscreenCanvas from RendererWorker',
 
   const result = await getOffscreenCanvas(100, 200)
 
-  expect(mockRpc.invocations).toEqual([['OffscreenCanvas.createForPreview', 100, 200, 0]])
+  expect(mockRpc.invocations).toEqual([['OffscreenCanvas.createForPreview', 1, 100, 200]])
   expect(result).toEqual({ canvasId: mockCanvasId, offscreenCanvas: mockCanvas })
 })
 
@@ -41,5 +41,5 @@ test('getOffscreenCanvas should propagate errors from RendererWorker', async () 
   })
 
   await expect(getOffscreenCanvas(0, 0)).rejects.toThrow(testError)
-  expect(mockRpc.invocations).toEqual([['OffscreenCanvas.createForPreview', 0, 0, 0]])
+  expect(mockRpc.invocations).toEqual([['OffscreenCanvas.createForPreview', 2, 0, 0]])
 })
