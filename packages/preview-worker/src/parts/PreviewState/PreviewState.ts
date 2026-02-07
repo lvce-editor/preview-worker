@@ -1,3 +1,4 @@
+import type { Rpc } from '@lvce-editor/rpc'
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 
 export interface PreviewState {
@@ -10,7 +11,7 @@ export interface PreviewState {
   readonly parsedDom: readonly VirtualDomNode[]
   readonly parsedNodesChildNodeCount: number
   readonly platform: number
-  readonly sandboxRpc: any
+  readonly sandboxRpc: Rpc
   readonly scripts: readonly string[]
   readonly uid: number
   readonly uri: string
