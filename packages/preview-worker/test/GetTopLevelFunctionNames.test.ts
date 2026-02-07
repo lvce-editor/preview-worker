@@ -54,3 +54,29 @@ function b() {}
 function c() {}`
   expect(GetTopLevelFunctionNames.getTopLevelFunctionNames(script)).toEqual(['a', 'b', 'c'])
 })
+
+test('getTopLevelFunctionNames - nested function should not be included', () => {
+  const script = `function outer() {
+  function inner() {}
+}`
+  expect(GetTopLevelFunctionNames.getTopLevelFunctionNames(script)).toEqual(['outer'])
+})
+
+test('getTopLevelFunctionNames - multiple nested functions', () => {
+  const script = `function outer() {
+  function inner1() {}
+  function inner2() {}
+}
+function topLevel() {}`
+  expect(GetTopLevelFunctionNames.getTopLevelFunctionNames(script)).toEqual(['outer', 'topLevel'])
+})
+
+test('getTopLevelFunctionNames - deeply nested functions', () => {
+  const script = `function a() {
+  function b() {
+    function c() {}
+  }
+}
+function d() {}`
+  expect(GetTopLevelFunctionNames.getTopLevelFunctionNames(script)).toEqual(['a', 'd'])
+})
