@@ -254,7 +254,7 @@ test('serialize should include draggable property set via JavaScript', () => {
   const div = doc.createElement('div')
   div.draggable = true
   div.textContent = 'Drag me'
-  doc.body.appendChild(div)
+  doc.body.append(div)
   const result = SerializeHappyDom.serialize(doc)
   expect(result.dom).toEqual([{ childCount: 1, draggable: 'true', type: VirtualDomElements.Div }, text('Drag me')])
 })
