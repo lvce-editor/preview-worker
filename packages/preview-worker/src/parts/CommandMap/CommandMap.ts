@@ -8,6 +8,12 @@ import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
 import * as HandleInput from '../HandleInput/HandleInput.ts'
 import * as HandleKeydown from '../HandleKeydown/HandleKeydown.ts'
 import * as HandleKeyup from '../HandleKeyup/HandleKeyup.ts'
+import * as HandleDragStart from '../HandleDragStart/HandleDragStart.ts'
+import * as HandleDragOver from '../HandleDragOver/HandleDragOver.ts'
+import * as HandleDrop from '../HandleDrop/HandleDrop.ts'
+import * as HandleDragEnd from '../HandleDragEnd/HandleDragEnd.ts'
+import * as HandleDragEnter from '../HandleDragEnter/HandleDragEnter.ts'
+import * as HandleDragLeave from '../HandleDragLeave/HandleDragLeave.ts'
 import * as LoadContent from '../LoadContent/LoadContent.ts'
 import { getCommandIds, wrapCommand, wrapGetter } from '../PreviewStates/PreviewStates.ts'
 import { render2 } from '../Render2/Render2.ts'
@@ -28,6 +34,12 @@ export const commandMap = {
   'Preview.handleInput': wrapCommand(HandleInput.handleInput),
   'Preview.handleKeyDown': wrapCommand(HandleKeydown.handleKeydown),
   'Preview.handleKeyUp': wrapCommand(HandleKeyup.handleKeyup),
+  'Preview.handleDragStart': wrapCommand(HandleDragStart.handleDragStart),
+  'Preview.handleDragOver': wrapCommand(HandleDragOver.handleDragOver),
+  'Preview.handleDrop': wrapCommand(HandleDrop.handleDrop),
+  'Preview.handleDragEnd': wrapCommand(HandleDragEnd.handleDragEnd),
+  'Preview.handleDragEnter': wrapCommand(HandleDragEnter.handleDragEnter),
+  'Preview.handleDragLeave': wrapCommand(HandleDragLeave.handleDragLeave),
   'Preview.loadContent': wrapCommand(LoadContent.loadContent),
   'Preview.render2': render2,
   'Preview.renderEventListeners': renderEventListeners,

@@ -106,6 +106,11 @@ const serializeNode = (node: any, dom: readonly VirtualDomNode[], css: readonly 
     }
   }
 
+  // Handle draggable property (may not be reflected as attribute in some DOM implementations)
+  if (node.draggable && !newNode.draggable) {
+    newNode.draggable = 'true'
+  }
+
   // Assign element tracking ID for interactivity
   if (context.elementMap) {
     const hdId = String(context.nextId++)
