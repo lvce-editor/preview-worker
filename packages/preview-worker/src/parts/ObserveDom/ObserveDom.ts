@@ -22,7 +22,7 @@ const handleMutations = async (uid: number): Promise<void> => {
     window: happyDomInstance.window,
   })
 
-  const { newState: state } = PreviewStates.get(uid)
+  const { newState: state, oldState } = PreviewStates.get(uid)
   const parsedDom = serialized.dom
   const { css } = serialized
   const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
@@ -34,7 +34,7 @@ const handleMutations = async (uid: number): Promise<void> => {
     parsedNodesChildNodeCount,
   }
 
-  PreviewStates.set(uid, state, updatedState)
+  PreviewStates.set(uid, oldState, updatedState)
   await RendererWorker.invoke('Preview.rerender', uid)
 }
 
