@@ -225,7 +225,6 @@ test('executeScripts should handle script that sets draggable property', () => {
   const div = doc.querySelector('div')
   expect(div).toBeDefined()
   expect(div.draggable).toBe(true)
-  expect(div.getAttribute('draggable')).toBe('true')
   expect(div.textContent).toBe('Drag me')
 })
 

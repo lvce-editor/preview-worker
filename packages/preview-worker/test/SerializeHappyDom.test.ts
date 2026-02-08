@@ -246,3 +246,15 @@ test('serialize should handle DOM with added children', () => {
   expect(ulNode).toBeDefined()
   expect(ulNode!.childCount).toBe(3)
 })
+
+test('serialize should include draggable property set via JavaScript', () => {
+  const window = new Window({ url: 'https://localhost:3000' })
+  const doc = window.document
+  doc.documentElement.innerHTML = '<body></body>'
+  const div = doc.createElement('div')
+  div.draggable = true
+  div.textContent = 'Drag me'
+  doc.body.appendChild(div)
+  const result = SerializeHappyDom.serialize(doc)
+  expect(result.dom).toEqual([{ childCount: 1, draggable: 'true', type: VirtualDomElements.Div }, text('Drag me')])
+})
