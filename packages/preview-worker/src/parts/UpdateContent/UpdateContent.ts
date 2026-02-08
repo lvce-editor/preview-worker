@@ -6,6 +6,7 @@ import { createWindow } from '../CreateWindow/CreateWindow.ts'
 import * as ExecuteScripts from '../ExecuteScripts/ExecuteScripts.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
+import { observe } from '../ObserveDom/ObserveDom.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as PatchCanvasElements from '../PatchCanvasElements/PatchCanvasElements.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
@@ -46,6 +47,7 @@ export const updateContent = async (
           elementMap,
           window: happyDomWindow,
         })
+        observe(state.uid, happyDomDocument, happyDomWindow)
       } catch (error) {
         console.error(error)
         // If script execution fails, fall back to static HTML parsing
