@@ -48,10 +48,10 @@ export const observe = (uid: number, document: any, window: any): void => {
   })
 
   observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true,
     attributes: true,
     characterData: true,
+    childList: true,
+    subtree: true,
   })
 
   observers.set(uid, observer)

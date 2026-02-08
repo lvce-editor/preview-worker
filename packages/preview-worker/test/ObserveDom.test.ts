@@ -1,23 +1,15 @@
-import { afterEach, beforeEach, expect, jest, test } from '@jest/globals'
+import { afterEach, expect, test } from '@jest/globals'
+import { RendererWorker } from '@lvce-editor/rpc-registry'
 import { Window } from 'happy-dom-without-node'
+import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as HappyDomState from '../src/parts/HappyDomState/HappyDomState.ts'
 import * as ObserveDom from '../src/parts/ObserveDom/ObserveDom.ts'
 import * as PreviewStates from '../src/parts/PreviewStates/PreviewStates.ts'
 import * as SerializeHappyDom from '../src/parts/SerializeHappyDom/SerializeHappyDom.ts'
-import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
-
-jest.mock('@lvce-editor/rpc-registry', () => ({
-  RendererWorker: {
-    invoke: jest.fn(() => Promise.resolve()),
-  },
-}))
-
-const { RendererWorker } = await import('@lvce-editor/rpc-registry')
 
 afterEach(() => {
   ObserveDom.disconnect(1)
   HappyDomState.remove(1)
-  jest.clearAllMocks()
 })
 
 const setupHappyDomWithObserver = (uid: number, html: string, scripts: readonly string[] = []): any => {
@@ -42,7 +34,7 @@ const setupHappyDomWithObserver = (uid: number, html: string, scripts: readonly 
 
   ObserveDom.observe(uid, document, window)
 
-  return { window, document }
+  return { document, window }
 }
 
 const waitForMutationObserver = (): Promise<void> => {
@@ -52,49 +44,54 @@ const waitForMutationObserver = (): Promise<void> => {
 }
 
 test('observe should detect childList mutations and trigger rerender', async () => {
+  using mockRpc = RendererWorker.registerMockRpc({ 'Preview.rerender': () => {} })
   const { document } = setupHappyDomWithObserver(1, '<body><div id="container"></div></body>')
 
-  const container = document.getElementById('container')
+  const container = document.querySelector('#container')
   const span = document.createElement('span')
   span.textContent = 'dynamic content'
-  container.appendChild(span)
+  container.append(span)
 
   await waitForMutationObserver()
 
-  expect(RendererWorker.invoke).toHaveBeenCalledWith('Preview.rerender', 1)
+  expect(mockRpc.invocations).toEqual([['Preview.rerender', 1]])
 })
 
 test('observe should detect attribute mutations and trigger rerender', async () => {
+  using mockRpc = RendererWorker.registerMockRpc({ 'Preview.rerender': () => {} })
   const { document } = setupHappyDomWithObserver(1, '<body><div id="target"></div></body>')
 
-  const target = document.getElementById('target')
+  const target = document.querySelector('#target')
   target.setAttribute('class', 'highlighted')
 
   await waitForMutationObserver()
 
-  expect(RendererWorker.invoke).toHaveBeenCalledWith('Preview.rerender', 1)
+  expect(mockRpc.invocations).toEqual([['Preview.rerender', 1]])
 })
 
 test('observe should detect characterData mutations and trigger rerender', async () => {
+  using mockRpc = RendererWorker.registerMockRpc({ 'Preview.rerender': () => {} })
   const { document } = setupHappyDomWithObserver(1, '<body><div id="text">original</div></body>')
 
-  const textDiv = document.getElementById('text')
+  const textDiv = document.querySelector('#text')
   textDiv.textContent = 'changed'
 
   await waitForMutationObserver()
 
-  expect(RendererWorker.invoke).toHaveBeenCalledWith('Preview.rerender', 1)
+  expect(mockRpc.invocations.length).toBeGreaterThanOrEqual(1)
+  expect(mockRpc.invocations[0]).toEqual(['Preview.rerender', 1])
 })
 
 test('observe should update PreviewStates with new parsedDom', async () => {
+  using _mockRpc = RendererWorker.registerMockRpc({ 'Preview.rerender': () => {} })
   const { document } = setupHappyDomWithObserver(1, '<body><div id="container"></div></body>')
 
   const stateBefore = PreviewStates.get(1).newState
 
-  const container = document.getElementById('container')
+  const container = document.querySelector('#container')
   const p = document.createElement('p')
   p.textContent = 'new paragraph'
-  container.appendChild(p)
+  container.append(p)
 
   await waitForMutationObserver()
 
@@ -103,13 +100,14 @@ test('observe should update PreviewStates with new parsedDom', async () => {
 })
 
 test('observe should update HappyDomState elementMap', async () => {
+  using _mockRpc = RendererWorker.registerMockRpc({ 'Preview.rerender': () => {} })
   const { document } = setupHappyDomWithObserver(1, '<body><div id="container"></div></body>')
 
   const elementMapBefore = HappyDomState.get(1)!.elementMap
 
-  const container = document.getElementById('container')
+  const container = document.querySelector('#container')
   const span = document.createElement('span')
-  container.appendChild(span)
+  container.append(span)
 
   await waitForMutationObserver()
 
@@ -118,68 +116,69 @@ test('observe should update HappyDomState elementMap', async () => {
 })
 
 test('observe should detect mutations from setTimeout in user scripts', async () => {
-  const { window } = setupHappyDomWithObserver(
-    1,
-    '<body><div id="container">initial</div></body>',
-    [
-      `
+  using mockRpc = RendererWorker.registerMockRpc({ 'Preview.rerender': () => {} })
+  setupHappyDomWithObserver(1, '<body><div id="container">initial</div></body>', [
+    `
       window.setTimeout(() => {
         const el = document.getElementById("container");
         el.textContent = "updated after timeout";
       }, 10);
       `,
-    ],
-  )
+  ])
 
   await new Promise((resolve) => {
     setTimeout(resolve, 100)
   })
 
-  expect(RendererWorker.invoke).toHaveBeenCalledWith('Preview.rerender', 1)
+  expect(mockRpc.invocations.length).toBeGreaterThanOrEqual(1)
+  expect(mockRpc.invocations[0]).toEqual(['Preview.rerender', 1])
 })
 
 test('disconnect should stop observing mutations', async () => {
+  using mockRpc = RendererWorker.registerMockRpc({ 'Preview.rerender': () => {} })
   const { document } = setupHappyDomWithObserver(1, '<body><div id="container"></div></body>')
 
   ObserveDom.disconnect(1)
 
-  const container = document.getElementById('container')
+  const container = document.querySelector('#container')
   const span = document.createElement('span')
-  container.appendChild(span)
+  container.append(span)
 
   await waitForMutationObserver()
 
-  expect(RendererWorker.invoke).not.toHaveBeenCalled()
+  expect(mockRpc.invocations).toEqual([])
 })
 
 test('observe should replace existing observer for same uid', async () => {
+  using mockRpc = RendererWorker.registerMockRpc({ 'Preview.rerender': () => {} })
   const { document, window } = setupHappyDomWithObserver(1, '<body><div id="container"></div></body>')
 
   // Observe again (should replace)
   ObserveDom.observe(1, document, window)
 
-  const container = document.getElementById('container')
+  const container = document.querySelector('#container')
   const span = document.createElement('span')
-  container.appendChild(span)
+  container.append(span)
 
   await waitForMutationObserver()
 
   // Should still work, not fire twice
-  expect(RendererWorker.invoke).toHaveBeenCalledTimes(1)
+  expect(mockRpc.invocations).toEqual([['Preview.rerender', 1]])
 })
 
 test('observe should not throw when HappyDomState is missing during mutation', async () => {
+  using mockRpc = RendererWorker.registerMockRpc({ 'Preview.rerender': () => {} })
   const { document } = setupHappyDomWithObserver(1, '<body><div id="container"></div></body>')
 
   // Remove the happy dom state
   HappyDomState.remove(1)
 
-  const container = document.getElementById('container')
+  const container = document.querySelector('#container')
   const span = document.createElement('span')
-  container.appendChild(span)
+  container.append(span)
 
   await waitForMutationObserver()
 
   // Should not call rerender since there's no happy dom state
-  expect(RendererWorker.invoke).not.toHaveBeenCalled()
+  expect(mockRpc.invocations).toEqual([])
 })
