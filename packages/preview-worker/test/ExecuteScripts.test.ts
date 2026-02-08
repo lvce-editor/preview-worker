@@ -211,6 +211,24 @@ test('executeScripts with dispatchClickEvent should execute onclick handler and 
   expect(button.textContent).toBe('2')
 })
 
+test('executeScripts should handle script that sets draggable property', () => {
+  const html = '<html><body></body></html>'
+  const scripts = [
+    `
+    const div = document.createElement("div");
+    div.draggable = true;
+    div.textContent = "Drag me";
+    document.body.appendChild(div);
+    `,
+  ]
+  const { document: doc } = ExecuteScripts.createWindowAndExecuteScripts(html, scripts)
+  const div = doc.querySelector('div')
+  expect(div).toBeDefined()
+  expect(div.draggable).toBe(true)
+  expect(div.getAttribute('draggable')).toBe('true')
+  expect(div.textContent).toBe('Drag me')
+})
+
 test('executeScripts with dispatchClickEvent should execute onclick handler and update textContent 2', () => {
   const html = '<html><body><button id="btn" onclick="someFunction(2)">Click me</button></body></html>'
   const scripts = [
