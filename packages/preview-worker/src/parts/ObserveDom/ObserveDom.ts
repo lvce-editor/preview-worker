@@ -35,7 +35,11 @@ const handleMutations = async (uid: number): Promise<void> => {
   }
 
   PreviewStates.set(uid, oldState, updatedState)
-  await RendererWorker.invoke('Preview.rerender', uid)
+  try {
+    await RendererWorker.invoke('Preview.rerender', uid)
+  } catch {
+    // ignore
+  }
 }
 
 export const observe = (uid: number, document: any, window: any): void => {
