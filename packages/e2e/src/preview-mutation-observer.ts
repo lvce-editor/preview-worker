@@ -34,14 +34,13 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspa
   await expect(previewArea).toBeVisible()
   const contentDiv = previewArea.locator('#content')
   await expect(contentDiv).toBeVisible()
-  await expect(contentDiv).toContainText('Original content')
+  await expect(contentDiv).toHaveText('Original content')
 
   // act
   await Command.execute('Preview.handleClick', '2')
-
   // Wait for the timeout to complete
   await new Promise((resolve) => setTimeout(resolve, 10))
 
   // assert
-  await expect(contentDiv).toContainText('Updated content')
+  await expect(contentDiv).toHaveText('Updated content')
 }
