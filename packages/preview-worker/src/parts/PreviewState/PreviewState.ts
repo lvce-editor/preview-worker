@@ -7,6 +7,7 @@ export interface PreviewState {
   readonly css: readonly string[]
   readonly errorCount: number
   readonly errorMessage: string
+  readonly height: number
   readonly initial: boolean
   readonly parsedDom: readonly VirtualDomNode[]
   readonly parsedNodesChildNodeCount: number
@@ -17,4 +18,7 @@ export interface PreviewState {
   readonly uri: string
   readonly useSandboxWorker: boolean
   readonly warningCount: number
+  readonly width: number
+  readonly x: number
+  readonly y: number
 }

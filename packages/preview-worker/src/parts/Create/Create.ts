@@ -19,6 +19,7 @@ export const create = async (
     css: [],
     errorCount: 0,
     errorMessage: '',
+    height,
     initial: true,
     parsedDom: [],
     parsedNodesChildNodeCount: 0,
@@ -29,6 +30,9 @@ export const create = async (
     uri,
     useSandboxWorker: false,
     warningCount: 0,
+    width,
+    x,
+    y,
   }
   set(uid, state, state)
 }
