@@ -78,6 +78,10 @@ export const updateContent = async (
           // Add the dynamic CSS rule if provided
           if (cssRule) {
             newCss = [...newCss, cssRule]
+            // If updateContent is still in progress, track this CSS rule to return it
+            if (UpdateContentInProgress.isUpdating(state.uid)) {
+              UpdateContentInProgress.addCssRule(state.uid, cssRule)
+            }
           }
           const newParsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(newParsedDom)
 
@@ -128,9 +132,13 @@ export const updateContent = async (
 
     const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
 
+    // Include any dynamic CSS rules generated during updateContent execution (e.g., canvas width/height rules)
+    const dynamicCssRules = UpdateContentInProgress.getCssRules(state.uid)
+    const finalCss = [...css, ...dynamicCssRules]
+
     return {
       content,
-      css,
+      css: finalCss,
       errorMessage: '',
       parsedDom,
       parsedNodesChildNodeCount,
