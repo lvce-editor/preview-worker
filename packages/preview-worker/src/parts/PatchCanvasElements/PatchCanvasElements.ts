@@ -3,12 +3,8 @@ import { toNumber } from '../CreateNewOffscreenCanvas/CreateNewOffscreenCanvas.t
 import { getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
 
 interface CanvasCanvasDimensions {
-  height: number
-  width: number
-}
-
-const generateCanvasCssRule = (dataUid: string, width: number, height: number): string => {
-  return `[data-id="${dataUid}"] { width: ${width}px; height: ${height}px; }`
+  readonly height: number
+  readonly width: number
 }
 
 export const patchCanvasElements = async (
