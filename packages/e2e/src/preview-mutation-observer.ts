@@ -36,8 +36,7 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspa
 
   // act
   await Command.execute('Preview.handleClick', '1')
-  // Wait for the timeout to complete
-  await new Promise((resolve) => setTimeout(resolve, 10))
+  await new Promise((resolve) => requestAnimationFrame(resolve))
 
   // assert
   await expect(contentDiv).toHaveText('Updated content')
