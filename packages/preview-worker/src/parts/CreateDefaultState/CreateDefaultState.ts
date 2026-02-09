@@ -7,6 +7,7 @@ export const createDefaultState = (): PreviewState => {
     css: [],
     errorCount: 0,
     errorMessage: '',
+    height: 0,
     initial: true,
     parsedDom: [],
     parsedNodesChildNodeCount: 0,
@@ -17,5 +18,8 @@ export const createDefaultState = (): PreviewState => {
     uri: '',
     useSandboxWorker: false,
     warningCount: 0,
+    width: 0,
+    x: 0,
+    y: 0,
   }
 }
