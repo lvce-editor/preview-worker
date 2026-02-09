@@ -8,6 +8,7 @@ import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/G
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import { observe } from '../ObserveDom/ObserveDom.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
+import * as PatchCanvasElements from '../PatchCanvasElements/PatchCanvasElements.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
 export const updateContent = async (
@@ -21,8 +22,6 @@ export const updateContent = async (
   scripts: readonly string[]
   errorMessage: string
 }> => {
-  // Mark that updateContent is in progress for this uid
-
   try {
     // Read the file content using RendererWorker RPC
     const content = await RendererWorker.readFile(uri)
@@ -37,12 +36,7 @@ export const updateContent = async (
     if (scripts.length > 0 && !state.useSandboxWorker) {
       try {
         const { document: happyDomDocument, window: happyDomWindow } = createWindow(content)
-
-        HappyDomState.set(state.uid, {
-          document: happyDomDocument,
-          elementMap: new Map(),
-          window: happyDomWindow,
-        })
+        await PatchCanvasElements.patchCanvasElements(happyDomDocument, state.uid)
         ExecuteScripts.executeScripts(happyDomWindow, happyDomDocument, scripts, state.width, state.height)
         const elementMap = new Map<string, any>()
         const serialized = SerializeHappyDom.serialize(happyDomDocument, elementMap)
@@ -81,7 +75,5 @@ export const updateContent = async (
       parsedNodesChildNodeCount: 0,
       scripts: [],
     }
-  } finally {
-    // Mark that updateContent is no longer in progress
   }
 }
