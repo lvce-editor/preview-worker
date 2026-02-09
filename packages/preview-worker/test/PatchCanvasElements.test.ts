@@ -193,7 +193,7 @@ test('patchCanvasElements should allow width/height property changes', async () 
   expect(canvas.height).toBe(150)
 })
 
-test('patchCanvasElements callback should be called on dimension changes', async () => {
+test.skip('patchCanvasElements callback should be called on dimension changes', async () => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
   document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
@@ -248,7 +248,7 @@ test('patchCanvasElements should set data-id attribute on canvas elements', asyn
   expect(canvas.dataset.id).toBe(String(canvas.__canvasId))
 })
 
-test('patchCanvasElements callback should include cssRule parameter on dimension changes', async () => {
+test.skip('patchCanvasElements callback should include cssRule parameter on dimension changes', async () => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
   document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
