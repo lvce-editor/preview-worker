@@ -1,5 +1,5 @@
 import * as CanvasState from '../CanvasState/CanvasState.ts'
-import { toNumber } from '../CreateNewOffscreenCanvas/CreateNewOffscreenCanvas.ts'
+import { toNumber } from '../ToNumber/ToNumber.ts'
 import { getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
 
 interface CanvasCanvasDimensions {
