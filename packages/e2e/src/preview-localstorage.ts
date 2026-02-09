@@ -6,7 +6,7 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   // arrange
   const tmpDir = await FileSystem.getTmpDir()
   await Workspace.setPath(tmpDir)
-  const filePath = `${tmpDir}/preview-test-localstorage-${Date.now()}.html`
+  const filePath = `${tmpDir}/preview-test-localstorage.html`
   const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -62,22 +62,22 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   // Test setting an item
   const setBtn = previewArea.locator('#setBtn')
   await expect(setBtn).toBeVisible()
-  await Command.execute('Preview.handleClick', '0')
+  await Command.execute('Preview.handleClick', '1')
   await expect(resultDiv).toContainText('item set')
 
   // Test getting the item back
   const getBtn = previewArea.locator('#getBtn')
   await expect(getBtn).toBeVisible()
-  await Command.execute('Preview.handleClick', '1')
+  await Command.execute('Preview.handleClick', '2')
   await expect(resultDiv).toContainText('testValue')
 
   // Test clearing localStorage
   const clearBtn = previewArea.locator('#clearBtn')
   await expect(clearBtn).toBeVisible()
-  await Command.execute('Preview.handleClick', '2')
+  await Command.execute('Preview.handleClick', '3')
   await expect(resultDiv).toContainText('cleared')
 
   // Verify it's actually cleared by trying to get the item again
-  await Command.execute('Preview.handleClick', '1')
+  await Command.execute('Preview.handleClick', '2')
   await expect(resultDiv).toContainText('not found')
 }
