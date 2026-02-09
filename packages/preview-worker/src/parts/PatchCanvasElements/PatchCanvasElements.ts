@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import * as CanvasState from '../CanvasState/CanvasState.ts'
 import { toNumber } from '../CreateNewOffscreenCanvas/CreateNewOffscreenCanvas.ts'
 import { getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
@@ -32,6 +31,7 @@ export const patchCanvasElements = async (
     const { canvasId, offscreenCanvas } = await getOffscreenCanvas(width, height)
     const dataId = String(canvasId)
     element.__canvasId = canvasId
+    element.__offscreenCanvas = offscreenCanvas
     element.dataset.id = dataId
     const context = offscreenCanvas.getContext('2d')
     element.getContext = (contextType: string): any => {
@@ -52,9 +52,9 @@ export const patchCanvasElements = async (
       get: () => widthValue,
       set: (newWidth: number | string) => {
         widthValue = toNumber(newWidth)
-        dimensions.width = widthValue
-        const cssRule = generateCanvasCssRule(dataId, widthValue, dimensions.height)
-        onCanvasDimensionsChange?.(element, widthValue, dimensions.height, cssRule)
+        element.__offscreenCanvas.width = widthValue
+        // const cssRule = generateCanvasCssRule(dataId, widthValue, dimensions.height)
+        // onCanvasDimensionsChange?.(element, widthValue, dimensions.height, cssRule)
       },
     })
 
@@ -67,8 +67,10 @@ export const patchCanvasElements = async (
       set: (newHeight: number | string) => {
         heightValue = toNumber(newHeight)
         dimensions.height = heightValue
-        const cssRule = generateCanvasCssRule(dataId, dimensions.width, heightValue)
-        onCanvasDimensionsChange?.(element, dimensions.width, heightValue, cssRule)
+        element.__offscreenCanvas.height = heightValue
+
+        // const cssRule = generateCanvasCssRule(dataId, dimensions.width, heightValue)
+        // onCanvasDimensionsChange?.(element, dimensions.width, heightValue, cssRule)
       },
     })
 
