@@ -206,6 +206,7 @@ test.skip('patchCanvasElements callback should be called on dimension changes', 
     },
   })
 
+  // @ts-ignore
   await PatchCanvasElements.patchCanvasElements(document, 1, async (element, width, height) => {
     changes.push({ height, width })
   })
@@ -261,6 +262,7 @@ test.skip('patchCanvasElements callback should include cssRule parameter on dime
     },
   })
 
+  // @ts-ignore
   await PatchCanvasElements.patchCanvasElements(document, 1, async (element, width, height, cssRule) => {
     changes.push({ cssRule, height, width })
   })
