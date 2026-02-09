@@ -1,16 +1,17 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import * as CanvasState from '../CanvasState/CanvasState.ts'
 import { getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
 
 interface CanvasCanvasDimensions {
-  width: number
   height: number
+  width: number
 }
 
 const toNumber = (value: number | string): number => {
   if (typeof value === 'number') {
     return value
   }
-  const num = parseInt(value, 10)
+  const num = Number.parseInt(value, 10)
   return Number.isNaN(num) ? 0 : num
 }
 
@@ -43,32 +44,32 @@ export const patchCanvasElements = async (
     }
 
     // Store dimension tracking
-    const dimensions: CanvasCanvasDimensions = { width, height }
+    const dimensions: CanvasCanvasDimensions = { height, width }
 
     // Override width property to detect changes
     let widthValue = width
     Object.defineProperty(element, 'width', {
+      configurable: true,
+      enumerable: true,
       get: () => widthValue,
       set: (newWidth: number | string) => {
         widthValue = toNumber(newWidth)
         dimensions.width = widthValue
         createNewOffscreenCanvas(widthValue, dimensions.height)
       },
-      configurable: true,
-      enumerable: true,
     })
 
     // Override height property to detect changes
     let heightValue = height
     Object.defineProperty(element, 'height', {
+      configurable: true,
+      enumerable: true,
       get: () => heightValue,
       set: (newHeight: number | string) => {
         heightValue = toNumber(newHeight)
         dimensions.height = heightValue
         createNewOffscreenCanvas(dimensions.width, heightValue)
       },
-      configurable: true,
-      enumerable: true,
     })
 
     const createNewOffscreenCanvas = async (w: number, h: number): Promise<void> => {
@@ -102,7 +103,7 @@ export const patchCanvasElements = async (
       }
     }
 
-    instances.push({ dataId, element, offscreenCanvas, dimensions })
+    instances.push({ dataId, dimensions, element, offscreenCanvas })
   }
   CanvasState.set(uid, { animationFrameHandles: [], instances })
 }
