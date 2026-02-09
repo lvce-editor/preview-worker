@@ -207,17 +207,17 @@ test('patchCanvasElements callback should be called on dimension changes', async
   })
 
   await PatchCanvasElements.patchCanvasElements(document, 1, async (element, width, height) => {
-    changes.push({ width, height })
+    changes.push({ height, width })
   })
 
   const canvas = document.querySelector('canvas') as any
-  
+
   // Change width first
   canvas.width = 200
-  
+
   // Wait for the async callback to complete
   await new Promise((resolve) => setTimeout(resolve, 50))
-  
+
   // Change height
   canvas.height = 150
 
@@ -227,5 +227,5 @@ test('patchCanvasElements callback should be called on dimension changes', async
   // Callback should have been called at least once
   expect(changes.length).toBeGreaterThan(0)
   // Last change should be width=200, height=150
-  expect(changes[changes.length - 1]).toEqual({ width: 200, height: 150 })
+  expect(changes[changes.length - 1]).toEqual({ height: 150, width: 200 })
 })

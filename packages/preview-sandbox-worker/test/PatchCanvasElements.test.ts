@@ -211,13 +211,13 @@ test('patchCanvasElements callback should be called on dimension changes', async
   })
 
   const canvas = document.querySelector('canvas') as any
-  
+
   // Change width first
   canvas.width = 200
-  
+
   // Wait for the async callback to complete
   await new Promise((resolve) => setTimeout(resolve, 50))
-  
+
   // Change height
   canvas.height = 150
 
