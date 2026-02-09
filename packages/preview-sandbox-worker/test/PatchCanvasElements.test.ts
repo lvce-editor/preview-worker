@@ -198,7 +198,7 @@ test('patchCanvasElements callback should be called on dimension changes', async
   const { document } = window
   document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
   const mockOffscreenCanvas = new MockOffscreenCanvas(100, 100)
-  const changes: Array<{ width: number; height: number }> = []
+  const changes: Array<{ height: number; width: number }> = []
 
   using _mockRpc = RendererWorker.registerMockRpc({
     'OffscreenCanvas.createForPreview': (id: number) => {
@@ -207,7 +207,7 @@ test('patchCanvasElements callback should be called on dimension changes', async
   })
 
   await PatchCanvasElements.patchCanvasElements(document, 1, async (element, width, height) => {
-    changes.push({ width, height })
+    changes.push({ height, width })
   })
 
   const canvas = document.querySelector('canvas') as any
@@ -227,5 +227,5 @@ test('patchCanvasElements callback should be called on dimension changes', async
   // Callback should have been called at least once
   expect(changes.length).toBeGreaterThan(0)
   // Last change should be width=200, height=150
-  expect(changes[changes.length - 1]).toEqual({ width: 200, height: 150 })
+  expect(changes[changes.length - 1]).toEqual({ height: 150, width: 200 })
 })
