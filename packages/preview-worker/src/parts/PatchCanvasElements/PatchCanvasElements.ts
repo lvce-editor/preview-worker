@@ -40,9 +40,7 @@ const createNewOffscreenCanvas = async (
   // Update the instance in CanvasState
   const state = CanvasState.get(uid)
   if (state) {
-    const instanceIndex = state.instances.findIndex(
-      (inst: readonly any) => inst.element === element,
-    )
+    const instanceIndex = state.instances.findIndex((inst: readonly any) => inst.element === element)
     if (instanceIndex !== -1) {
       ;(state.instances[instanceIndex] as any).offscreenCanvas = newOffscreenCanvas
     }
@@ -92,7 +90,6 @@ export const patchCanvasElements = async (
       enumerable: true,
       get: () => widthValue,
       set: (newWidth: number | string) => {
-        console.log('set widt')
         widthValue = toNumber(newWidth)
         dimensions.width = widthValue
         createNewOffscreenCanvas(widthValue, dimensions.height)
