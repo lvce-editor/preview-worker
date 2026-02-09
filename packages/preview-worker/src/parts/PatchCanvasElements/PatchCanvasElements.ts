@@ -109,37 +109,6 @@ export const patchCanvasElements = async (
       },
     })
 
-    const createNewOffscreenCanvas = async (w: number, h: number): Promise<void> => {
-      if (Number.isNaN(w) || Number.isNaN(h) || w <= 0 || h <= 0) {
-        return
-      }
-
-      const { offscreenCanvas: newOffscreenCanvas } = await getOffscreenCanvas(w, h)
-      const newContext = newOffscreenCanvas.getContext('2d')
-
-      // Update getContext to return the new context
-      element.getContext = (contextType: string): any => {
-        if (contextType === '2d') {
-          return newContext
-        }
-        return undefined
-      }
-
-      // Update the instance in CanvasState
-      const state = CanvasState.get(uid)
-      if (state) {
-        const instanceIndex = state.instances.findIndex((inst) => inst.element === element)
-        if (instanceIndex !== -1) {
-          ;(state.instances[instanceIndex] as any).offscreenCanvas = newOffscreenCanvas
-        }
-      }
-
-      // Notify if callback is provided
-      if (onCanvasDimensionsChange) {
-        await onCanvasDimensionsChange(element, w, h)
-      }
-    }
-
     instances.push({ dataId, dimensions, element, offscreenCanvas })
   }
   CanvasState.set(uid, { animationFrameHandles: [], instances })
