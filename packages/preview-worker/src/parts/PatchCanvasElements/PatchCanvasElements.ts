@@ -43,11 +43,7 @@ export const patchCanvasElements = async (document: any, uid: number): Promise<v
       enumerable: true,
       get: () => widthValue,
       set: (newWidth: number | string) => {
-<<<<<<< HEAD
         widthValue = toNumber(newWidth)
-=======
-        widthValue = newWidth
->>>>>>> origin/main
         element.__offscreenCanvas.width = widthValue
       },
     })
@@ -59,11 +55,7 @@ export const patchCanvasElements = async (document: any, uid: number): Promise<v
       enumerable: true,
       get: () => heightValue,
       set: (newHeight: number | string) => {
-<<<<<<< HEAD
         heightValue = toNumber(newHeight)
-=======
-        heightValue = newHeight
->>>>>>> origin/main
         element.__offscreenCanvas.height = heightValue
       },
     })
