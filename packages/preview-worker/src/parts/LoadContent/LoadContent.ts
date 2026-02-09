@@ -15,11 +15,12 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
   }
 
   // Read and parse file contents if we have a URI
-  const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = state.uri
+  const { content, css, dynamicCanvasCss, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = state.uri
     ? await updateContent(state, state.uri)
     : {
         content: state.content,
         css: state.css,
+        dynamicCanvasCss: state.dynamicCanvasCss,
         errorMessage: state.errorMessage,
         parsedDom: state.parsedDom,
         parsedNodesChildNodeCount: state.parsedNodesChildNodeCount,
@@ -43,6 +44,7 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
     ...state,
     content,
     css: finalCss,
+    dynamicCanvasCss,
     errorCount: 0,
     errorMessage,
     initial: false,
