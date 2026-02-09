@@ -32,7 +32,7 @@ export const patchCanvasElements = async (
     const { canvasId, offscreenCanvas } = await getOffscreenCanvas(width, height)
     const dataId = String(canvasId)
     element.__canvasId = canvasId
-    element.setAttribute('data-uid', dataId)
+    element.dataset.uid = dataId
     const context = offscreenCanvas.getContext('2d')
     element.getContext = (contextType: string): any => {
       if (contextType === '2d') {
@@ -51,7 +51,6 @@ export const patchCanvasElements = async (
       enumerable: true,
       get: () => widthValue,
       set: (newWidth: number | string) => {
-        console.log('set canvas witdh', newWidth)
         widthValue = toNumber(newWidth)
         dimensions.width = widthValue
         const cssRule = generateCanvasCssRule(dataId, widthValue, dimensions.height)

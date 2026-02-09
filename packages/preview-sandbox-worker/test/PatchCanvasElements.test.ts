@@ -244,8 +244,8 @@ test('patchCanvasElements should set data-uid attribute on canvas elements', asy
 
   await PatchCanvasElements.patchCanvasElements(document, 1)
   const canvas = document.querySelector('canvas') as any
-  expect(canvas.getAttribute('data-uid')).toBeDefined()
-  expect(canvas.getAttribute('data-uid')).toBe(String(canvas.__canvasId))
+  expect(canvas.dataset.uid).toBeDefined()
+  expect(canvas.dataset.uid).toBe(String(canvas.__canvasId))
 })
 
 test('patchCanvasElements callback should include cssRule parameter on dimension changes', async () => {
@@ -262,11 +262,11 @@ test('patchCanvasElements callback should include cssRule parameter on dimension
   })
 
   await PatchCanvasElements.patchCanvasElements(document, 1, async (element, width, height, cssRule) => {
-    changes.push({ height, width, cssRule })
+    changes.push({ cssRule, height, width })
   })
 
   const canvas = document.querySelector('canvas') as any
-  const dataUid = canvas.getAttribute('data-uid')
+  const dataUid = canvas.dataset.uid
 
   // Change width
   canvas.width = 200

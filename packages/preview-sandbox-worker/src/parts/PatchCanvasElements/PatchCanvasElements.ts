@@ -75,7 +75,7 @@ export const patchCanvasElements = async (
     const { canvasId, offscreenCanvas } = await getOffscreenCanvas(width, height)
     const dataId = String(canvasId)
     element.__canvasId = canvasId
-    element.setAttribute('data-uid', dataId)
+    element.dataset.uid = dataId
     const context = offscreenCanvas.getContext('2d')
     element.getContext = (contextType: string): any => {
       if (contextType === '2d') {
