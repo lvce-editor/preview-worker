@@ -9,7 +9,6 @@ import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import { observe } from '../ObserveDom/ObserveDom.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
-import * as UpdateContentInProgress from '../UpdateContentInProgress/UpdateContentInProgress.ts'
 
 export const updateContent = async (
   state: PreviewState,
@@ -23,7 +22,6 @@ export const updateContent = async (
   errorMessage: string
 }> => {
   // Mark that updateContent is in progress for this uid
-  UpdateContentInProgress.set(state.uid)
 
   try {
     // Read the file content using RendererWorker RPC
@@ -85,6 +83,5 @@ export const updateContent = async (
     }
   } finally {
     // Mark that updateContent is no longer in progress
-    UpdateContentInProgress.remove(state.uid)
   }
 }
