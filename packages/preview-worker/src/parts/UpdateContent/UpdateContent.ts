@@ -19,6 +19,7 @@ export const updateContent = async (
 ): Promise<{
   content: string
   css: readonly string[]
+  dynamicCanvasCss: readonly string[]
   parsedDom: readonly VirtualDomNode[]
   parsedNodesChildNodeCount: number
   scripts: readonly string[]
@@ -74,10 +75,11 @@ export const updateContent = async (
 
           // Update the parsed DOM with new serialization
           const newParsedDom = serialized.dom
-          let newCss = serialized.css
+          const newCss = serialized.css
           // Add the dynamic CSS rule if provided
+          let newDynamicCanvasCss = previewState.dynamicCanvasCss
           if (cssRule) {
-            newCss = [...newCss, cssRule]
+            newDynamicCanvasCss = [...newDynamicCanvasCss, cssRule]
             // If updateContent is still in progress, track this CSS rule to return it
             if (UpdateContentInProgress.isUpdating(state.uid)) {
               UpdateContentInProgress.addCssRule(state.uid, cssRule)
@@ -88,6 +90,7 @@ export const updateContent = async (
           const updatedState = {
             ...previewState,
             css: newCss,
+            dynamicCanvasCss: newDynamicCanvasCss,
             parsedDom: newParsedDom,
             parsedNodesChildNodeCount: newParsedNodesChildNodeCount,
           }
@@ -135,11 +138,11 @@ export const updateContent = async (
     // Include any dynamic CSS rules generated during updateContent execution (e.g., canvas width/height rules)
     const dynamicCssRules = UpdateContentInProgress.getCssRules(state.uid)
     console.log({ dynamicCssRules })
-    const finalCss = [...css, ...dynamicCssRules]
 
     return {
       content,
-      css: finalCss,
+      css,
+      dynamicCanvasCss: dynamicCssRules,
       errorMessage: '',
       parsedDom,
       parsedNodesChildNodeCount,
@@ -151,6 +154,7 @@ export const updateContent = async (
     return {
       content: '',
       css: [],
+      dynamicCanvasCss: [],
       errorMessage,
       parsedDom: [],
       parsedNodesChildNodeCount: 0,
