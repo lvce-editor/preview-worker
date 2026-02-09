@@ -37,7 +37,7 @@ export const updateContent = async (
       try {
         const { document: happyDomDocument, window: happyDomWindow } = createWindow(content)
         await PatchCanvasElements.patchCanvasElements(happyDomDocument, state.uid)
-        ExecuteScripts.executeScripts(happyDomWindow, happyDomDocument, scripts)
+        ExecuteScripts.executeScripts(happyDomWindow, happyDomDocument, scripts, state.width, state.height)
         const elementMap = new Map<string, any>()
         const serialized = SerializeHappyDom.serialize(happyDomDocument, elementMap)
         parsedDom = serialized.dom
