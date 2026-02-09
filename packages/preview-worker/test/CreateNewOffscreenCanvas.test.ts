@@ -158,7 +158,11 @@ describe('createNewOffscreenCanvas', () => {
       },
     })
 
-    const callback = async (_element: any, width: number, height: number): Promise<void> => {
+    const callback = async (
+      _element: any,
+      width: number,
+      height: number,
+    ): Promise<void> => {
       callbackSpy.push({ height, width })
     }
 
