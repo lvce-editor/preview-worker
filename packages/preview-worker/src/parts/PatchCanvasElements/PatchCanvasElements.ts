@@ -7,11 +7,7 @@ interface CanvasCanvasDimensions {
   readonly width: number
 }
 
-export const patchCanvasElements = async (
-  document: any,
-  uid: number,
-  onCanvasDimensionsChange?: (element: any, width: number, height: number, cssRule?: string) => Promise<void>,
-): Promise<void> => {
+export const patchCanvasElements = async (document: any, uid: number): Promise<void> => {
   const canvasElements = document.querySelectorAll('canvas')
   if (canvasElements.length === 0) {
     return
@@ -60,7 +56,6 @@ export const patchCanvasElements = async (
       get: () => heightValue,
       set: (newHeight: number | string) => {
         heightValue = toNumber(newHeight)
-        dimensions.height = heightValue
         element.__offscreenCanvas.height = heightValue
       },
     })
