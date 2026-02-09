@@ -8,6 +8,8 @@ import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
 import * as HandleInput from '../HandleInput/HandleInput.ts'
 import * as HandleKeydown from '../HandleKeydown/HandleKeydown.ts'
 import * as HandleKeyup from '../HandleKeyup/HandleKeyup.ts'
+import * as HandleMousedown from '../HandleMousedown/HandleMousedown.ts'
+import * as HandleMousemove from '../HandleMousemove/HandleMousemove.ts'
 import * as LoadContent from '../LoadContent/LoadContent.ts'
 import { getCommandIds, wrapCommand, wrapGetter } from '../PreviewStates/PreviewStates.ts'
 import { render2 } from '../Render2/Render2.ts'
@@ -28,6 +30,8 @@ export const commandMap = {
   'Preview.handleInput': wrapCommand(HandleInput.handleInput),
   'Preview.handleKeyDown': wrapCommand(HandleKeydown.handleKeydown),
   'Preview.handleKeyUp': wrapCommand(HandleKeyup.handleKeyup),
+  'Preview.handleMousedown': wrapCommand(HandleMousedown.handleMousedown),
+  'Preview.handleMousemove': wrapCommand(HandleMousemove.handleMousemove),
   'Preview.loadContent': wrapCommand(LoadContent.loadContent),
   'Preview.render2': render2,
   'Preview.renderEventListeners': renderEventListeners,
