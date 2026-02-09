@@ -19,7 +19,7 @@ const handleMousemoveSandbox = async (state: PreviewState, hdId: string): Promis
   }
 }
 
-const handleMousemoveLocal = (state: PreviewState, hdId: string): PreviewState => {
+const handleMousemoveLocal = (state: PreviewState, hdId: string, clientX: number, clientY: number): PreviewState => {
   const happyDomInstance = HappyDomState.get(state.uid)
   if (!happyDomInstance) {
     return state
@@ -29,7 +29,9 @@ const handleMousemoveLocal = (state: PreviewState, hdId: string): PreviewState =
     return state
   }
 
-  DispatchMousemoveEvent.dispatchMousemoveEvent(element, happyDomInstance.window)
+  const adjustedClientX = clientX - state.x
+  const adjustedClientY = clientY - state.y
+  DispatchMousemoveEvent.dispatchMousemoveEvent(element, happyDomInstance.window, adjustedClientX, adjustedClientY)
 
   const elementMap = new Map<string, any>()
   const serialized = SerializeHappyDom.serialize(happyDomInstance.document, elementMap)
@@ -52,12 +54,12 @@ const handleMousemoveLocal = (state: PreviewState, hdId: string): PreviewState =
   }
 }
 
-export const handleMousemove = (state: PreviewState, hdId: string): PreviewState | Promise<PreviewState> => {
+export const handleMousemove = (state: PreviewState, hdId: string, clientX: number, clientY: number): PreviewState | Promise<PreviewState> => {
   if (!hdId) {
     return state
   }
   if (state.useSandboxWorker) {
     return handleMousemoveSandbox(state, hdId)
   }
-  return handleMousemoveLocal(state, hdId)
+  return handleMousemoveLocal(state, hdId, clientX, clientY)
 }
