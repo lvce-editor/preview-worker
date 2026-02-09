@@ -9,6 +9,7 @@ import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import { observe } from '../ObserveDom/ObserveDom.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as PatchCanvasElements from '../PatchCanvasElements/PatchCanvasElements.ts'
+import * as PreviewStates from '../PreviewStates/PreviewStates.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 
 export const updateContent = async (
@@ -36,7 +37,57 @@ export const updateContent = async (
     if (scripts.length > 0 && !state.useSandboxWorker) {
       try {
         const { document: happyDomDocument, window: happyDomWindow } = createWindow(content)
-        await PatchCanvasElements.patchCanvasElements(happyDomDocument, state.uid)
+
+        // Handle canvas dimension changes by re-serializing and re-rendering
+        const handleCanvasDimensionsChange = async (element: any, width: number, height: number): Promise<void> => {
+          // Get the latest happy-dom state
+          const happyDomInstance = HappyDomState.get(state.uid)
+          if (!happyDomInstance) {
+            return
+          }
+
+          // Re-serialize the DOM with updated canvas dimensions
+          const elementMap = new Map<string, any>()
+          const serialized = SerializeHappyDom.serialize(happyDomDocument, elementMap)
+
+          // Update happy-dom state
+          HappyDomState.set(state.uid, {
+            document: happyDomDocument,
+            elementMap,
+            window: happyDomWindow,
+          })
+
+          // Get the current preview state
+          const previewStates = PreviewStates.get(state.uid)
+          const previewState = previewStates?.newState || previewStates?.oldState
+          if (!previewState) {
+            return
+          }
+
+          // Update the parsed DOM with new serialization
+          const newParsedDom = serialized.dom
+          const newCss = serialized.css
+          const newParsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(newParsedDom)
+
+          const updatedState = {
+            ...previewState,
+            css: newCss,
+            parsedDom: newParsedDom,
+            parsedNodesChildNodeCount: newParsedNodesChildNodeCount,
+          }
+
+          // Update the state
+          PreviewStates.set(state.uid, previewStates?.oldState || previewState, updatedState)
+
+          // Trigger re-render
+          try {
+            await RendererWorker.invoke('Preview.rerender', state.uid)
+          } catch {
+            // ignore
+          }
+        }
+
+        await PatchCanvasElements.patchCanvasElements(happyDomDocument, state.uid, handleCanvasDimensionsChange)
         ExecuteScripts.executeScripts(happyDomWindow, happyDomDocument, scripts, state.width, state.height)
         const elementMap = new Map<string, any>()
         const serialized = SerializeHappyDom.serialize(happyDomDocument, elementMap)
