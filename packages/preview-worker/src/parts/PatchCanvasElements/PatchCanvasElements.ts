@@ -92,7 +92,7 @@ export const patchCanvasElements = async (
       set: (newWidth: number | string) => {
         widthValue = toNumber(newWidth)
         dimensions.width = widthValue
-        createNewOffscreenCanvas(widthValue, dimensions.height)
+        createNewOffscreenCanvas(widthValue, dimensions.height, element, uid, onCanvasDimensionsChange)
       },
     })
 
@@ -105,7 +105,7 @@ export const patchCanvasElements = async (
       set: (newHeight: number | string) => {
         heightValue = toNumber(newHeight)
         dimensions.height = heightValue
-        createNewOffscreenCanvas(dimensions.width, heightValue)
+        createNewOffscreenCanvas(dimensions.width, heightValue, element, uid, onCanvasDimensionsChange)
       },
     })
 
