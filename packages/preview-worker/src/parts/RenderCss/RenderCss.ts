@@ -4,7 +4,6 @@ import * as ReplaceCssBodySelector from '../ReplaceCssBodySelector/ReplaceCssBod
 export const renderCss = (oldState: PreviewState, newState: PreviewState): any => {
   const { css, dynamicCanvasCss, uid } = newState
 
-  console.log({ css, dynamicCanvasCss })
   // Combine all CSS strings (both regular and dynamic canvas CSS) into a single string
   const allCss = [...css, ...dynamicCanvasCss]
   let cssString = allCss.join('\n')
