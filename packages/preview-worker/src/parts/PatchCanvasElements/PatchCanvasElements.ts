@@ -9,7 +9,7 @@ interface CanvasCanvasDimensions {
 }
 
 const generateCanvasCssRule = (dataUid: string, width: number, height: number): string => {
-  return `[data-uid="${dataUid}"] { width: ${width}px; height: ${height}px; }`
+  return `[data-id="${dataUid}"] { width: ${width}px; height: ${height}px; }`
 }
 
 export const patchCanvasElements = async (
@@ -32,7 +32,7 @@ export const patchCanvasElements = async (
     const { canvasId, offscreenCanvas } = await getOffscreenCanvas(width, height)
     const dataId = String(canvasId)
     element.__canvasId = canvasId
-    element.dataset.uid = dataId
+    element.dataset.id = dataId
     const context = offscreenCanvas.getContext('2d')
     element.getContext = (contextType: string): any => {
       if (contextType === '2d') {

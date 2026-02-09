@@ -134,6 +134,7 @@ export const updateContent = async (
 
     // Include any dynamic CSS rules generated during updateContent execution (e.g., canvas width/height rules)
     const dynamicCssRules = UpdateContentInProgress.getCssRules(state.uid)
+    console.log({ dynamicCssRules })
     const finalCss = [...css, ...dynamicCssRules]
 
     return {

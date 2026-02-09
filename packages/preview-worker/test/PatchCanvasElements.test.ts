@@ -230,7 +230,7 @@ test('patchCanvasElements callback should be called on dimension changes', async
   expect(changes[changes.length - 1]).toEqual({ height: 150, width: 200 })
 })
 
-test('patchCanvasElements should set data-uid attribute on canvas elements', async () => {
+test('patchCanvasElements should set data-id attribute on canvas elements', async () => {
   const window = new Window({ url: 'https://localhost:3000' })
   const { document } = window
   document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
@@ -244,8 +244,8 @@ test('patchCanvasElements should set data-uid attribute on canvas elements', asy
 
   await PatchCanvasElements.patchCanvasElements(document, 1)
   const canvas = document.querySelector('canvas') as any
-  expect(canvas.dataset.uid).toBeDefined()
-  expect(canvas.dataset.uid).toBe(String(canvas.__canvasId))
+  expect(canvas.dataset.id).toBeDefined()
+  expect(canvas.dataset.id).toBe(String(canvas.__canvasId))
 })
 
 test('patchCanvasElements callback should include cssRule parameter on dimension changes', async () => {
@@ -266,7 +266,7 @@ test('patchCanvasElements callback should include cssRule parameter on dimension
   })
 
   const canvas = document.querySelector('canvas') as any
-  const dataUid = canvas.dataset.uid
+  const dataUid = canvas.dataset.id
 
   // Change width
   canvas.width = 200
@@ -277,6 +277,6 @@ test('patchCanvasElements callback should include cssRule parameter on dimension
   // The callback should have been called with a CSS rule
   expect(changes.length).toBeGreaterThan(0)
   expect(changes[changes.length - 1].cssRule).toBeDefined()
-  expect(changes[changes.length - 1].cssRule).toContain(`[data-uid="${dataUid}"]`)
+  expect(changes[changes.length - 1].cssRule).toContain(`[data-id="${dataUid}"]`)
   expect(changes[changes.length - 1].cssRule).toContain('width: 200px')
 })
