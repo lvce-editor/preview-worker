@@ -1,5 +1,6 @@
 import * as CanvasState from '../CanvasState/CanvasState.ts'
 import { getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
+import { toNumber } from '../ToNumber/ToNumber.ts'
 
 interface CanvasCanvasDimensions {
   readonly height: number
@@ -15,8 +16,8 @@ export const patchCanvasElements = async (document: any, uid: number): Promise<v
 
   for (let i = 0; i < canvasElements.length; i++) {
     const element = canvasElements[i]
-    const width = element.getAttribute('width') || 300
-    const height = element.getAttribute('height') || 300
+    const width = toNumber(element.getAttribute('width') || 300)
+    const height = toNumber(element.getAttribute('height') || 300)
     element.width = width
     element.height = height
     const { canvasId, offscreenCanvas } = await getOffscreenCanvas(width, height)
@@ -42,7 +43,7 @@ export const patchCanvasElements = async (document: any, uid: number): Promise<v
       enumerable: true,
       get: () => widthValue,
       set: (newWidth: number | string) => {
-        widthValue = newWidth
+        widthValue = toNumber(newWidth)
         element.__offscreenCanvas.width = widthValue
       },
     })
@@ -54,7 +55,7 @@ export const patchCanvasElements = async (document: any, uid: number): Promise<v
       enumerable: true,
       get: () => heightValue,
       set: (newHeight: number | string) => {
-        heightValue = newHeight
+        heightValue = toNumber(newHeight)
         element.__offscreenCanvas.height = heightValue
       },
     })

@@ -163,3 +163,122 @@ test('patchCanvasElements should set __canvasId on canvas elements', async () =>
   expect(canvas.__canvasId).toBeDefined()
   expect(typeof canvas.__canvasId).toBe('number')
 })
+test('patchCanvasElements should allow width/height property changes', async () => {
+  const window = new Window({ url: 'https://localhost:3000' })
+  const { document } = window
+  document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
+  const mockOffscreenCanvas1 = new MockOffscreenCanvas(100, 100)
+  const mockOffscreenCanvas2 = new MockOffscreenCanvas(200, 150)
+  let callCount = 0
+  using _mockRpc = RendererWorker.registerMockRpc({
+    'OffscreenCanvas.createForPreview': (id: number) => {
+      callCount++
+      const canvas = callCount === 1 ? mockOffscreenCanvas1 : mockOffscreenCanvas2
+      executeCallback(id, canvas, callCount)
+    },
+  })
+  await PatchCanvasElements.patchCanvasElements(document, 1)
+  const canvas = document.querySelector('canvas') as any
+  const initialWidth = canvas.width
+  const initialHeight = canvas.height
+  expect(initialWidth).toBe(100)
+  expect(initialHeight).toBe(100)
+
+  // Change width and height properties
+  canvas.width = 200
+  canvas.height = 150
+
+  // Verify the properties were updated
+  expect(canvas.width).toBe(200)
+  expect(canvas.height).toBe(150)
+})
+
+test.skip('patchCanvasElements callback should be called on dimension changes', async () => {
+  const window = new Window({ url: 'https://localhost:3000' })
+  const { document } = window
+  document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
+  const mockOffscreenCanvas = new MockOffscreenCanvas(100, 100)
+  const changes: Array<{ width: number; height: number }> = []
+
+  using _mockRpc = RendererWorker.registerMockRpc({
+    'OffscreenCanvas.createForPreview': (id: number) => {
+      executeCallback(id, mockOffscreenCanvas, 1)
+    },
+  })
+
+  // @ts-ignore
+  await PatchCanvasElements.patchCanvasElements(document, 1, async (element, width, height) => {
+    changes.push({ height, width })
+  })
+
+  const canvas = document.querySelector('canvas') as any
+
+  // Change width first
+  canvas.width = 200
+
+  // Wait for the async callback to complete
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  // Change height
+  canvas.height = 150
+
+  // Give async operations time to complete
+  await new Promise((resolve) => setTimeout(resolve, 100))
+
+  // Callback should have been called at least once
+  expect(changes.length).toBeGreaterThan(0)
+  // Last change should be width=200, height=150
+  expect(changes[changes.length - 1]).toEqual({ height: 150, width: 200 })
+})
+
+test('patchCanvasElements should set data-id attribute on canvas elements', async () => {
+  const window = new Window({ url: 'https://localhost:3000' })
+  const { document } = window
+  document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
+  const mockOffscreenCanvas = new MockOffscreenCanvas(100, 100)
+
+  using _mockRpc = RendererWorker.registerMockRpc({
+    'OffscreenCanvas.createForPreview': (id: number) => {
+      executeCallback(id, mockOffscreenCanvas, 1)
+    },
+  })
+
+  await PatchCanvasElements.patchCanvasElements(document, 1)
+  const canvas = document.querySelector('canvas') as any
+  expect(canvas.dataset.id).toBeDefined()
+  expect(canvas.dataset.id).toBe(String(canvas.__canvasId))
+})
+
+test.skip('patchCanvasElements callback should include cssRule parameter on dimension changes', async () => {
+  const window = new Window({ url: 'https://localhost:3000' })
+  const { document } = window
+  document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
+  const mockOffscreenCanvas = new MockOffscreenCanvas(100, 100)
+  const changes: Array<{ width: number; height: number; cssRule?: string }> = []
+
+  using _mockRpc = RendererWorker.registerMockRpc({
+    'OffscreenCanvas.createForPreview': (id: number) => {
+      executeCallback(id, mockOffscreenCanvas, 1)
+    },
+  })
+
+  // @ts-ignore
+  await PatchCanvasElements.patchCanvasElements(document, 1, async (element, width, height, cssRule) => {
+    changes.push({ cssRule, height, width })
+  })
+
+  const canvas = document.querySelector('canvas') as any
+  const dataUid = canvas.dataset.id
+
+  // Change width
+  canvas.width = 200
+
+  // Wait for the async callback to complete
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  // The callback should have been called with a CSS rule
+  expect(changes.length).toBeGreaterThan(0)
+  expect(changes[changes.length - 1].cssRule).toBeDefined()
+  expect(changes[changes.length - 1].cssRule).toContain(`[data-id="${dataUid}"]`)
+  expect(changes[changes.length - 1].cssRule).toContain('width: 200px')
+})
