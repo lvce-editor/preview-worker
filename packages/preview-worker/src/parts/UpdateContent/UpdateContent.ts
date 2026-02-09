@@ -11,6 +11,7 @@ import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as PatchCanvasElements from '../PatchCanvasElements/PatchCanvasElements.ts'
 import * as PreviewStates from '../PreviewStates/PreviewStates.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
+import * as UpdateContentInProgress from '../UpdateContentInProgress/UpdateContentInProgress.ts'
 
 export const updateContent = async (
   state: PreviewState,
@@ -23,6 +24,9 @@ export const updateContent = async (
   scripts: readonly string[]
   errorMessage: string
 }> => {
+  // Mark that updateContent is in progress for this uid
+  UpdateContentInProgress.set(state.uid)
+
   try {
     // Read the file content using RendererWorker RPC
     const content = await RendererWorker.readFile(uri)
@@ -41,8 +45,10 @@ export const updateContent = async (
         // Handle canvas dimension changes by re-serializing and re-rendering
         const handleCanvasDimensionsChange = async (element: any, width: number, height: number, cssRule?: string): Promise<void> => {
           // Get the latest happy-dom state
+          console.log('canvas change', width, height)
           const happyDomInstance = HappyDomState.get(state.uid)
           if (!happyDomInstance) {
+            console.log('return 1')
             return
           }
 
@@ -61,6 +67,8 @@ export const updateContent = async (
           const previewStates = PreviewStates.get(state.uid)
           const previewState = previewStates?.newState || previewStates?.oldState
           if (!previewState) {
+            console.log('return 2')
+
             return
           }
 
@@ -80,17 +88,26 @@ export const updateContent = async (
             parsedNodesChildNodeCount: newParsedNodesChildNodeCount,
           }
 
+          console.log({ cssRule })
           // Update the state
           PreviewStates.set(state.uid, previewStates?.oldState || previewState, updatedState)
 
-          // Trigger re-render
-          try {
-            await RendererWorker.invoke('Preview.rerender', state.uid)
-          } catch {
-            // ignore
+          // Only trigger re-render if updateContent has finished
+          // If updateContent is still in progress, the updated CSS will be included in the returned data
+          if (!UpdateContentInProgress.isUpdating(state.uid)) {
+            try {
+              await RendererWorker.invoke('Preview.rerender', state.uid)
+            } catch {
+              // ignore
+            }
           }
         }
 
+        HappyDomState.set(state.uid, {
+          document: happyDomDocument,
+          elementMap: new Map(),
+          window: happyDomWindow,
+        })
         await PatchCanvasElements.patchCanvasElements(happyDomDocument, state.uid, handleCanvasDimensionsChange)
         ExecuteScripts.executeScripts(happyDomWindow, happyDomDocument, scripts, state.width, state.height)
         const elementMap = new Map<string, any>()
@@ -130,5 +147,8 @@ export const updateContent = async (
       parsedNodesChildNodeCount: 0,
       scripts: [],
     }
+  } finally {
+    // Mark that updateContent is no longer in progress
+    UpdateContentInProgress.remove(state.uid)
   }
 }
