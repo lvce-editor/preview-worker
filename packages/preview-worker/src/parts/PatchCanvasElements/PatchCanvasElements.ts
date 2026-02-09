@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import * as CanvasState from '../CanvasState/CanvasState.ts'
-import { createNewOffscreenCanvas, toNumber } from '../CreateNewOffscreenCanvas/CreateNewOffscreenCanvas.ts'
+import { toNumber } from '../CreateNewOffscreenCanvas/CreateNewOffscreenCanvas.ts'
 import { getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
 
 interface CanvasCanvasDimensions {
@@ -8,10 +8,14 @@ interface CanvasCanvasDimensions {
   width: number
 }
 
+const generateCanvasCssRule = (dataUid: string, width: number, height: number): string => {
+  return `[data-uid="${dataUid}"] { width: ${width}px; height: ${height}px; }`
+}
+
 export const patchCanvasElements = async (
   document: any,
   uid: number,
-  onCanvasDimensionsChange?: (element: any, width: number, height: number) => Promise<void>,
+  onCanvasDimensionsChange?: (element: any, width: number, height: number, cssRule?: string) => Promise<void>,
 ): Promise<void> => {
   const canvasElements = document.querySelectorAll('canvas')
   if (canvasElements.length === 0) {
@@ -28,6 +32,7 @@ export const patchCanvasElements = async (
     const { canvasId, offscreenCanvas } = await getOffscreenCanvas(width, height)
     const dataId = String(canvasId)
     element.__canvasId = canvasId
+    element.setAttribute('data-uid', dataId)
     const context = offscreenCanvas.getContext('2d')
     element.getContext = (contextType: string): any => {
       if (contextType === '2d') {
@@ -46,9 +51,11 @@ export const patchCanvasElements = async (
       enumerable: true,
       get: () => widthValue,
       set: (newWidth: number | string) => {
+        console.log('set canvas witdh', newWidth)
         widthValue = toNumber(newWidth)
         dimensions.width = widthValue
-        createNewOffscreenCanvas(widthValue, dimensions.height, element, uid, onCanvasDimensionsChange)
+        const cssRule = generateCanvasCssRule(dataId, widthValue, dimensions.height)
+        onCanvasDimensionsChange?.(element, widthValue, dimensions.height, cssRule)
       },
     })
 
@@ -61,7 +68,8 @@ export const patchCanvasElements = async (
       set: (newHeight: number | string) => {
         heightValue = toNumber(newHeight)
         dimensions.height = heightValue
-        createNewOffscreenCanvas(dimensions.width, heightValue, element, uid, onCanvasDimensionsChange)
+        const cssRule = generateCanvasCssRule(dataId, dimensions.width, heightValue)
+        onCanvasDimensionsChange?.(element, dimensions.width, heightValue, cssRule)
       },
     })
 

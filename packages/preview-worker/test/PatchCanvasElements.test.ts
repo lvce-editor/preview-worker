@@ -229,3 +229,54 @@ test('patchCanvasElements callback should be called on dimension changes', async
   // Last change should be width=200, height=150
   expect(changes[changes.length - 1]).toEqual({ height: 150, width: 200 })
 })
+
+test('patchCanvasElements should set data-uid attribute on canvas elements', async () => {
+  const window = new Window({ url: 'https://localhost:3000' })
+  const { document } = window
+  document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
+  const mockOffscreenCanvas = new MockOffscreenCanvas(100, 100)
+
+  using _mockRpc = RendererWorker.registerMockRpc({
+    'OffscreenCanvas.createForPreview': (id: number) => {
+      executeCallback(id, mockOffscreenCanvas, 1)
+    },
+  })
+
+  await PatchCanvasElements.patchCanvasElements(document, 1)
+  const canvas = document.querySelector('canvas') as any
+  expect(canvas.getAttribute('data-uid')).toBeDefined()
+  expect(canvas.getAttribute('data-uid')).toBe(String(canvas.__canvasId))
+})
+
+test('patchCanvasElements callback should include cssRule parameter on dimension changes', async () => {
+  const window = new Window({ url: 'https://localhost:3000' })
+  const { document } = window
+  document.documentElement.innerHTML = '<body><canvas width="100" height="100"></canvas></body>'
+  const mockOffscreenCanvas = new MockOffscreenCanvas(100, 100)
+  const changes: Array<{ width: number; height: number; cssRule?: string }> = []
+
+  using _mockRpc = RendererWorker.registerMockRpc({
+    'OffscreenCanvas.createForPreview': (id: number) => {
+      executeCallback(id, mockOffscreenCanvas, 1)
+    },
+  })
+
+  await PatchCanvasElements.patchCanvasElements(document, 1, async (element, width, height, cssRule) => {
+    changes.push({ height, width, cssRule })
+  })
+
+  const canvas = document.querySelector('canvas') as any
+  const dataUid = canvas.getAttribute('data-uid')
+
+  // Change width
+  canvas.width = 200
+
+  // Wait for the async callback to complete
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  // The callback should have been called with a CSS rule
+  expect(changes.length).toBeGreaterThan(0)
+  expect(changes[changes.length - 1].cssRule).toBeDefined()
+  expect(changes[changes.length - 1].cssRule).toContain(`[data-uid="${dataUid}"]`)
+  expect(changes[changes.length - 1].cssRule).toContain('width: 200px')
+})

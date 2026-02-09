@@ -39,7 +39,7 @@ export const updateContent = async (
         const { document: happyDomDocument, window: happyDomWindow } = createWindow(content)
 
         // Handle canvas dimension changes by re-serializing and re-rendering
-        const handleCanvasDimensionsChange = async (element: any, width: number, height: number): Promise<void> => {
+        const handleCanvasDimensionsChange = async (element: any, width: number, height: number, cssRule?: string): Promise<void> => {
           // Get the latest happy-dom state
           const happyDomInstance = HappyDomState.get(state.uid)
           if (!happyDomInstance) {
@@ -66,7 +66,11 @@ export const updateContent = async (
 
           // Update the parsed DOM with new serialization
           const newParsedDom = serialized.dom
-          const newCss = serialized.css
+          let newCss = serialized.css
+          // Add the dynamic CSS rule if provided
+          if (cssRule) {
+            newCss = [...newCss, cssRule]
+          }
           const newParsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(newParsedDom)
 
           const updatedState = {
