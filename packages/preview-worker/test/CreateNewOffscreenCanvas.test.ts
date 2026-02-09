@@ -2,8 +2,8 @@
 import { afterEach, beforeAll, describe, expect, test } from '@jest/globals'
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import * as CanvasState from '../src/parts/CanvasState/CanvasState.ts'
-import { executeCallback } from '../src/parts/GetOffscreenCanvas/GetOffscreenCanvas.ts'
 import { createNewOffscreenCanvas, toNumber } from '../src/parts/CreateNewOffscreenCanvas/CreateNewOffscreenCanvas.ts'
+import { executeCallback } from '../src/parts/GetOffscreenCanvas/GetOffscreenCanvas.ts'
 
 // OffscreenCanvas is a Web Worker API not available in Node.js
 // Provide a minimal mock for testing
@@ -158,14 +158,14 @@ describe('createNewOffscreenCanvas', () => {
       },
     })
 
-    const callback = async (_element: any, width: number, height: number) => {
-      callbackSpy.push({ width, height })
+    const callback = async (_element: any, width: number, height: number): Promise<void> => {
+      callbackSpy.push({ height, width })
     }
 
     await createNewOffscreenCanvas(200, 150, element, 1, callback)
 
     expect(callbackSpy.length).toBe(1)
-    expect(callbackSpy[0]).toEqual({ width: 200, height: 150 })
+    expect(callbackSpy[0]).toEqual({ height: 150, width: 200 })
   })
 
   test('should not call callback if not provided', async () => {
