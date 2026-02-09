@@ -5,6 +5,7 @@ export interface PreviewState {
   readonly assetDir: string
   readonly content: string
   readonly css: readonly string[]
+  readonly dynamicCanvasCss: readonly string[]
   readonly errorCount: number
   readonly errorMessage: string
   readonly height: number

@@ -17,6 +17,7 @@ export const create = async (
     assetDir,
     content: '',
     css: [],
+    dynamicCanvasCss: [],
     errorCount: 0,
     errorMessage: '',
     height,
