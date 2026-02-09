@@ -1,6 +1,6 @@
 import * as CanvasState from '../CanvasState/CanvasState.ts'
-import { toNumber } from '../ToNumber/ToNumber.ts'
 import { getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
+import { toNumber } from '../ToNumber/ToNumber.ts'
 
 interface CanvasCanvasDimensions {
   readonly height: number
