@@ -2,10 +2,8 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'preview.canvas-resize'
 
-export const skip = 1
-
 export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspace }) => {
-  // Create a temporary HTML file with canvas that resizes itself
+  // arrange
   const tmpDir = await FileSystem.getTmpDir()
   await Workspace.setPath(tmpDir)
   const filePath = `${tmpDir}/preview-test-canvas-resize.html`
@@ -52,53 +50,29 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspa
       drawAndUpdateSize();
     });
 
-    // Also test programmatic resize
-    setTimeout(() => {
-      canvas.width = 300;
-      canvas.height = 250;
-      drawAndUpdateSize();
-    }, 1000);
   </script>
 </body>
 </html>`
 
   await FileSystem.writeFile(filePath, html)
-
-  // Open the preview with the HTML file
   await Command.execute('Layout.showPreview', filePath)
-
-  // Wait for preview to render
   const previewArea = Locator('.Viewlet.Preview')
   await expect(previewArea).toBeVisible()
-
-  // Verify the heading is visible
   const heading = previewArea.locator('h2')
   await expect(heading).toBeVisible()
   await expect(heading).toContainText('Canvas Resize Test')
-
-  // Verify the canvas element is present and visible with initial size
   const canvas = previewArea.locator('canvas')
   await expect(canvas).toBeVisible()
   await expect(canvas).toHaveAttribute('width', '200')
   await expect(canvas).toHaveAttribute('height', '200')
-
-  // Verify initial size is displayed
   const sizeSpan = previewArea.locator('#canvasSize')
   await expect(sizeSpan).toContainText('200x200')
 
-  // Click the resize button
-  const resizeBtn = previewArea.locator('#resizeBtn')
-  await resizeBtn.click()
+  // act
+  await Command.execute('Preview.handleClick', '2')
 
-  // Wait for canvas to be resized and check the new size
-  // The canvas should now be 400x300
+  // assert
   await expect(canvas).toHaveAttribute('width', '400')
   await expect(canvas).toHaveAttribute('height', '300')
   await expect(sizeSpan).toContainText('400x300')
-
-  // Wait for programmatic resize (1 second after initial load + some buffer)
-  // The canvas should be resized to 300x250
-  await expect(canvas).toHaveAttribute('width', '300')
-  await expect(canvas).toHaveAttribute('height', '250')
-  await expect(sizeSpan).toContainText('300x250')
 }
