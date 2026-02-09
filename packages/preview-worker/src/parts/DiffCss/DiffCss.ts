@@ -11,15 +11,5 @@ export const iEqual = (oldState: PreviewState, newState: PreviewState): boolean 
     }
   }
 
-  if (oldState.dynamicCanvasCss.length !== newState.dynamicCanvasCss.length) {
-    return false
-  }
-
-  for (let i = 0; i < oldState.dynamicCanvasCss.length; i++) {
-    if (oldState.dynamicCanvasCss[i] !== newState.dynamicCanvasCss[i]) {
-      return false
-    }
-  }
-
   return true
 }

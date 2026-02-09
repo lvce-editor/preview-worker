@@ -52,7 +52,6 @@ export const handleEditorChanged = async (): Promise<void> => {
           ...state,
           content: '',
           css: [],
-          dynamicCanvasCss: [],
           errorMessage,
           parsedDom: [],
           scripts: [],

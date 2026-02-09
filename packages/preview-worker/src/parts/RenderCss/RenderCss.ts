@@ -2,11 +2,10 @@ import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as ReplaceCssBodySelector from '../ReplaceCssBodySelector/ReplaceCssBodySelector.ts'
 
 export const renderCss = (oldState: PreviewState, newState: PreviewState): any => {
-  const { css, dynamicCanvasCss, uid } = newState
+  const { css, uid } = newState
 
-  // Combine all CSS strings (both regular and dynamic canvas CSS) into a single string
-  const allCss = [...css, ...dynamicCanvasCss]
-  let cssString = allCss.join('\n')
+  // Combine all CSS strings into a single string
+  let cssString = css.join('\n')
 
   // Replace body selector with .Preview since we render the preview in a div element, not a body
   cssString = ReplaceCssBodySelector.replaceCssBodySelector(cssString)

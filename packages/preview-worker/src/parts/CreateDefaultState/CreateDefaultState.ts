@@ -5,7 +5,6 @@ export const createDefaultState = (): PreviewState => {
     assetDir: '',
     content: '',
     css: [],
-    dynamicCanvasCss: [],
     errorCount: 0,
     errorMessage: '',
     height: 0,

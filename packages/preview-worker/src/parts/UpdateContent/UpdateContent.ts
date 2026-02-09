@@ -19,7 +19,6 @@ export const updateContent = async (
 ): Promise<{
   content: string
   css: readonly string[]
-  dynamicCanvasCss: readonly string[]
   parsedDom: readonly VirtualDomNode[]
   parsedNodesChildNodeCount: number
   scripts: readonly string[]
@@ -43,79 +42,11 @@ export const updateContent = async (
       try {
         const { document: happyDomDocument, window: happyDomWindow } = createWindow(content)
 
-        // Handle canvas dimension changes by re-serializing and re-rendering
-        const handleCanvasDimensionsChange = async (element: any, width: number, height: number, cssRule?: string): Promise<void> => {
-          // Get the latest happy-dom state
-          console.log('canvas change', width, height)
-          const happyDomInstance = HappyDomState.get(state.uid)
-          if (!happyDomInstance) {
-            console.log('return 1')
-            return
-          }
-
-          // Re-serialize the DOM with updated canvas dimensions
-          const elementMap = new Map<string, any>()
-          const serialized = SerializeHappyDom.serialize(happyDomDocument, elementMap)
-
-          // Update happy-dom state
-          HappyDomState.set(state.uid, {
-            document: happyDomDocument,
-            elementMap,
-            window: happyDomWindow,
-          })
-
-          // Get the current preview state
-          const previewStates = PreviewStates.get(state.uid)
-          const previewState = previewStates?.newState || previewStates?.oldState
-          if (!previewState) {
-            console.log('return 2')
-
-            return
-          }
-
-          // Update the parsed DOM with new serialization
-          const newParsedDom = serialized.dom
-          const newCss = serialized.css
-          // Add the dynamic CSS rule if provided
-          let newDynamicCanvasCss = previewState.dynamicCanvasCss
-          if (cssRule) {
-            newDynamicCanvasCss = [...newDynamicCanvasCss, cssRule]
-            // If updateContent is still in progress, track this CSS rule to return it
-            if (UpdateContentInProgress.isUpdating(state.uid)) {
-              UpdateContentInProgress.addCssRule(state.uid, cssRule)
-            }
-          }
-          const newParsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(newParsedDom)
-
-          const updatedState = {
-            ...previewState,
-            css: newCss,
-            dynamicCanvasCss: newDynamicCanvasCss,
-            parsedDom: newParsedDom,
-            parsedNodesChildNodeCount: newParsedNodesChildNodeCount,
-          }
-
-          console.log({ cssRule })
-          // Update the state
-          PreviewStates.set(state.uid, previewStates?.oldState || previewState, updatedState)
-
-          // Only trigger re-render if updateContent has finished
-          // If updateContent is still in progress, the updated CSS will be included in the returned data
-          if (!UpdateContentInProgress.isUpdating(state.uid)) {
-            try {
-              await RendererWorker.invoke('Preview.rerender', state.uid)
-            } catch {
-              // ignore
-            }
-          }
-        }
-
         HappyDomState.set(state.uid, {
           document: happyDomDocument,
           elementMap: new Map(),
           window: happyDomWindow,
         })
-        await PatchCanvasElements.patchCanvasElements(happyDomDocument, state.uid, handleCanvasDimensionsChange)
         ExecuteScripts.executeScripts(happyDomWindow, happyDomDocument, scripts, state.width, state.height)
         const elementMap = new Map<string, any>()
         const serialized = SerializeHappyDom.serialize(happyDomDocument, elementMap)
@@ -135,14 +66,9 @@ export const updateContent = async (
 
     const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
 
-    // Include any dynamic CSS rules generated during updateContent execution (e.g., canvas width/height rules)
-    const dynamicCssRules = UpdateContentInProgress.getCssRules(state.uid)
-    console.log({ dynamicCssRules })
-
     return {
       content,
       css,
-      dynamicCanvasCss: dynamicCssRules,
       errorMessage: '',
       parsedDom,
       parsedNodesChildNodeCount,
@@ -154,7 +80,6 @@ export const updateContent = async (
     return {
       content: '',
       css: [],
-      dynamicCanvasCss: [],
       errorMessage,
       parsedDom: [],
       parsedNodesChildNodeCount: 0,

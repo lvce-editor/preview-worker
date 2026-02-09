@@ -11,7 +11,6 @@ const createWindow = (): any => {
 const createState = (uid: number): any => {
   return {
     css: [],
-    dynamicCanvasCss: [],
     initial: false,
     parsedDom: [],
     parsedNodesChildNodeCount: [],
