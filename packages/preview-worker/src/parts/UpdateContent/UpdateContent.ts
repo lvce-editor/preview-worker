@@ -8,8 +8,6 @@ import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/G
 import * as HappyDomState from '../HappyDomState/HappyDomState.ts'
 import { observe } from '../ObserveDom/ObserveDom.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
-import * as PatchCanvasElements from '../PatchCanvasElements/PatchCanvasElements.ts'
-import * as PreviewStates from '../PreviewStates/PreviewStates.ts'
 import * as SerializeHappyDom from '../SerializeHappyDom/SerializeHappyDom.ts'
 import * as UpdateContentInProgress from '../UpdateContentInProgress/UpdateContentInProgress.ts'
 
