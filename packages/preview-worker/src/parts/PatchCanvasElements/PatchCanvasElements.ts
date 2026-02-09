@@ -53,8 +53,6 @@ export const patchCanvasElements = async (
       set: (newWidth: number | string) => {
         widthValue = toNumber(newWidth)
         element.__offscreenCanvas.width = widthValue
-        // const cssRule = generateCanvasCssRule(dataId, widthValue, dimensions.height)
-        // onCanvasDimensionsChange?.(element, widthValue, dimensions.height, cssRule)
       },
     })
 
@@ -68,9 +66,6 @@ export const patchCanvasElements = async (
         heightValue = toNumber(newHeight)
         dimensions.height = heightValue
         element.__offscreenCanvas.height = heightValue
-
-        // const cssRule = generateCanvasCssRule(dataId, dimensions.width, heightValue)
-        // onCanvasDimensionsChange?.(element, dimensions.width, heightValue, cssRule)
       },
     })
 
