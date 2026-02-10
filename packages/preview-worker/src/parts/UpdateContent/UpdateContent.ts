@@ -1,18 +1,13 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import { RendererWorker } from '@lvce-editor/rpc-registry'
+import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 
 export const updateContent = async (
+  state: PreviewState,
   uri: string,
-): Promise<{
-  content: string
-  css: readonly string[]
-  parsedDom: readonly VirtualDomNode[]
-  parsedNodesChildNodeCount: number
-  scripts: readonly string[]
-  errorMessage: string
-}> => {
+): Promise<PreviewState> => {
   try {
     // Read the file content using RendererWorker RPC
     const content = await RendererWorker.readFile(uri)
@@ -26,6 +21,7 @@ export const updateContent = async (
     const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
 
     return {
+      ...state,
       content,
       css,
       errorMessage: '',
@@ -37,6 +33,7 @@ export const updateContent = async (
     // If file reading or parsing fails, return empty content and parsedDom with error message
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return {
+      ...state,
       content: '',
       css: [],
       errorMessage,
