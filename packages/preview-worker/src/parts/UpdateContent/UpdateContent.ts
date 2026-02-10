@@ -3,10 +3,7 @@ import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 
-export const updateContent = async (
-  state: PreviewState,
-  uri: string,
-): Promise<PreviewState> => {
+export const updateContent = async (state: PreviewState, uri: string): Promise<PreviewState> => {
   try {
     // Read the file content using RendererWorker RPC
     const content = await RendererWorker.readFile(uri)
