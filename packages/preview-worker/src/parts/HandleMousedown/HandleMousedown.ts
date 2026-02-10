@@ -5,5 +5,8 @@ export const handleMousedown = async (state: PreviewState, hdId: string, clientX
   if (!hdId) {
     return state
   }
-  return CallAndUpdate.callAndUpdate(state, 'SandBox.handleMousedown', hdId, clientX, clientY)
+  const { x, y } = state
+  const adjustedClientX = clientX - x
+  const adjustedClientY = clientY - y
+  return CallAndUpdate.callAndUpdate(state, 'SandBox.handleMousedown', hdId, adjustedClientX, adjustedClientY)
 }
