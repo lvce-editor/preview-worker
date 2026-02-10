@@ -1,40 +1,21 @@
-/* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
+
 import { RendererWorker } from '@lvce-editor/rpc-registry'
+import type { PreviewState } from '../PreviewState/PreviewState.ts'
 
-const callBacks = Object.create(null)
 
-let id = 0
 
-type OffscreenCanvasResultRaw = [OffscreenCanvas, number]
+const callbackRpcs = Object.create(null)
 
-const registerCallback = (): any => {
-  const nextId = id++
-  const { promise, resolve } = Promise.withResolvers<OffscreenCanvasResultRaw>()
-  callBacks[nextId] = resolve
-  return {
-    id: nextId,
-    promise,
-  }
+export const executeCallback = async (id: number, ...args: readonly any[]): Promise<void> => {
+
+  const rpc = callbackRpcs[id]
+  await rpc.invokeAndTransfer('SandBox.executeCallback', id, ...args)
 }
 
-export const executeCallback = (id: number, ...args: OffscreenCanvasResultRaw): void => {
-  const callback = callBacks[id]
-  if (callback) {
-    callback(args)
-    delete callBacks[id]
-  } else {
-    console.warn(`[preview-worker] No callback found for id ${id}`)
-  }
-}
 
-interface OffscreenCanvasResult {
-  readonly canvasId: number
-  readonly offscreenCanvas: OffscreenCanvas
-}
-
-export const getOffscreenCanvas = async (width: number, height: number): Promise<OffscreenCanvasResult> => {
-  const { id, promise } = registerCallback()
+export const getOffscreenCanvas = async (state: PreviewState, id: number, width: number, height: number): Promise<void> => {
+  // TODO possible race condition / conflict if multiple
+  // previews create offscreen canvases at the same time
+  callbackRpcs[id] = state.sandboxRpc
   await RendererWorker.invoke('OffscreenCanvas.createForPreview', id, width, height)
-  const [offscreenCanvas, canvasId] = await promise
-  return { canvasId, offscreenCanvas }
 }
