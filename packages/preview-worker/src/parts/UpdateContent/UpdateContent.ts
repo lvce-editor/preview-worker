@@ -26,7 +26,7 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
         content,
         css,
         errorMessage: '',
-        parsedDom,
+        parsedDom: finalParsedDom,
         parsedNodesChildNodeCount: finalParsedNodesChildNodeCount,
         scripts,
       }
