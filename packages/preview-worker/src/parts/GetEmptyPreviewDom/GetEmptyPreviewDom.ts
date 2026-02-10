@@ -9,6 +9,11 @@ export const getEmptyPreviewDom = (): readonly any[] => {
     },
     {
       childCount: 1,
+      className: 'PreviewContents',
+      type: VirtualDomElements.Div,
+    },
+    {
+      childCount: 1,
       type: VirtualDomElements.H1,
     },
     {
