@@ -18,6 +18,7 @@ import { renderEventListeners } from '../RenderEventListeners/RenderEventListene
 import { rerender } from '../Rerender/Rerender.ts'
 import { resize } from '../Resize/Resize.ts'
 import { saveState } from '../SaveState/SaveState.ts'
+import * as SetErrorMessage from '../SetErrorMessage/SetErrorMessage.ts'
 import { setUri } from '../SetUri/SetUri.ts'
 
 export const commandMap = {
@@ -40,6 +41,7 @@ export const commandMap = {
   'Preview.rerender': wrapCommand(rerender),
   'Preview.resize': wrapCommand(resize),
   'Preview.saveState': wrapGetter(saveState),
+  'Preview.setErrorMessage': wrapCommand(SetErrorMessage.setErrorMessage),
   'Preview.setUri': wrapCommand(setUri),
   'Preview.terminate': terminate,
 }
