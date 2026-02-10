@@ -8,7 +8,8 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
     // Read the file content using RendererWorker RPC
     const content = await RendererWorker.readFile(uri)
 
-    const { sandboxRpc } = state
+    const { height, sandboxRpc, uid, width } = state
+
     // Parse the content into virtual DOM and CSS
     const parseResult = ParseHtml.parseHtml(content)
     const parsedDom = parseResult.dom
@@ -17,7 +18,6 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
 
 
     if (scripts.length > 0) {
-      const { content, height, scripts, uid, width } = state
       await sandboxRpc.invoke('SandBox.loadContent', uid, width, height, content, scripts)
       const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', uid)
       const finalParsedDom = serialized.dom
