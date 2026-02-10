@@ -16,7 +16,6 @@ export interface PreviewState {
   readonly scripts: readonly string[]
   readonly uid: number
   readonly uri: string
-  readonly useSandboxWorker: boolean
   readonly warningCount: number
   readonly width: number
   readonly x: number

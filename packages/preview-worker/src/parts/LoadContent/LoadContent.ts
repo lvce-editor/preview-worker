@@ -1,5 +1,6 @@
 import { EditorWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
+import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import { updateContent } from '../UpdateContent/UpdateContent.ts'
 
 export const loadContent = async (state: PreviewState): Promise<PreviewState> => {
@@ -16,7 +17,7 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
 
   // Read and parse file contents if we have a URI
   const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = state.uri
-    ? await updateContent(state, state.uri)
+    ? await updateContent(state.uri)
     : {
         content: state.content,
         css: state.css,
@@ -31,12 +32,12 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
   let finalCss = css
   let finalParsedNodesChildNodeCount = parsedNodesChildNodeCount
 
-  if (state.useSandboxWorker && scripts.length > 0) {
+  if (scripts.length > 0) {
     await sandboxRpc.invoke('SandBox.initialize', state.uid, content, scripts)
     const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', state.uid)
     finalParsedDom = serialized.dom
     finalCss = serialized.css
-    finalParsedNodesChildNodeCount = finalParsedDom.length > 0 ? finalParsedDom[0].childCount || 0 : 0
+    finalParsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(finalParsedDom)
   }
 
   return {

@@ -16,7 +16,6 @@ export const createDefaultState = (): PreviewState => {
     scripts: [],
     uid: 0,
     uri: '',
-    useSandboxWorker: false,
     warningCount: 0,
     width: 0,
     x: 0,
