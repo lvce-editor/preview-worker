@@ -19,7 +19,7 @@ const handleClickSandbox = async (state: PreviewState, hdId: string): Promise<Pr
   }
 }
 
-const handleClickLocal = (state: PreviewState, hdId: string): PreviewState => {
+const handleClickLocal = (state: PreviewState, hdId: string, clientX: number, clientY: number): PreviewState => {
   const happyDomInstance = HappyDomState.get(state.uid)
   if (!happyDomInstance) {
     return state
@@ -29,7 +29,9 @@ const handleClickLocal = (state: PreviewState, hdId: string): PreviewState => {
     return state
   }
 
-  DispatchClickEvent.dispatchClickEvent(element, happyDomInstance.window)
+  const adjustedClientX = clientX - state.x
+  const adjustedClientY = clientY - state.y
+  DispatchClickEvent.dispatchClickEvent(element, happyDomInstance.window, adjustedClientX, adjustedClientY)
 
   const elementMap = new Map<string, any>()
   const serialized = SerializeHappyDom.serialize(happyDomInstance.document, elementMap)
@@ -52,12 +54,12 @@ const handleClickLocal = (state: PreviewState, hdId: string): PreviewState => {
   }
 }
 
-export const handleClick = (state: PreviewState, hdId: string): PreviewState | Promise<PreviewState> => {
+export const handleClick = (state: PreviewState, hdId: string, clientX: number, clientY: number): PreviewState | Promise<PreviewState> => {
   if (!hdId) {
     return state
   }
   if (state.useSandboxWorker) {
     return handleClickSandbox(state, hdId)
   }
-  return handleClickLocal(state, hdId)
+  return handleClickLocal(state, hdId, clientX, clientY)
 }

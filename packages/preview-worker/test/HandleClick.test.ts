@@ -47,20 +47,20 @@ afterEach(() => {
 
 test('handleClick should return state unchanged when hdId is empty', async () => {
   const state = createState(1)
-  const result = await HandleClick.handleClick(state, '')
+  const result = await HandleClick.handleClick(state, '', 0, 0)
   expect(result).toBe(state)
 })
 
 test('handleClick should return state unchanged when no happy-dom state exists', async () => {
   const state = createState(1)
-  const result = await HandleClick.handleClick(state, '0')
+  const result = await HandleClick.handleClick(state, '0', 0, 0)
   expect(result).toBe(state)
 })
 
 test('handleClick should return state unchanged when element not found in map', async () => {
   setupHappyDom(1, '<body><div>hello</div></body>', [])
   const state = createState(1)
-  const result = await HandleClick.handleClick(state, '999')
+  const result = await HandleClick.handleClick(state, '999', 0, 0)
   expect(result).toBe(state)
 })
 
@@ -91,7 +91,7 @@ test('handleClick should dispatch click and update state for counter pattern', a
   expect(buttonHdId).not.toBe('')
 
   const state = createState(1)
-  const result = await HandleClick.handleClick(state, buttonHdId)
+  const result = await HandleClick.handleClick(state, buttonHdId, 0, 0)
 
   // parsedDom should have changed
   expect(result).not.toBe(state)
@@ -129,7 +129,7 @@ test('handleClick should handle multiple clicks incrementing counter', async () 
   let state = createState(1)
 
   // Click 3 times
-  state = await HandleClick.handleClick(state, buttonHdId)
+  state = await HandleClick.handleClick(state, buttonHdId, 0, 0)
   // After first click, need to get the NEW button hdId from the updated element map
   let instance = HappyDomState.get(1)!
   for (const [hdId, element] of instance.elementMap) {
@@ -138,7 +138,7 @@ test('handleClick should handle multiple clicks incrementing counter', async () 
       break
     }
   }
-  state = await HandleClick.handleClick(state, buttonHdId)
+  state = await HandleClick.handleClick(state, buttonHdId, 0, 0)
   instance = HappyDomState.get(1)!
   for (const [hdId, element] of instance.elementMap) {
     if (element.id === 'btn') {
@@ -146,7 +146,7 @@ test('handleClick should handle multiple clicks incrementing counter', async () 
       break
     }
   }
-  state = await HandleClick.handleClick(state, buttonHdId)
+  state = await HandleClick.handleClick(state, buttonHdId, 0, 0)
 
   const textNode = state.parsedDom.find((n: any) => n.text === '3')
   expect(textNode).toBeDefined()
@@ -175,7 +175,7 @@ test('handleClick should handle click event bubbling', async () => {
   }
 
   const state = createState(1)
-  const result = await HandleClick.handleClick(state, childHdId)
+  const result = await HandleClick.handleClick(state, childHdId, 0, 0)
 
   // Parent should now have class="clicked"
   const parentNode = result.parsedDom.find((n: any) => n.className === 'clicked')
@@ -211,7 +211,7 @@ test('handleClick should handle toggle visibility', async () => {
   }
 
   const state = createState(1)
-  const result = await HandleClick.handleClick(state, toggleHdId)
+  const result = await HandleClick.handleClick(state, toggleHdId, 0, 0)
 
   // Content should now have class="visible" instead of "hidden"
   const contentNode = result.parsedDom.find((n: any) => n.className === 'visible')
@@ -245,7 +245,7 @@ test('handleClick should update parsedNodesChildNodeCount', async () => {
   }
 
   const state = createState(1)
-  const result = await HandleClick.handleClick(state, addHdId)
+  const result = await HandleClick.handleClick(state, addHdId, 0, 0)
 
   expect(result.parsedNodesChildNodeCount).toBeGreaterThan(0)
 })

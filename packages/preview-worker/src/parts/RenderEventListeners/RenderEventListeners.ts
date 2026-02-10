@@ -6,7 +6,7 @@ export const renderEventListeners = (): readonly DomEventListener[] => {
     {
       capture: true,
       name: DomEventListenersFunctions.HandleClick,
-      params: ['handleClick', 'event.target.dataset.id'],
+      params: ['handleClick', 'event.target.dataset.id', 'event.clientX', 'event.clientY'],
     },
     {
       capture: true,

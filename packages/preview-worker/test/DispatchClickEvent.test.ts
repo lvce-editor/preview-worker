@@ -97,3 +97,18 @@ test('dispatchClickEvent does not call onclick when it is not a function', () =>
     DispatchClickEvent.dispatchClickEvent(button, window)
   }).not.toThrow()
 })
+
+test('dispatchClickEvent passes clientX and clientY to event', () => {
+  const window = createWindow()
+  const { document } = window
+  document.body.innerHTML = '<button id="btn">Click</button>'
+  const button = document.querySelector('#btn')
+  let receivedEvent: any = null
+  button.addEventListener('click', (event: any) => {
+    receivedEvent = event
+  })
+  DispatchClickEvent.dispatchClickEvent(button, window, 100, 200)
+  expect(receivedEvent).toBeDefined()
+  expect(receivedEvent.clientX).toBe(100)
+  expect(receivedEvent.clientY).toBe(200)
+})
