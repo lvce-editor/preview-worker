@@ -4,7 +4,6 @@ import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as HandleClick from '../src/parts/HandleClick/HandleClick.ts'
 import * as HappyDomState from '../src/parts/HappyDomState/HappyDomState.ts'
-import * as SerializeHappyDom from '../src/parts/SerializeHappyDom/SerializeHappyDom.ts'
 
 const createState = (uid: number, overrides: Partial<PreviewState> = {}): PreviewState => ({
   ...createDefaultState(),
