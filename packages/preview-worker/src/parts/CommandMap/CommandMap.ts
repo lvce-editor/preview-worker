@@ -23,7 +23,7 @@ import { setUri } from '../SetUri/SetUri.ts'
 export const commandMap = {
   handleEditorChanged: handleEditorChanged,
   'Preview.create': Preview.create,
-  'Preview.createOffscreenCanvas': getOffscreenCanvas,
+  'Preview.createOffscreenCanvas': wrapGetter(getOffscreenCanvas),
   'Preview.diff2': diff2,
   'Preview.executeCallback': executeCallback,
   'Preview.getCommandIds': getCommandIds,

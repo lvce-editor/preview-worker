@@ -16,7 +16,6 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
     const { css } = parseResult
     const { scripts } = parseResult
 
-
     if (scripts.length > 0) {
       await sandboxRpc.invoke('SandBox.loadContent', uid, width, height, content, scripts)
       const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', uid)

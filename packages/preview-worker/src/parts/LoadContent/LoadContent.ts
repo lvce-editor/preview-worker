@@ -21,14 +21,13 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
   const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = uri
     ? await updateContent(state, state.uri)
     : {
-      content: state.content,
-      css: state.css,
-      errorMessage: state.errorMessage,
-      parsedDom: state.parsedDom,
-      parsedNodesChildNodeCount: state.parsedNodesChildNodeCount,
-      scripts: state.scripts,
-    }
-
+        content: state.content,
+        css: state.css,
+        errorMessage: state.errorMessage,
+        parsedDom: state.parsedDom,
+        parsedNodesChildNodeCount: state.parsedNodesChildNodeCount,
+        scripts: state.scripts,
+      }
 
   return {
     ...state,
