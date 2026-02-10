@@ -21,38 +21,24 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
   const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = uri
     ? await updateContent(state, state.uri)
     : {
-        content: state.content,
-        css: state.css,
-        errorMessage: state.errorMessage,
-        parsedDom: state.parsedDom,
-        parsedNodesChildNodeCount: state.parsedNodesChildNodeCount,
-        scripts: state.scripts,
-      }
+      content: state.content,
+      css: state.css,
+      errorMessage: state.errorMessage,
+      parsedDom: state.parsedDom,
+      parsedNodesChildNodeCount: state.parsedNodesChildNodeCount,
+      scripts: state.scripts,
+    }
 
-  const { sandboxRpc } = state
-  let finalParsedDom = parsedDom
-  let finalCss = css
-  let finalParsedNodesChildNodeCount = parsedNodesChildNodeCount
-
-  if (scripts.length > 0) {
-    const { content, height, scripts, uid, width } = state
-    await sandboxRpc.invoke('SandBox.loadContent', uid, width, height, content, scripts)
-    const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', uid)
-    finalParsedDom = serialized.dom
-    finalCss = serialized.css
-    finalParsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(finalParsedDom)
-  }
 
   return {
     ...state,
     content,
-    css: finalCss,
+    css,
     errorCount: 0,
     errorMessage,
     initial: false,
-    parsedDom: finalParsedDom,
-    parsedNodesChildNodeCount: finalParsedNodesChildNodeCount,
-    sandboxRpc,
+    parsedDom,
+    parsedNodesChildNodeCount,
     scripts,
     warningCount: 1,
   }
