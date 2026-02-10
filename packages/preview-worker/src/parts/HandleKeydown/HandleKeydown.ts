@@ -1,17 +1,6 @@
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
-import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
+import * as CallAndUpdate from '../CallAndUpdate/CallAndUpdate.ts'
 
 export const handleKeydown = async (state: PreviewState, hdId: string, key: string, code: string): Promise<PreviewState> => {
-  const { sandboxRpc, uid } = state
-  await sandboxRpc.invoke('SandBox.handleKeyDown', uid, hdId, key, code)
-  const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', uid)
-  const parsedDom = serialized.dom
-  const { css } = serialized
-  const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
-  return {
-    ...state,
-    css,
-    parsedDom,
-    parsedNodesChildNodeCount,
-  }
+  return CallAndUpdate.callAndUpdate(state, 'SandBox.handleKeyDown', hdId, key, code)
 }
