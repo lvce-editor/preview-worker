@@ -15,7 +15,7 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
     console.error(error)
   }
 
-  const { uid, uri } = state
+  const { uri } = state
 
   // Read and parse file contents if we have a URI
   const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = uri
