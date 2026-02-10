@@ -1,4 +1,3 @@
-import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
