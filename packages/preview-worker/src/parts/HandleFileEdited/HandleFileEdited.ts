@@ -3,7 +3,7 @@ import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/G
 import { updateContent } from '../UpdateContent/UpdateContent.ts'
 
 export const handleFileEdited = async (state: PreviewState): Promise<PreviewState> => {
-  const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = await updateContent(state.uri)
+  const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = await updateContent(state, state.uri)
 
   let finalParsedDom = parsedDom
   let finalCss = css
