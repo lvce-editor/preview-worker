@@ -28,7 +28,6 @@ export const create = async (
     scripts: [],
     uid,
     uri,
-    useSandboxWorker: false,
     warningCount: 0,
     width,
     x,
