@@ -5,5 +5,8 @@ export const handleClick = async (state: PreviewState, hdId: string, clientX: nu
   if (!hdId) {
     return state
   }
-  return CallAndUpdate.callAndUpdate(state, 'SandBox.handleClick', hdId, clientX, clientY)
+  const { x, y } = state
+  const adjustedClientX = clientX - x
+  const adjustedClientY = clientY - y
+  return CallAndUpdate.callAndUpdate(state, 'SandBox.handleClick', hdId, adjustedClientX, adjustedClientY)
 }
