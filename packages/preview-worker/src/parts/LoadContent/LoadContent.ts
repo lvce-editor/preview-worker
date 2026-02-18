@@ -14,8 +14,10 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
     console.error(error)
   }
 
+  const { uri } = state
+
   // Read and parse file contents if we have a URI
-  const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = state.uri
+  const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = uri
     ? await updateContent(state, state.uri)
     : {
         content: state.content,
@@ -26,29 +28,15 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
         scripts: state.scripts,
       }
 
-  const { sandboxRpc } = state
-  let finalParsedDom = parsedDom
-  let finalCss = css
-  let finalParsedNodesChildNodeCount = parsedNodesChildNodeCount
-
-  if (state.useSandboxWorker && scripts.length > 0) {
-    await sandboxRpc.invoke('SandBox.initialize', state.uid, content, scripts)
-    const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', state.uid)
-    finalParsedDom = serialized.dom
-    finalCss = serialized.css
-    finalParsedNodesChildNodeCount = finalParsedDom.length > 0 ? finalParsedDom[0].childCount || 0 : 0
-  }
-
   return {
     ...state,
     content,
-    css: finalCss,
+    css,
     errorCount: 0,
     errorMessage,
     initial: false,
-    parsedDom: finalParsedDom,
-    parsedNodesChildNodeCount: finalParsedNodesChildNodeCount,
-    sandboxRpc,
+    parsedDom,
+    parsedNodesChildNodeCount,
     scripts,
     warningCount: 1,
   }
