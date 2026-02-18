@@ -10,8 +10,8 @@ const createState = () => {
     sandboxRpc,
   }
   return {
-    state,
     sandboxRpc,
+    state,
   }
 }
 
@@ -27,7 +27,7 @@ test('getOffscreenCanvas should invoke RendererWorker with correct parameters', 
 })
 
 test('getOffscreenCanvas should store callback rpc and execute callback', async () => {
-  const { state, sandboxRpc } = createState()
+  const { sandboxRpc, state } = createState()
   const invokeAndTransfer = jest.fn()
   sandboxRpc.invokeAndTransfer = invokeAndTransfer
 
