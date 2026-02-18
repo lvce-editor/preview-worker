@@ -2,9 +2,18 @@ import { expect, jest, test } from '@jest/globals'
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import { getOffscreenCanvas, executeCallback } from '../src/parts/GetOffscreenCanvas/GetOffscreenCanvas.ts'
 
-const createState = () => {
+const createState = (): {
+  sandboxRpc: {
+    invokeAndTransfer: () => void
+  }
+  state: {
+    sandboxRpc: {
+      invokeAndTransfer: () => void
+    }
+  }
+} => {
   const sandboxRpc = {
-    invokeAndTransfer: () => {},
+    invokeAndTransfer: (): void => {},
   }
   const state = {
     sandboxRpc,
@@ -33,7 +42,7 @@ test('getOffscreenCanvas should store callback rpc and execute callback', async 
 
   using mockRpc = RendererWorker.registerMockRpc({
     'OffscreenCanvas.createForPreview': (id: number) => {
-      executeCallback(id, 'arg-1', 'arg-2')
+      void executeCallback(id, 'arg-1', 'arg-2')
     },
   })
 
