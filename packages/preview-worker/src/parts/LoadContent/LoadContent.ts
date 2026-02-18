@@ -1,6 +1,5 @@
 import { EditorWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
-import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import { updateContent } from '../UpdateContent/UpdateContent.ts'
 
 export const loadContent = async (state: PreviewState): Promise<PreviewState> => {
