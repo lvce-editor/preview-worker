@@ -10,6 +10,9 @@ export interface PreviewState {
   readonly height: number
   readonly initial: boolean
   readonly listenerId: string
+  readonly loadExternalStyleSheets: boolean
+  readonly loadJavaScript: boolean
+  readonly loadStyleElements: boolean
   readonly parsedDom: readonly VirtualDomNode[]
   readonly parsedNodesChildNodeCount: number
   readonly platform: number

@@ -49,3 +49,35 @@ test('loadLinkedStylesheets should continue when stylesheet is missing', async (
     ['FileSystem.readFile', '/tmp/present.css'],
   ])
 })
+
+test('loadLinkedStylesheets should resolve relative stylesheets from memfs document uri', async () => {
+  using mockRpc = RendererWorker.registerMockRpc({
+    'FileSystem.readFile': (uri: string) => {
+      if (uri === 'memfs://workspace/app.css') {
+        return 'body { color: green; }'
+      }
+      throw new Error('file not found')
+    },
+  })
+
+  const result = await LoadLinkedStylesheets.loadLinkedStylesheets('memfs://workspace/index.html', ['./app.css'])
+
+  expect(result).toEqual(['body { color: green; }'])
+  expect(mockRpc.invocations).toEqual([['FileSystem.readFile', 'memfs://workspace/app.css']])
+})
+
+test('loadLinkedStylesheets should allow absolute custom scheme stylesheet uris', async () => {
+  using mockRpc = RendererWorker.registerMockRpc({
+    'FileSystem.readFile': (uri: string) => {
+      if (uri === 'memfs://workspace/theme.css') {
+        return 'h1 { color: purple; }'
+      }
+      throw new Error('file not found')
+    },
+  })
+
+  const result = await LoadLinkedStylesheets.loadLinkedStylesheets('/tmp/index.html', ['memfs://workspace/theme.css'])
+
+  expect(result).toEqual(['h1 { color: purple; }'])
+  expect(mockRpc.invocations).toEqual([['FileSystem.readFile', 'memfs://workspace/theme.css']])
+})

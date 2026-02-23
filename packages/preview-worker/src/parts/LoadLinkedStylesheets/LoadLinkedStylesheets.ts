@@ -1,27 +1,43 @@
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 
-const isExternalUrl = (href: string): boolean => {
-  return /^(?:[a-z][a-z\d+.-]*:)?\/\//i.test(href) || /^(?:data|javascript|blob):/i.test(href)
+const hasScheme = (uri: string): boolean => {
+  return /^[a-z][a-z\d+.-]*:/i.test(uri)
+}
+
+const isBlockedStylesheetHref = (href: string): boolean => {
+  if (/^\/\//.test(href)) {
+    return true
+  }
+  if (/^(?:data|javascript|blob):/i.test(href)) {
+    return true
+  }
+  if (/^(?:http|https):/i.test(href)) {
+    return true
+  }
+  return false
 }
 
 const toBaseUrl = (uri: string): string => {
-  if (/^[a-z][a-z\d+.-]*:/i.test(uri)) {
+  if (hasScheme(uri)) {
     return uri
   }
   return `file://${uri}`
 }
 
 const resolveStylesheetUri = (documentUri: string, href: string): string => {
-  if (!href || href.startsWith('#') || isExternalUrl(href)) {
+  if (!href || href.startsWith('#') || isBlockedStylesheetHref(href)) {
     return ''
   }
   try {
     const baseUrl = toBaseUrl(documentUri)
     const resolved = new URL(href, baseUrl)
-    if (resolved.protocol !== 'file:') {
+    if (/^(?:http|https):$/i.test(resolved.protocol)) {
       return ''
     }
-    return decodeURIComponent(resolved.pathname)
+    if (resolved.protocol === 'file:' && !hasScheme(documentUri)) {
+      return decodeURIComponent(resolved.pathname)
+    }
+    return resolved.href
   } catch {
     return ''
   }
@@ -37,7 +53,8 @@ export const loadLinkedStylesheets = async (documentUri: string, hrefs: readonly
     try {
       const stylesheetContent = await RendererWorker.readFile(stylesheetUri)
       css.push(stylesheetContent)
-    } catch {
+    } catch (error) {
+      console.error(error)
       // Ignore missing or unreadable stylesheets so preview still renders
     }
   }

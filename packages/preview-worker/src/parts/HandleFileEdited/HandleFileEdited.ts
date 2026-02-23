@@ -6,7 +6,7 @@ export const handleFileEdited = async (state: PreviewState): Promise<PreviewStat
   const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = await updateContent(state, state.uri)
 
   let finalParsedDom = parsedDom
-  let finalCss = css
+  let finalCss = [...css]
   let finalParsedNodesChildNodeCount = parsedNodesChildNodeCount
 
   if (scripts.length > 0) {
@@ -14,7 +14,12 @@ export const handleFileEdited = async (state: PreviewState): Promise<PreviewStat
     await sandboxRpc.invoke('SandBox.initialize', uid, content, scripts)
     const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', uid)
     finalParsedDom = serialized.dom
-    finalCss = serialized.css
+    finalCss = [...serialized.css]
+    for (const cssContent of css) {
+      if (!finalCss.includes(cssContent)) {
+        finalCss.push(cssContent)
+      }
+    }
     finalParsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(finalParsedDom)
   }
 
