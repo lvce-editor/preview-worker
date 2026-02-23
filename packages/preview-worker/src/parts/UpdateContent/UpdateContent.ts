@@ -1,8 +1,8 @@
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
-import * as LoadStyleSheets from '../LoadStyleSheets/LoadStyleSheets.ts'
 import * as LoadScripts from '../LoadScripts/LoadScripts.ts'
+import * as LoadStyleSheets from '../LoadStyleSheets/LoadStyleSheets.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 
 export const updateContent = async (state: PreviewState, uri: string): Promise<PreviewState> => {
