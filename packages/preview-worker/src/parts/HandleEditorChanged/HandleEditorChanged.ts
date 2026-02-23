@@ -1,5 +1,5 @@
 import { EditorWorker, RendererWorker } from '@lvce-editor/rpc-registry'
-import * as LoadLinkedStylesheets from '../LoadLinkedStylesheets/LoadLinkedStylesheets.ts'
+import * as LoadStyleSheets from '../LoadStyleSheets/LoadStyleSheets.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as PreviewStates from '../PreviewStates/PreviewStates.ts'
 
@@ -35,16 +35,13 @@ export const handleEditorChanged = async (): Promise<void> => {
       try {
         const content = await EditorWorker.invoke('Editor.getText', matchingEditorUid)
         const parseResult = ParseHtml.parseHtml(content, [])
-        const linkedStylesheets = state.loadExternalStyleSheets
-          ? await LoadLinkedStylesheets.loadLinkedStylesheets(state.uri, parseResult.stylesheets)
-          : []
-        const cssFromStyleElements = state.loadStyleElements ? parseResult.css : []
+        const css = await LoadStyleSheets.loadStyleSheets(state.uri, parseResult.styleSheets, state.loadExternalStyleSheets, state.loadStyleElements)
         const scripts = state.loadJavaScript ? parseResult.scripts : []
 
         const updatedState = {
           ...state,
           content,
-          css: [...cssFromStyleElements, ...linkedStylesheets],
+          css,
           errorMessage: '',
           parsedDom: parseResult.dom,
           scripts,
