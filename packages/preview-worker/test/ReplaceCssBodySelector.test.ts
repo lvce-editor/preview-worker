@@ -1,9 +1,9 @@
-import { describe, expect, test } from '@jest/globals'
+import { expect, test } from '@jest/globals'
 import * as ReplaceCssBodySelector from '../src/parts/ReplaceCssBodySelector/ReplaceCssBodySelector.ts'
 
 const normalizeWhitespace = (value: string): string => value.replaceAll(/\s+/g, ' ').trim()
 
-describe('ReplaceCssBodySelector', () => {
+const runTests = (): void => {
   test('should replace simple body selector', () => {
     const css = 'body { color: red; }'
     const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
@@ -277,4 +277,6 @@ describe('ReplaceCssBodySelector', () => {
     expect(normalizeWhitespace(result)).toContain('@media (min-width: 1px) { .Preview { margin: 0; } }')
     expect(normalizeWhitespace(result)).toContain('.Preview main { padding: 4px; }')
   })
-})
+}
+
+runTests()
