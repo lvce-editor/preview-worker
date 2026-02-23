@@ -1,4 +1,5 @@
 import { RendererWorker } from '@lvce-editor/rpc-registry'
+import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
 
 const hasScheme = (uri: string): boolean => {
   return /^[a-z][a-z\d+.-]*:/i.test(uri)
@@ -50,19 +51,39 @@ const resolveStylesheetUri = (documentUri: string, href: string): string => {
   }
 }
 
-export const loadLinkedStylesheets = async (documentUri: string, hrefs: readonly string[]): Promise<readonly string[]> => {
+const loadLinkedStyleSheet = async (documentUri: string, href: string): Promise<string> => {
+  const stylesheetUri = resolveStylesheetUri(documentUri, href)
+  if (!stylesheetUri) {
+    return ''
+  }
+  try {
+    return await RendererWorker.readFile(stylesheetUri)
+  } catch (error) {
+    console.error(error)
+    return ''
+  }
+}
+
+export const loadStyleSheets = async (
+  documentUri: string,
+  styleSheets: readonly StyleSheet[],
+  loadExternalStyleSheets: boolean,
+  loadStyleElements: boolean,
+): Promise<readonly string[]> => {
   const css: string[] = []
-  for (const href of hrefs) {
-    const stylesheetUri = resolveStylesheetUri(documentUri, href)
-    if (!stylesheetUri) {
+  for (const styleSheet of styleSheets) {
+    if (styleSheet.type === 'style') {
+      if (loadStyleElements && styleSheet.content) {
+        css.push(styleSheet.content)
+      }
       continue
     }
-    try {
-      const stylesheetContent = await RendererWorker.readFile(stylesheetUri)
-      css.push(stylesheetContent)
-    } catch (error) {
-      console.error(error)
-      // Ignore missing or unreadable stylesheets so preview still renders
+    if (!loadExternalStyleSheets || !styleSheet.href) {
+      continue
+    }
+    const linkedStyleSheet = await loadLinkedStyleSheet(documentUri, styleSheet.href)
+    if (linkedStyleSheet) {
+      css.push(linkedStyleSheet)
     }
   }
   return css
