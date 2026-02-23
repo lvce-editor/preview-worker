@@ -1,5 +1,5 @@
 import { RendererWorker } from '@lvce-editor/rpc-registry'
-import { resolveStylesheetUri } from '../ResolveStylesheetUri/ResolveStylesheetUri.ts'
+import { resolveStylesheetUri } from '../ResolveStylesheetUri/ResolveStylesheetUri'
 
 export const loadLinkedStyleSheet = async (documentUri: string, href: string): Promise<string> => {
   const stylesheetUri = resolveStylesheetUri(documentUri, href)
@@ -13,5 +13,3 @@ export const loadLinkedStyleSheet = async (documentUri: string, href: string): P
     return ''
   }
 }
-
-export default loadLinkedStyleSheet

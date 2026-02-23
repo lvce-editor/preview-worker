@@ -7,9 +7,9 @@ import * as GetVirtualDomTag from '../GetVirtualDomTag/GetVirtualDomTag.ts'
 import * as HtmlTokenType from '../HtmlTokenType/HtmlTokenType.ts'
 import * as IsDefaultAllowedAttribute from '../IsDefaultAllowedAttribute/IsDefaultAllowedAttribute.ts'
 import * as IsSelfClosingTag from '../IsSelfClosingTag/IsSelfClosingTag.ts'
+import * as NormalizeAttributeName from '../NormalizeAttributeName/NormalizeAttributeName.ts'
 import * as ParseText from '../ParseText/ParseText.ts'
 import * as TokenizeHtml from '../TokenizeHtml/TokenizeHtml.ts'
-import * as NormalizeAttributeName from '../NormalizeAttributeName/NormalizeAttributeName.ts'
 
 // Tags that should be completely skipped (both tag and content)
 const TAGS_TO_SKIP_COMPLETELY = new Set(['meta', 'title'])

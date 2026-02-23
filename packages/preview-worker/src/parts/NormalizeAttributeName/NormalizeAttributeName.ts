@@ -8,4 +8,3 @@ export const normalizeAttributeName = (attribute: string): string => {
   return attribute
 }
 
-export default normalizeAttributeName
