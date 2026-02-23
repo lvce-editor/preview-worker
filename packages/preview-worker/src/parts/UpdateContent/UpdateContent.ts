@@ -1,14 +1,13 @@
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
+import * as LoadScripts from '../LoadScripts/LoadScripts.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 
 export const updateContent = async (state: PreviewState, uri: string): Promise<PreviewState> => {
   try {
     // Read the file content using RendererWorker RPC
     const content = await RendererWorker.readFile(uri)
-
-    const { height, sandboxRpc, uid, width } = state
 
     // Parse the content into virtual DOM and CSS
     const parseResult = ParseHtml.parseHtml(content)
@@ -17,19 +16,7 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
     const { scripts } = parseResult
 
     if (scripts.length > 0) {
-      await sandboxRpc.invoke('SandBox.loadContent', uid, width, height, content, scripts)
-      const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', uid)
-      const finalParsedDom = serialized.dom
-      const finalParsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(finalParsedDom)
-      return {
-        ...state,
-        content,
-        css,
-        errorMessage: '',
-        parsedDom: finalParsedDom,
-        parsedNodesChildNodeCount: finalParsedNodesChildNodeCount,
-        scripts,
-      }
+      return LoadScripts.loadScripts(state, content, css, scripts)
     }
 
     const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
