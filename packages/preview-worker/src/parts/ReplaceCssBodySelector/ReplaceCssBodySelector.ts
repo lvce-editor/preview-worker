@@ -360,6 +360,14 @@ const shouldScopeNestedAtRule = (prelude: string): boolean => {
   )
 }
 
+const formatRule = (prelude: string, block: string): string => {
+  const startsWithNewline = block.startsWith('\n') || block.startsWith('\r')
+  if (startsWithNewline) {
+    return `${prelude} {${block} }`
+  }
+  return `${prelude} { ${block} }`
+}
+
 const scopeCss = (css: string): string => {
   const rules: string[] = []
   let index = 0
@@ -483,15 +491,15 @@ const scopeCss = (css: string): string => {
       if (shouldScopeNestedAtRule(prelude)) {
         const scopedBlock = scopeCss(block)
         if (scopedBlock) {
-          rules.push(`${prelude} { ${scopedBlock} }`)
+          rules.push(formatRule(prelude, scopedBlock))
         }
       } else {
-        rules.push(`${prelude} { ${block} }`)
+        rules.push(formatRule(prelude, block))
       }
     } else {
       const scopedPrelude = scopeSelectorList(prelude)
       if (scopedPrelude) {
-        rules.push(`${scopedPrelude} { ${block} }`)
+        rules.push(formatRule(scopedPrelude, block))
       }
     }
 
