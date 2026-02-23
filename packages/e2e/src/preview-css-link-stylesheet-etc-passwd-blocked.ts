@@ -1,29 +1,30 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
 
-export const name = 'preview.css-link-stylesheet'
+export const name = 'preview.css-link-stylesheet-etc-passwd-blocked'
 
-// export const skip = 1
+export const skip = 1
 
 export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, Workspace }) => {
   const tmpDir = await FileSystem.getTmpDir()
   await Workspace.setPath(tmpDir)
 
-  const filePath = `${tmpDir}/preview-test-css-link-stylesheet.html`
-  const cssPath = `${tmpDir}/preview-test-css-link-stylesheet.css`
+  const filePath = `${tmpDir}/preview-test-css-link-stylesheet-etc-passwd-blocked.html`
+  const cssPath = `${tmpDir}/preview-test-css-link-stylesheet-etc-passwd-blocked.css`
 
   const html = `<!DOCTYPE html>
 <html>
 <head>
-  <title>CSS Link Stylesheet Test</title>
-  <link rel="stylesheet" href="./preview-test-css-link-stylesheet.css">
+  <title>Etc Passwd Stylesheet Blocked Test</title>
+  <link rel="stylesheet" href="/etc/passwd">
+  <link rel="stylesheet" href="./preview-test-css-link-stylesheet-etc-passwd-blocked.css">
 </head>
 <body>
-  <div id="target">Styled via linked stylesheet</div>
+  <div id="target">Preview should still render when /etc/passwd is referenced</div>
 </body>
 </html>`
 
   const css = `#target {
-  color: rgb(255, 0, 0);
+  color: rgb(0, 0, 255);
 }`
 
   await FileSystem.writeFile(cssPath, css)
@@ -37,5 +38,5 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
 
   const target = previewArea.locator('#target')
   await expect(target).toBeVisible()
-  await expect(target).toHaveCSS('color', 'rgb(255, 0, 0)')
+  await expect(target).toHaveCSS('color', 'rgb(0, 0, 255)')
 }

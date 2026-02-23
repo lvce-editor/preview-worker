@@ -1,32 +1,29 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
 
-export const name = 'preview.css-link-stylesheet'
-
-// export const skip = 1
+export const name = 'preview.css-link-stylesheet-data-uri-blocked'
 
 export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, Workspace }) => {
   const tmpDir = await FileSystem.getTmpDir()
   await Workspace.setPath(tmpDir)
 
-  const filePath = `${tmpDir}/preview-test-css-link-stylesheet.html`
-  const cssPath = `${tmpDir}/preview-test-css-link-stylesheet.css`
+  const filePath = `${tmpDir}/preview-test-css-link-stylesheet-data-uri-blocked.html`
 
   const html = `<!DOCTYPE html>
 <html>
 <head>
-  <title>CSS Link Stylesheet Test</title>
-  <link rel="stylesheet" href="./preview-test-css-link-stylesheet.css">
+  <title>Data URI Stylesheet Blocked Test</title>
+  <style>
+    #target {
+      color: rgb(0, 128, 0);
+    }
+  </style>
+  <link rel="stylesheet" href="data:text/css,%23target%20%7B%20color%3A%20rgb(255%2C%200%2C%200)%3B%20%7D">
 </head>
 <body>
-  <div id="target">Styled via linked stylesheet</div>
+  <div id="target">Data URI stylesheet should be blocked</div>
 </body>
 </html>`
 
-  const css = `#target {
-  color: rgb(255, 0, 0);
-}`
-
-  await FileSystem.writeFile(cssPath, css)
   await FileSystem.writeFile(filePath, html)
   await Main.openUri(filePath)
 
@@ -37,5 +34,5 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
 
   const target = previewArea.locator('#target')
   await expect(target).toBeVisible()
-  await expect(target).toHaveCSS('color', 'rgb(255, 0, 0)')
+  await expect(target).toHaveCSS('color', 'rgb(0, 128, 0)')
 }
