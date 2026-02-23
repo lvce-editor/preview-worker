@@ -1,5 +1,7 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import { text } from '@lvce-editor/virtual-dom-worker'
+import type { ParseResult } from '../ParseResult/ParseResult.ts'
+import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
 import * as Assert from '../Assert/Assert.ts'
 import * as GetVirtualDomTag from '../GetVirtualDomTag/GetVirtualDomTag.ts'
 import * as HtmlTokenType from '../HtmlTokenType/HtmlTokenType.ts'
@@ -20,13 +22,6 @@ const TAGS_TO_CAPTURE_AS_CSS = new Set(['style'])
 // Tags where we capture content as JavaScript
 const TAGS_TO_CAPTURE_AS_JS = new Set(['script'])
 
-export interface ParseResult {
-  readonly css: readonly string[]
-  readonly dom: readonly VirtualDomNode[]
-  readonly scripts: readonly string[]
-  readonly stylesheets: readonly string[]
-}
-
 export const parseHtml = (html: string, allowedAttributes: readonly string[] = [], defaultAllowedAttributes: readonly string[] = []): ParseResult => {
   Assert.string(html)
   Assert.array(allowedAttributes)
@@ -39,6 +34,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
   const dom: VirtualDomNode[] = []
   const css: string[] = []
   const scripts: string[] = []
+  const styleSheets: StyleSheet[] = []
   const stylesheets: string[] = []
   const root: VirtualDomNode = {
     childCount: 0,
@@ -79,6 +75,10 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
   const finalizeStylesheetLink = (): void => {
     if (stylesheetRel.toLowerCase() === 'stylesheet' && stylesheetHref) {
       stylesheets.push(stylesheetHref)
+      styleSheets.push({
+        href: stylesheetHref,
+        type: 'link',
+      })
     }
     captureStylesheetLink = false
     stylesheetHref = ''
@@ -149,6 +149,10 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
           // Finished capturing CSS
           if (cssContent.trim()) {
             css.push(cssContent)
+            styleSheets.push({
+              content: cssContent,
+              type: 'style',
+            })
           }
           cssContent = ''
           captureCss = false
@@ -258,7 +262,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
     ;(dom as any).rootChildCount = root.childCount
   }
 
-  return { css, dom, scripts, stylesheets }
+  return { css, dom, scripts, styleSheets, stylesheets }
 }
 
 // Test helper: returns just the DOM array for backward compatibility with existing tests
