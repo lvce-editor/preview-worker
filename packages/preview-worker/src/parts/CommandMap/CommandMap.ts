@@ -19,6 +19,7 @@ import { rerender, triggerRerender } from '../Rerender/Rerender.ts'
 import { resize } from '../Resize/Resize.ts'
 import { saveState } from '../SaveState/SaveState.ts'
 import { setUri } from '../SetUri/SetUri.ts'
+import { waitForClick } from '../WaitForClick/WaitForClick.ts'
 
 export const commandMap = {
   handleEditorChanged: handleEditorChanged,
@@ -44,4 +45,5 @@ export const commandMap = {
   'Preview.setUri': wrapCommand(setUri),
   'Preview.terminate': terminate,
   'Preview.triggerRerender': wrapCommand(triggerRerender),
+  'Preview.waitForClick': wrapCommand(waitForClick),
 }
