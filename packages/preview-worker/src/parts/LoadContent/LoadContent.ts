@@ -1,6 +1,7 @@
 import { EditorWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { updateContent } from '../UpdateContent/UpdateContent.ts'
+import { createUuid } from '../CreateUuid/CreateUuid.ts'
 
 export const loadContent = async (state: PreviewState): Promise<PreviewState> => {
   // Try to register to receive editor change notifications from the editor worker.
@@ -8,7 +9,7 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
   // the EditorWorker / ListenerType are not available (e.g. unit tests).
   const EditorChange = 1
   const rpcId = 9112
-  const listenerId = globalThis.crypto.randomUUID()
+  const listenerId = createUuid()
   try {
     await EditorWorker.invoke('Listener.register', EditorChange, rpcId, listenerId)
   } catch (error) {
