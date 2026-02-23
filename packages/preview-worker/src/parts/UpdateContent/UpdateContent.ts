@@ -13,9 +13,10 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
     // Parse the content into virtual DOM and CSS
     const parseResult = ParseHtml.parseHtml(content)
     const parsedDom = parseResult.dom
-    const linkedStylesheets = await LoadLinkedStylesheets.loadLinkedStylesheets(uri, parseResult.stylesheets)
-    const css = [...parseResult.css, ...linkedStylesheets]
-    const { scripts } = parseResult
+    const linkedStylesheets = state.loadExternalStyleSheets ? await LoadLinkedStylesheets.loadLinkedStylesheets(uri, parseResult.stylesheets) : []
+    const cssFromStyleElements = state.loadStyleElements ? parseResult.css : []
+    const css = [...cssFromStyleElements, ...linkedStylesheets]
+    const scripts = state.loadJavaScript ? parseResult.scripts : []
 
     if (scripts.length > 0) {
       return LoadScripts.loadScripts(state, content, css, scripts)

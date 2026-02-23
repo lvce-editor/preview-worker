@@ -35,15 +35,19 @@ export const handleEditorChanged = async (): Promise<void> => {
       try {
         const content = await EditorWorker.invoke('Editor.getText', matchingEditorUid)
         const parseResult = ParseHtml.parseHtml(content, [])
-        const linkedStylesheets = await LoadLinkedStylesheets.loadLinkedStylesheets(state.uri, parseResult.stylesheets)
+        const linkedStylesheets = state.loadExternalStyleSheets
+          ? await LoadLinkedStylesheets.loadLinkedStylesheets(state.uri, parseResult.stylesheets)
+          : []
+        const cssFromStyleElements = state.loadStyleElements ? parseResult.css : []
+        const scripts = state.loadJavaScript ? parseResult.scripts : []
 
         const updatedState = {
           ...state,
           content,
-          css: [...parseResult.css, ...linkedStylesheets],
+          css: [...cssFromStyleElements, ...linkedStylesheets],
           errorMessage: '',
           parsedDom: parseResult.dom,
-          scripts: parseResult.scripts,
+          scripts,
         }
 
         PreviewStates.set(previewUid, state, updatedState)
