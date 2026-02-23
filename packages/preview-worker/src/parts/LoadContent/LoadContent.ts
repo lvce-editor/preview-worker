@@ -8,8 +8,9 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
   // the EditorWorker / ListenerType are not available (e.g. unit tests).
   const EditorChange = 1
   const rpcId = 9112
+  const listenerId = globalThis.crypto.randomUUID()
   try {
-    await EditorWorker.invoke('Listener.register', EditorChange, rpcId)
+    await EditorWorker.invoke('Listener.register', EditorChange, rpcId, listenerId)
   } catch (error) {
     console.error(error)
   }
@@ -35,6 +36,7 @@ export const loadContent = async (state: PreviewState): Promise<PreviewState> =>
     errorCount: 0,
     errorMessage,
     initial: false,
+    listenerId,
     parsedDom,
     parsedNodesChildNodeCount,
     scripts,
