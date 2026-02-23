@@ -15,5 +15,3 @@ export const isBlockedStylesheetHref = (href: string): boolean => {
   }
   return false
 }
-
-export default isBlockedStylesheetHref

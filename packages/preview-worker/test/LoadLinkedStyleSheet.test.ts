@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals'
 import { RendererWorker } from '@lvce-editor/rpc-registry'
-import * as LoadLinkedStyleSheet from '../src/parts/LoadStyleSheets/LoadLinkedStyleSheet/LoadLinkedStyleSheet.ts'
+import * as LoadLinkedStyleSheet from '../src/parts/LoadLinkedStyleSheet/LoadLinkedStyleSheet.ts'
 
 test('loadLinkedStyleSheet should read local relative stylesheet', async () => {
   using mockRpc = RendererWorker.registerMockRpc({

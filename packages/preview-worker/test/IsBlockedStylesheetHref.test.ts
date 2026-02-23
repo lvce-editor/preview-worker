@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import * as IsBlocked from '../src/parts/LoadStyleSheets/IsBlockedStylesheetHref/IsBlockedStylesheetHref.ts'
+import * as IsBlocked from '../src/parts/IsBlockedStylesheetHref/IsBlockedStylesheetHref.ts'
 
 test('isBlockedStylesheetHref should block protocol-relative urls', () => {
   expect(IsBlocked.isBlockedStylesheetHref('//example.com/app.css')).toBe(true)

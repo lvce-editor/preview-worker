@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import * as ToBaseUrl from '../src/parts/LoadStyleSheets/ToBaseUrl/ToBaseUrl.ts'
+import * as ToBaseUrl from '../src/parts/ToBaseUrl/ToBaseUrl.ts'
 
 test('toBaseUrl should return uri when it has scheme', () => {
   expect(ToBaseUrl.toBaseUrl('memfs://workspace/index.html')).toBe('memfs://workspace/index.html')

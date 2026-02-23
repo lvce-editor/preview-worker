@@ -1,5 +1,5 @@
 import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
-import { loadLinkedStyleSheet } from './LoadLinkedStyleSheet/LoadLinkedStyleSheet.ts'
+import { loadLinkedStyleSheet } from '../LoadLinkedStyleSheet/LoadLinkedStyleSheet.ts'
 
 export const loadStyleSheets = async (
   documentUri: string,

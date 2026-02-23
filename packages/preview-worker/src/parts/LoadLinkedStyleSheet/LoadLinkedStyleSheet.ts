@@ -13,5 +13,3 @@ export const loadLinkedStyleSheet = async (documentUri: string, href: string): P
     return ''
   }
 }
-
-export default loadLinkedStyleSheet

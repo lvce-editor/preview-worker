@@ -20,5 +20,3 @@ export const resolveStylesheetUri = (documentUri: string, href: string): string 
     return ''
   }
 }
-
-export default resolveStylesheetUri

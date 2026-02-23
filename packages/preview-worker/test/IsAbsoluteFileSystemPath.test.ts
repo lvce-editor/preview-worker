@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import * as IsAbsolute from '../src/parts/LoadStyleSheets/IsAbsoluteFileSystemPath/IsAbsoluteFileSystemPath.ts'
+import * as IsAbsolute from '../src/parts/IsAbsoluteFileSystemPath/IsAbsoluteFileSystemPath.ts'
 
 test('isAbsoluteFileSystemPath should detect POSIX absolute path', () => {
   expect(IsAbsolute.isAbsoluteFileSystemPath('/tmp/app.css')).toBe(true)

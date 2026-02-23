@@ -6,5 +6,3 @@ export const toBaseUrl = (uri: string): string => {
   }
   return `file://${uri}`
 }
-
-export default toBaseUrl
