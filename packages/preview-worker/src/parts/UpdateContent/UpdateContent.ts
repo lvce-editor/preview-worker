@@ -1,6 +1,7 @@
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
+import * as LoadLinkedStylesheets from '../LoadLinkedStylesheets/LoadLinkedStylesheets.ts'
 import * as LoadScripts from '../LoadScripts/LoadScripts.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 
@@ -12,7 +13,8 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
     // Parse the content into virtual DOM and CSS
     const parseResult = ParseHtml.parseHtml(content)
     const parsedDom = parseResult.dom
-    const { css } = parseResult
+    const linkedStylesheets = await LoadLinkedStylesheets.loadLinkedStylesheets(uri, parseResult.stylesheets)
+    const css = [...parseResult.css, ...linkedStylesheets]
     const { scripts } = parseResult
 
     if (scripts.length > 0) {
