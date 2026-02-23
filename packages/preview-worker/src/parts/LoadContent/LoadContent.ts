@@ -1,7 +1,7 @@
 import { EditorWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
-import { updateContent } from '../UpdateContent/UpdateContent.ts'
 import { createUuid } from '../CreateUuid/CreateUuid.ts'
+import { updateContent } from '../UpdateContent/UpdateContent.ts'
 
 export const loadContent = async (state: PreviewState): Promise<PreviewState> => {
   // Try to register to receive editor change notifications from the editor worker.
