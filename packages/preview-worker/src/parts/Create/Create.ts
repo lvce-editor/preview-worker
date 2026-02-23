@@ -2,7 +2,7 @@ import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { createSandboxRpc } from '../CreateSandboxRpc/CreateSandboxRpc.ts'
 import { set } from '../PreviewStates/PreviewStates.ts'
 
-interface PreviewFeatureOptions {
+export interface PreviewFeatureOptions {
   readonly loadExternalStyleSheets?: boolean
   readonly loadJavaScript?: boolean
   readonly loadStyleElements?: boolean
