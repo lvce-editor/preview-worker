@@ -31,6 +31,19 @@ test('loadLinkedStylesheets should ignore external stylesheets', async () => {
   expect(mockRpc.invocations).toEqual([])
 })
 
+test('loadLinkedStylesheets should block absolute filesystem stylesheet paths', async () => {
+  using mockRpc = RendererWorker.registerMockRpc({
+    'FileSystem.readFile': () => {
+      throw new Error('should not be called')
+    },
+  })
+
+  const result = await LoadLinkedStylesheets.loadLinkedStylesheets('/tmp/index.html', ['/tmp/app.css'])
+
+  expect(result).toEqual([])
+  expect(mockRpc.invocations).toEqual([])
+})
+
 test('loadLinkedStylesheets should continue when stylesheet is missing', async () => {
   using mockRpc = RendererWorker.registerMockRpc({
     'FileSystem.readFile': (uri: string) => {
