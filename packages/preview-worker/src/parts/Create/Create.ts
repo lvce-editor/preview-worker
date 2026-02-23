@@ -21,6 +21,7 @@ export const create = async (
     errorMessage: '',
     height,
     initial: true,
+    listenerId: '',
     parsedDom: [],
     parsedNodesChildNodeCount: 0,
     platform,
