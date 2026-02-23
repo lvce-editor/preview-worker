@@ -8,7 +8,6 @@ export default [
   ...tsconfig.default,
   {
     rules: {
-      'tsconfig/dont-skip-lib-check': 'off',
       'unicorn/consistent-function-scoping': 'off',
     },
   },
