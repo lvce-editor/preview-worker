@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import * as Resolve from '../src/parts/LoadStyleSheets/ResolveStylesheetUri/ResolveStylesheetUri.ts'
+import * as Resolve from '../src/parts/ResolveStylesheetUri/ResolveStylesheetUri.ts'
 
 test('resolveStylesheetUri should return empty for empty href', () => {
   expect(Resolve.resolveStylesheetUri('/tmp/index.html', '')).toBe('')

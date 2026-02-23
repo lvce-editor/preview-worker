@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import * as HasScheme from '../src/parts/LoadStyleSheets/HasScheme/HasScheme.ts'
+import * as HasScheme from '../src/parts/HasScheme/HasScheme.ts'
 
 test('hasScheme should detect http scheme', () => {
   expect(HasScheme.hasScheme('http://example.com')).toBe(true)
