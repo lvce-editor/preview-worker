@@ -22,6 +22,16 @@ const TAGS_TO_CAPTURE_AS_CSS = new Set(['style'])
 // Tags where we capture content as JavaScript
 const TAGS_TO_CAPTURE_AS_JS = new Set(['script'])
 
+const normalizeAttributeName = (attribute: string): string => {
+  if (attribute === 'class') {
+    return 'className'
+  }
+  if (attribute === 'type') {
+    return 'inputType'
+  }
+  return attribute
+}
+
 export const parseHtml = (html: string, allowedAttributes: readonly string[] = [], defaultAllowedAttributes: readonly string[] = []): ParseResult => {
   Assert.string(html)
   Assert.array(allowedAttributes)
@@ -53,16 +63,6 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
   let captureStylesheetLink = false
   let stylesheetHref = ''
   let stylesheetRel = ''
-
-  const normalizeAttributeName = (attribute: string): string => {
-    if (attribute === 'class') {
-      return 'className'
-    }
-    if (attribute === 'type') {
-      return 'inputType'
-    }
-    return attribute
-  }
 
   const setStylesheetAttribute = (name: string, value: string): void => {
     if (name === 'href') {
