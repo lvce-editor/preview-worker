@@ -1,6 +1,6 @@
-import { hasScheme } from '../HasScheme/HasScheme.js'
-import { isBlockedStylesheetHref } from '../IsBlockedStylesheetHref/IsBlockedStylesheetHref.js'
-import { toBaseUrl } from '../ToBaseUrl/ToBaseUrl.js'
+import { hasScheme } from '../HasScheme/HasScheme.ts'
+import { isBlockedStylesheetHref } from '../IsBlockedStylesheetHref/IsBlockedStylesheetHref.ts'
+import { toBaseUrl } from '../ToBaseUrl/ToBaseUrl.ts'
 
 export const resolveStylesheetUri = (documentUri: string, href: string): string => {
   if (!href || href.startsWith('#') || isBlockedStylesheetHref(href)) {
