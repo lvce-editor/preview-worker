@@ -1,5 +1,5 @@
 import { RendererWorker } from '@lvce-editor/rpc-registry'
-import type { StyleSheet } from '../ParseHtml/ParseHtml.ts'
+import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
 
 const hasScheme = (uri: string): boolean => {
   return /^[a-z][a-z\d+.-]*:/i.test(uri)
