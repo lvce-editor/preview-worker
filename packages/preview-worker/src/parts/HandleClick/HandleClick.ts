@@ -3,11 +3,11 @@ import * as CallAndUpdate from '../CallAndUpdate/CallAndUpdate.ts'
 import * as WaitForClickState from '../WaitForClickState/WaitForClickState.ts'
 
 export const handleClick = async (state: PreviewState, hdId: string, clientX: number, clientY: number): Promise<PreviewState> => {
-  if (!hdId) {
-    return state
-  }
   if (WaitForClickState.has(state.uid)) {
     WaitForClickState.resolve(state.uid)
+  }
+  if (!hdId) {
+    return state
   }
   const { x, y } = state
   const adjustedClientX = clientX - x
