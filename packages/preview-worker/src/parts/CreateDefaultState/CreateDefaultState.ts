@@ -9,6 +9,7 @@ export const createDefaultState = (): PreviewState => {
     errorMessage: '',
     height: 0,
     initial: true,
+    listenerId: '',
     parsedDom: [],
     parsedNodesChildNodeCount: 0,
     platform: 0,
