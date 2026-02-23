@@ -2,10 +2,9 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'preview.css-link-stylesheet'
 
-// export const skip = 1
-
-export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, Workspace }) => {
+export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, SideBar, Workspace }) => {
   const tmpDir = await FileSystem.getTmpDir()
+  await SideBar.hide()
   await Workspace.setPath(tmpDir)
 
   const filePath = `${tmpDir}/preview-test-css-link-stylesheet.html`
