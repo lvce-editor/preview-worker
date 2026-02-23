@@ -11,10 +11,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-<<<<<<< HEAD
-    "@lvce-editor/server": "0.74.3"
-=======
     "@lvce-editor/server": "0.74.4"
->>>>>>> origin/main
   }
 }
