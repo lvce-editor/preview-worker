@@ -1,0 +1,47 @@
+import type { Test } from '@lvce-editor/test-with-playwright'
+
+export const name = 'preview.css-style-escape-preview'
+
+export const skip = 1
+
+export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, Workspace }) => {
+  const tmpDir = await FileSystem.getTmpDir()
+  await Workspace.setPath(tmpDir)
+
+  const filePath = `${tmpDir}/preview-test-css-style-escape-preview.html`
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+  <title>Style Escape Preview Test</title>
+  <style>
+    .Preview {
+      #target {
+        color: rgb(0, 0, 255);
+      }
+    }
+
+    } html {
+      background-color: rgb(255, 0, 0) !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="target">Styled via nested Preview style element</div>
+</body>
+</html>`
+
+  await FileSystem.writeFile(filePath, html)
+  await Main.openUri(filePath)
+
+  await Command.execute('Layout.showPreview', filePath)
+
+  const previewArea = Locator('.Viewlet.Preview')
+  await expect(previewArea).toBeVisible()
+
+  const target = previewArea.locator('#target')
+  await expect(target).toBeVisible()
+  await expect(target).toHaveCSS('color', 'rgb(0, 0, 255)')
+
+  const root = Locator('html')
+  await expect(root).toHaveCSS('background-color', 'rgb(255, 0, 0)')
+}
