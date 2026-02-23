@@ -6,7 +6,7 @@ export const handleFileEdited = async (state: PreviewState): Promise<PreviewStat
   const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = await updateContent(state, state.uri)
 
   let finalParsedDom = parsedDom
-  let finalCss = css
+  let finalCss = [...css]
   let finalParsedNodesChildNodeCount = parsedNodesChildNodeCount
 
   if (scripts.length > 0) {
