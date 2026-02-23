@@ -1,4 +1,4 @@
-import { expect, test, afterEach } from '@jest/globals'
+import { expect, test, afterEach, jest } from '@jest/globals'
 import * as Listener from '../src/parts/Listener/Listener.ts'
 
 afterEach(() => {
@@ -48,8 +48,11 @@ test('execute should return the listener return value', () => {
 })
 
 test('execute should return undefined when listener is not found', () => {
+  const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
   const result = Listener.execute(99_999)
   expect(result).toBeUndefined()
+  expect(warnSpy).toHaveBeenCalledWith('listener with id 99999 not found')
+  warnSpy.mockRestore()
 })
 
 test('execute should throw when id is not a number', () => {
@@ -94,12 +97,15 @@ const listener2String = (): string => {
 }
 
 test('unregister should not affect other listeners', () => {
+  const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
   const id1 = Listener.register(listener1String)
   const id2 = Listener.register(listener2String)
   Listener.unregister(id1)
   const result = Listener.execute(id2)
   expect(result).toBe('listener2')
   expect(Listener.execute(id1)).toBeUndefined()
+  expect(warnSpy).toHaveBeenCalledWith(`listener with id ${id1} not found`)
+  warnSpy.mockRestore()
 })
 
 test('register should return unique IDs', () => {
