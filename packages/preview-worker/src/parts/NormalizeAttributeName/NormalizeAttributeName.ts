@@ -7,4 +7,3 @@ export const normalizeAttributeName = (attribute: string): string => {
   }
   return attribute
 }
-
