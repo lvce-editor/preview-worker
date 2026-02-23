@@ -1,4 +1,4 @@
-import { isAbsoluteFileSystemPath } from '../isAbsoluteFileSystemPath/isAbsoluteFileSystemPath'
+import { isAbsoluteFileSystemPath } from './IsAbsoluteFileSystemPath'
 
 export const isBlockedStylesheetHref = (href: string): boolean => {
   if (/^\/\//.test(href)) {

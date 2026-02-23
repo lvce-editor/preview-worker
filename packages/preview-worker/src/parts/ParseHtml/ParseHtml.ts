@@ -9,6 +9,7 @@ import * as IsDefaultAllowedAttribute from '../IsDefaultAllowedAttribute/IsDefau
 import * as IsSelfClosingTag from '../IsSelfClosingTag/IsSelfClosingTag.ts'
 import * as ParseText from '../ParseText/ParseText.ts'
 import * as TokenizeHtml from '../TokenizeHtml/TokenizeHtml.ts'
+import * as NormalizeAttributeName from '../NormalizeAttributeName/NormalizeAttributeName.ts'
 
 // Tags that should be completely skipped (both tag and content)
 const TAGS_TO_SKIP_COMPLETELY = new Set(['meta', 'title'])
@@ -22,15 +23,7 @@ const TAGS_TO_CAPTURE_AS_CSS = new Set(['style'])
 // Tags where we capture content as JavaScript
 const TAGS_TO_CAPTURE_AS_JS = new Set(['script'])
 
-const normalizeAttributeName = (attribute: string): string => {
-  if (attribute === 'class') {
-    return 'className'
-  }
-  if (attribute === 'type') {
-    return 'inputType'
-  }
-  return attribute
-}
+// Attribute name normalization is implemented in a separate module
 
 export const parseHtml = (html: string, allowedAttributes: readonly string[] = [], defaultAllowedAttributes: readonly string[] = []): ParseResult => {
   Assert.string(html)
@@ -102,7 +95,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
           (allAllowedAttributes.has(attributeName) ||
             (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
         ) {
-          const finalAttributeName = normalizeAttributeName(attributeName)
+          const finalAttributeName = NormalizeAttributeName.normalizeAttributeName(attributeName)
           current[finalAttributeName] = token.text
         }
         attributeName = ''
@@ -118,7 +111,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
             (allAllowedAttributes.has(attributeName) ||
               (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
           ) {
-            const finalAttributeName = normalizeAttributeName(attributeName)
+            const finalAttributeName = NormalizeAttributeName.normalizeAttributeName(attributeName)
             current[finalAttributeName] = attributeName
           }
           attributeName = ''
@@ -243,7 +236,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
           (allAllowedAttributes.has(attributeName) ||
             (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
         ) {
-          const finalAttributeName = normalizeAttributeName(attributeName)
+          const finalAttributeName = NormalizeAttributeName.normalizeAttributeName(attributeName)
           current[finalAttributeName] = attributeName
         }
         attributeName = ''

@@ -1,4 +1,4 @@
-import { hasScheme } from '../hasScheme/hasScheme'
+import { hasScheme } from './HasScheme'
 
 export const toBaseUrl = (uri: string): string => {
   if (hasScheme(uri)) {
