@@ -24,6 +24,7 @@ export interface ParseResult {
   readonly css: readonly string[]
   readonly dom: readonly VirtualDomNode[]
   readonly scripts: readonly string[]
+  readonly stylesheets: readonly string[]
 }
 
 export const parseHtml = (html: string, allowedAttributes: readonly string[] = [], defaultAllowedAttributes: readonly string[] = []): ParseResult => {
@@ -38,6 +39,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
   const dom: VirtualDomNode[] = []
   const css: string[] = []
   const scripts: string[] = []
+  const stylesheets: string[] = []
   const root: VirtualDomNode = {
     childCount: 0,
     type: 0,
@@ -52,6 +54,36 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
   let cssContent = '' // Accumulate CSS content
   let captureJs = false // Track if we're inside a script tag
   let jsContent = '' // Accumulate JavaScript content
+  let captureStylesheetLink = false
+  let stylesheetHref = ''
+  let stylesheetRel = ''
+
+  const normalizeAttributeName = (attribute: string): string => {
+    if (attribute === 'class') {
+      return 'className'
+    }
+    if (attribute === 'type') {
+      return 'inputType'
+    }
+    return attribute
+  }
+
+  const setStylesheetAttribute = (name: string, value: string): void => {
+    if (name === 'href') {
+      stylesheetHref = value
+    } else if (name === 'rel') {
+      stylesheetRel = value
+    }
+  }
+
+  const finalizeStylesheetLink = (): void => {
+    if (stylesheetRel.toLowerCase() === 'stylesheet' && stylesheetHref) {
+      stylesheets.push(stylesheetHref)
+    }
+    captureStylesheetLink = false
+    stylesheetHref = ''
+    stylesheetRel = ''
+  }
 
   for (const token of tokens) {
     switch (token.type) {
@@ -61,31 +93,32 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
         }
         break
       case HtmlTokenType.AttributeValue:
-        if (
+        if (captureStylesheetLink) {
+          setStylesheetAttribute(attributeName, token.text)
+        } else if (
           skipDepth === 0 &&
           !captureCss &&
           !captureJs &&
           (allAllowedAttributes.has(attributeName) ||
             (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
         ) {
-          let finalAttributeName = attributeName
-          if (attributeName === 'class') finalAttributeName = 'className'
-          else if (attributeName === 'type') finalAttributeName = 'inputType'
+          const finalAttributeName = normalizeAttributeName(attributeName)
           current[finalAttributeName] = token.text
         }
         attributeName = ''
         break
       case HtmlTokenType.ClosingAngleBracket:
-        if (skipDepth === 0 && !captureCss && !captureJs) {
+        if (captureStylesheetLink && lastTagWasSelfClosing) {
+          finalizeStylesheetLink()
+        }
+        if (skipDepth === 0 && !captureCss && !captureJs && !captureStylesheetLink) {
           // Handle boolean attributes (attributes without values)
           if (
             attributeName &&
             (allAllowedAttributes.has(attributeName) ||
               (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
           ) {
-            let finalAttributeName = attributeName
-            if (attributeName === 'class') finalAttributeName = 'className'
-            else if (attributeName === 'type') finalAttributeName = 'inputType'
+            const finalAttributeName = normalizeAttributeName(attributeName)
             current[finalAttributeName] = attributeName
           }
           attributeName = ''
@@ -126,6 +159,8 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
           }
           jsContent = ''
           captureJs = false
+        } else if (tagNameToClose === 'link' && captureStylesheetLink) {
+          finalizeStylesheetLink()
         } else if (TAGS_TO_SKIP_COMPLETELY.has(tagNameToClose)) {
           // We were skipping this content, so decrement skipDepth
           skipDepth--
@@ -154,6 +189,13 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
           captureJs = true
           jsContent = ''
           tagStack.push(token.text)
+        } else if (tagNameLower === 'link') {
+          captureStylesheetLink = true
+          stylesheetHref = ''
+          stylesheetRel = ''
+          if (!lastTagWasSelfClosing) {
+            tagStack.push(token.text)
+          }
         }
         // Check if this tag should be completely skipped (meta, title)
         else if (TAGS_TO_SKIP_COMPLETELY.has(tagNameLower)) {
@@ -187,7 +229,9 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
         }
         break
       case HtmlTokenType.WhitespaceInsideOpeningTag:
-        if (
+        if (captureStylesheetLink && attributeName) {
+          setStylesheetAttribute(attributeName, attributeName)
+        } else if (
           skipDepth === 0 &&
           !captureCss &&
           !captureJs && // Handle boolean attributes (attributes without values)
@@ -195,9 +239,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
           (allAllowedAttributes.has(attributeName) ||
             (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
         ) {
-          let finalAttributeName = attributeName
-          if (attributeName === 'class') finalAttributeName = 'className'
-          else if (attributeName === 'type') finalAttributeName = 'inputType'
+          const finalAttributeName = normalizeAttributeName(attributeName)
           current[finalAttributeName] = attributeName
         }
         attributeName = ''
@@ -216,7 +258,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
     ;(dom as any).rootChildCount = root.childCount
   }
 
-  return { css, dom, scripts }
+  return { css, dom, scripts, stylesheets }
 }
 
 // Test helper: returns just the DOM array for backward compatibility with existing tests

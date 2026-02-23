@@ -1,7 +1,7 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import { expect, test } from '@jest/globals'
 import { VirtualDomElements, text } from '@lvce-editor/virtual-dom-worker'
-import { parseHtmlDom } from '../src/parts/ParseHtml/ParseHtml.ts'
+import { parseHtml, parseHtmlDom } from '../src/parts/ParseHtml/ParseHtml.ts'
 
 // Basic HTML parsing tests
 test('parseHtml should parse empty string', () => {
@@ -752,4 +752,20 @@ test('parseHtml should capture script in head as js content', () => {
   const expectedArray: any[] = []
   const result = parseHtmlDom('<head><script></script></head>', [])
   expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should capture stylesheet links and skip rendering link tags', () => {
+  const html = '<head><link rel="stylesheet" href="./app.css"></head><div>Content</div>'
+  const result = parseHtml(html)
+
+  expect(result.stylesheets).toEqual(['./app.css'])
+  expect(result.dom).toEqual([{ childCount: 1, type: VirtualDomElements.Div }, text('Content')])
+})
+
+test('parseHtml should ignore non-stylesheet links', () => {
+  const html = '<head><link rel="icon" href="./favicon.ico"></head><div>Content</div>'
+  const result = parseHtml(html)
+
+  expect(result.stylesheets).toEqual([])
+  expect(result.dom).toEqual([{ childCount: 1, type: VirtualDomElements.Div }, text('Content')])
 })
