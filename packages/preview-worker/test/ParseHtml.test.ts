@@ -759,6 +759,7 @@ test('parseHtml should capture stylesheet links and skip rendering link tags', (
   const result = parseHtml(html)
 
   expect(result.stylesheets).toEqual(['./app.css'])
+  expect(result.styleSheets).toEqual([{ href: './app.css', type: 'link' }])
   expect(result.dom).toEqual([{ childCount: 1, type: VirtualDomElements.Div }, text('Content')])
 })
 
@@ -768,4 +769,17 @@ test('parseHtml should ignore non-stylesheet links', () => {
 
   expect(result.stylesheets).toEqual([])
   expect(result.dom).toEqual([{ childCount: 1, type: VirtualDomElements.Div }, text('Content')])
+})
+
+test('parseHtml should capture styles and links in source order', () => {
+  const html = '<head><style>#a{color:blue;}</style><link rel="stylesheet" href="./app.css"><style>#a{color:green;}</style></head>'
+  const result = parseHtml(html)
+
+  expect(result.styleSheets).toEqual([
+    { content: '#a{color:blue;}', type: 'style' },
+    { href: './app.css', type: 'link' },
+    { content: '#a{color:green;}', type: 'style' },
+  ])
+  expect(result.css).toEqual(['#a{color:blue;}', '#a{color:green;}'])
+  expect(result.stylesheets).toEqual(['./app.css'])
 })
