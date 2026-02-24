@@ -2,7 +2,7 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'preview.css-link-stylesheet-live-update'
 
-export const skip = 1
+// export const skip = 1
 
 export const test: Test = async ({ Command, Editor, expect, FileSystem, Locator, Main, SideBar, Workspace }) => {
   const tmpDir = await FileSystem.getTmpDir()
@@ -46,7 +46,7 @@ export const test: Test = async ({ Command, Editor, expect, FileSystem, Locator,
 
   await Main.openUri(cssPath)
   await Editor.setText(updatedCss)
-  await Main.save()
+  // await Main.save()
 
   await expect(target).toHaveCSS('color', 'rgb(0, 0, 255)')
 }
