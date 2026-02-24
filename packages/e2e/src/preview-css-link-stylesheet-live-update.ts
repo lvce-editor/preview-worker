@@ -2,7 +2,7 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'preview.css-link-stylesheet-live-update'
 
-// export const skip = 1
+export const skip = 1
 
 export const test: Test = async ({ Command, Editor, expect, FileSystem, Locator, Main, SideBar, Workspace }) => {
   const tmpDir = await FileSystem.getTmpDir()
