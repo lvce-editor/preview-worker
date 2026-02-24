@@ -30,6 +30,7 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
       parsedDom,
       parsedNodesChildNodeCount,
       scripts,
+      styleSheets: parseResult.styleSheets,
     }
   } catch (error) {
     // If file reading or parsing fails, return empty content and parsedDom with error message
@@ -42,6 +43,7 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
       parsedDom: [],
       parsedNodesChildNodeCount: 0,
       scripts: [],
+      styleSheets: [],
     }
   }
 }

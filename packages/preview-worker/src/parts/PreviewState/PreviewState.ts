@@ -1,5 +1,6 @@
 import type { Rpc } from '@lvce-editor/rpc'
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
+import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
 
 export interface PreviewState {
   readonly assetDir: string
@@ -18,6 +19,7 @@ export interface PreviewState {
   readonly platform: number
   readonly sandboxRpc: Rpc
   readonly scripts: readonly string[]
+  readonly styleSheets: readonly StyleSheet[]
   readonly uid: number
   readonly uri: string
   readonly warningCount: number
