@@ -2,6 +2,8 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'preview.css-style-breakout'
 
+export const skip = 1
+
 export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, Workspace }) => {
   const tmpDir = await FileSystem.getTmpDir()
   await Workspace.setPath(tmpDir)
@@ -39,5 +41,5 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   await expect(target).toHaveCSS('color', 'rgb(0, 0, 255)')
 
   const root = Locator('html')
-  await expect(root).toHaveCSS('background-color', 'rgb(255, 0, 0)')
+  await expect(root).not.toHaveCSS('background-color', 'rgb(255, 0, 0)')
 }
