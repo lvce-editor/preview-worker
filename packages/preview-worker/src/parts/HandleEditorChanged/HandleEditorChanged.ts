@@ -91,7 +91,12 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
         try {
           const content = await EditorWorker.invoke('Editor.getText', matchingEditorUid)
           const parseResult = ParseHtml.parseHtml(content, [])
-          const css = await LoadStyleSheets.loadStyleSheets(state.uri, parseResult.styleSheets, state.loadExternalStyleSheets, state.loadStyleElements)
+          const css = await LoadStyleSheets.loadStyleSheets(
+            state.uri,
+            parseResult.styleSheets,
+            state.loadExternalStyleSheets,
+            state.loadStyleElements,
+          )
           const scripts = state.loadJavaScript ? parseResult.scripts : []
 
           const updatedState = {
