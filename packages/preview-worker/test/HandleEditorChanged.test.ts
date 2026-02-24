@@ -46,3 +46,45 @@ test('handleEditorChanged should update preview css when linked stylesheet edito
   ])
   expect(rendererRpc.invocations).toEqual([['Preview.rerender']])
 })
+
+test('handleEditorChanged should match linked stylesheet when editor uri uses file scheme', async () => {
+  const uid = 9002
+  const previousState = {
+    ...createDefaultState(),
+    content: '<link rel="stylesheet" href="./app.css"><div id="target">x</div>',
+    css: ['#target { color: rgb(255, 0, 0); }'],
+    styleSheets: [{ href: './app.css', type: 'link' }] as const,
+    uid,
+    uri: '/tmp/index.html',
+  }
+  PreviewStates.set(uid, previousState, previousState)
+
+  using editorRpc = EditorWorker.registerMockRpc({
+    'Editor.getText': (editorUid: number) => {
+      if (editorUid === 78) {
+        return '#target { color: rgb(0, 255, 0); }'
+      }
+      throw new Error('unexpected editor uid')
+    },
+    'Editor.getUri': (editorUid: number) => {
+      if (editorUid === 78) {
+        return 'file:///tmp/app.css'
+      }
+      throw new Error('unexpected editor uid')
+    },
+  })
+
+  using rendererRpc = RendererWorker.registerMockRpc({
+    'Preview.rerender': () => {},
+  })
+
+  await handleEditorChanged(78)
+
+  const { newState } = PreviewStates.get(uid)
+  expect(newState.css).toEqual(['#target { color: rgb(0, 255, 0); }'])
+  expect(editorRpc.invocations).toEqual([
+    ['Editor.getUri', 78],
+    ['Editor.getText', 78],
+  ])
+  expect(rendererRpc.invocations).toEqual([['Preview.rerender']])
+})
