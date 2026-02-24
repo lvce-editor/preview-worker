@@ -10,6 +10,7 @@ test('handleEditorChanged should update preview css when linked stylesheet edito
     ...createDefaultState(),
     content: '<link rel="stylesheet" href="./app.css"><div id="target">x</div>',
     css: ['#target { color: rgb(255, 0, 0); }'],
+    styleSheets: [{ href: './app.css', type: 'link' }] as const,
     uid,
     uri: '/tmp/index.html',
   }

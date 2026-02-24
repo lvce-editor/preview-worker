@@ -1,33 +1,26 @@
 import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
-import { loadLinkedStyleSheet } from '../LoadLinkedStyleSheet/LoadLinkedStyleSheet.ts'
 import { resolveStylesheetUri } from '../ResolveStylesheetUri/ResolveStylesheetUri.ts'
-
-export const hasMatchingLinkedStyleSheet = (documentUri: string, styleSheets: readonly StyleSheet[], changedEditorUri: string): boolean => {
-  for (const styleSheet of styleSheets) {
-    if (styleSheet.type !== 'link' || !styleSheet.href) {
-      continue
-    }
-    const styleSheetUri = resolveStylesheetUri(documentUri, styleSheet.href)
-    if (styleSheetUri && styleSheetUri === changedEditorUri) {
-      return true
-    }
-  }
-  return false
-}
 
 export const loadStyleSheetsWithEditorOverride = async (
   documentUri: string,
   styleSheets: readonly StyleSheet[],
+  currentCss: readonly string[],
   loadExternalStyleSheets: boolean,
   loadStyleElements: boolean,
   changedEditorUri: string,
   changedEditorContent: string,
 ): Promise<readonly string[]> => {
   const css: string[] = []
+  let cssIndex = 0
   for (const styleSheet of styleSheets) {
     if (styleSheet.type === 'style') {
       if (loadStyleElements && styleSheet.content) {
-        css.push(styleSheet.content)
+        if (cssIndex < currentCss.length) {
+          css.push(currentCss[cssIndex])
+        } else {
+          css.push(styleSheet.content)
+        }
+        cssIndex++
       }
       continue
     }
@@ -42,11 +35,14 @@ export const loadStyleSheetsWithEditorOverride = async (
       if (changedEditorContent) {
         css.push(changedEditorContent)
       }
+      if (cssIndex < currentCss.length) {
+        cssIndex++
+      }
       continue
     }
-    const linkedStyleSheet = await loadLinkedStyleSheet(documentUri, styleSheet.href)
-    if (linkedStyleSheet) {
-      css.push(linkedStyleSheet)
+    if (cssIndex < currentCss.length) {
+      css.push(currentCss[cssIndex])
+      cssIndex++
     }
   }
   return css

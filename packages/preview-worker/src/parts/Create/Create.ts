@@ -38,6 +38,7 @@ export const create = async (
     platform,
     sandboxRpc,
     scripts: [],
+    styleSheets: [],
     uid,
     uri,
     warningCount: 0,

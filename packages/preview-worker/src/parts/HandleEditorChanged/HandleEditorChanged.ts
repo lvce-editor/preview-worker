@@ -1,6 +1,7 @@
 import { EditorWorker, RendererWorker } from '@lvce-editor/rpc-registry'
+import { hasMatchingLinkedStyleSheet } from '../HasMatchingLinkedStyleSheet/HasMatchingLinkedStyleSheet.ts'
 import * as LoadStyleSheets from '../LoadStyleSheets/LoadStyleSheets.ts'
-import { hasMatchingLinkedStyleSheet, loadStyleSheetsWithEditorOverride } from '../LoadStyleSheetsWithEditorOverride/LoadStyleSheetsWithEditorOverride.ts'
+import { loadStyleSheetsWithEditorOverride } from '../LoadStyleSheetsWithEditorOverride/LoadStyleSheetsWithEditorOverride.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as PreviewStates from '../PreviewStates/PreviewStates.ts'
 
@@ -54,6 +55,7 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
             errorMessage: '',
             parsedDom: parseResult.dom,
             scripts,
+            styleSheets: parseResult.styleSheets,
           }
 
           PreviewStates.set(previewUid, state, updatedState)
@@ -67,6 +69,7 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
             errorMessage,
             parsedDom: [],
             scripts: [],
+            styleSheets: [],
           }
 
           PreviewStates.set(previewUid, state, updatedState)
@@ -117,6 +120,7 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
           errorMessage: '',
           parsedDom: parseResult.dom,
           scripts,
+          styleSheets: parseResult.styleSheets,
         }
 
         PreviewStates.set(previewUid, state, updatedState)
@@ -131,6 +135,7 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
           errorMessage,
           parsedDom: [],
           scripts: [],
+          styleSheets: [],
         }
 
         PreviewStates.set(previewUid, state, updatedState)
@@ -139,12 +144,11 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
       continue
     }
 
-    if (!state.content || !state.loadExternalStyleSheets) {
+    if (!state.loadExternalStyleSheets) {
       continue
     }
 
-    const parseResult = ParseHtml.parseHtml(state.content, [])
-    if (!hasMatchingLinkedStyleSheet(state.uri, parseResult.styleSheets, changedEditorUri)) {
+    if (!hasMatchingLinkedStyleSheet(state.uri, state.styleSheets, changedEditorUri)) {
       continue
     }
 
@@ -152,7 +156,8 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
       const content = await getChangedEditorContent()
       const css = await loadStyleSheetsWithEditorOverride(
         state.uri,
-        parseResult.styleSheets,
+        state.styleSheets,
+        state.css,
         state.loadExternalStyleSheets,
         state.loadStyleElements,
         changedEditorUri,
