@@ -1,4 +1,3 @@
-import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 
@@ -26,9 +25,4 @@ export const rerender = async (state: PreviewState): Promise<PreviewState> => {
     ...state,
     parsedDom,
   }
-}
-
-export const triggerRerender = async (state: PreviewState): Promise<PreviewState> => {
-  await RendererWorker.invoke('Preview.rerender')
-  return state
 }
