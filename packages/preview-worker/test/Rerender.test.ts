@@ -3,20 +3,24 @@ import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import { rerender } from '../src/parts/Rerender/Rerender.ts'
 
-test('rerender should return a new state object', () => {
-  const state: PreviewState = createDefaultState()
-  const result = rerender(state)
+test('rerender should return a new state object', async () => {
+  const state: PreviewState = {
+    ...createDefaultState(),
+    loadJavaScript: false,
+  }
+  const result = await rerender(state)
 
   // Should return a different object reference
   expect(result).not.toBe(state)
 })
 
-test('rerender should return a new parsedDom array reference', () => {
+test('rerender should return a new parsedDom array reference', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
+    loadJavaScript: false,
     parsedDom: [{ childCount: 0, type: 1 }],
   }
-  const result = rerender(state)
+  const result = await rerender(state)
 
   // parsedDom should be a different array reference
   expect(result.parsedDom).not.toBe(state.parsedDom)
@@ -24,7 +28,7 @@ test('rerender should return a new parsedDom array reference', () => {
   expect(result.parsedDom).toEqual(state.parsedDom)
 })
 
-test('rerender should preserve all state properties', () => {
+test('rerender should preserve all state properties', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
     assetDir: '/assets',
@@ -32,6 +36,7 @@ test('rerender should preserve all state properties', () => {
     errorCount: 2,
     errorMessage: 'test error',
     initial: false,
+    loadJavaScript: false,
     parsedDom: [
       { childCount: 1, type: 1 },
       { childCount: 0, type: 2 },
@@ -43,7 +48,7 @@ test('rerender should preserve all state properties', () => {
     warningCount: 3,
   }
 
-  const result = rerender(state)
+  const result = await rerender(state)
 
   expect(result.assetDir).toBe(state.assetDir)
   expect(result.content).toBe(state.content)
@@ -56,27 +61,52 @@ test('rerender should preserve all state properties', () => {
   expect(result.warningCount).toBe(state.warningCount)
 })
 
-test('rerender should handle empty parsedDom', () => {
+test('rerender should handle empty parsedDom', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
+    loadJavaScript: false,
     parsedDom: [],
   }
-  const result = rerender(state)
+  const result = await rerender(state)
 
   expect(result.parsedDom).not.toBe(state.parsedDom)
   expect(result.parsedDom).toEqual([])
 })
 
-test('rerender should create shallow copy of parsedDom elements', () => {
+test('rerender should create shallow copy of parsedDom elements', async () => {
   const domElement = { childCount: 2, className: 'test', type: 1 }
   const state: PreviewState = {
     ...createDefaultState(),
+    loadJavaScript: false,
     parsedDom: [domElement],
   }
-  const result = rerender(state)
+  const result = await rerender(state)
 
   // Array reference should be different
   expect(result.parsedDom).not.toBe(state.parsedDom)
   // But the elements themselves are the same objects (shallow copy)
   expect(result.parsedDom[0]).toBe(state.parsedDom[0])
+})
+
+test('rerender should fetch potentially updated dom from sandbox when javascript is enabled', async () => {
+  const serialized = {
+    css: ['body{color:red;}'],
+    dom: [{ childCount: 1, type: 1 }],
+  }
+  const sandboxRpc = {
+    invoke: async () => serialized,
+  }
+  const state: PreviewState = {
+    ...createDefaultState(),
+    loadJavaScript: true,
+    parsedDom: [{ childCount: 0, type: 1 }],
+    sandboxRpc: sandboxRpc as any,
+    uid: 42,
+  }
+
+  const result = await rerender(state)
+
+  expect(result.parsedDom).toBe(serialized.dom)
+  expect(result.css).toEqual(serialized.css)
+  expect(result.parsedNodesChildNodeCount).toBe(1)
 })
