@@ -1,6 +1,6 @@
 import { expect, jest, test } from '@jest/globals'
-import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as CallAndUpdate from '../src/parts/CallAndUpdate/CallAndUpdate.ts'
+import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 
 test('callAndUpdate should reuse current parsedDom reference when serialized dom is deeply equal', async () => {
   const currentParsedDom = [{ childCount: 0, type: 1 }] as any
@@ -8,20 +8,20 @@ test('callAndUpdate should reuse current parsedDom reference when serialized dom
   const invoke = jest.fn(async (method: string) => {
     if (method === 'SandBox.getSerializedDom') {
       return {
-        dom: nextParsedDom,
         css: [],
+        dom: nextParsedDom,
       }
     }
     return undefined
   })
   const state = {
     ...createDefaultState(),
-    uid: 1,
+    parsedDom: currentParsedDom,
+    parsedNodesChildNodeCount: 1,
     sandboxRpc: {
       invoke,
     } as any,
-    parsedDom: currentParsedDom,
-    parsedNodesChildNodeCount: 1,
+    uid: 1,
   }
 
   const result = await CallAndUpdate.callAndUpdate(state, 'SandBox.eval', 'abc')
@@ -41,20 +41,20 @@ test('callAndUpdate should use new parsedDom reference when serialized dom is di
   const invoke = jest.fn(async (method: string) => {
     if (method === 'SandBox.getSerializedDom') {
       return {
-        dom: nextParsedDom,
         css: [],
+        dom: nextParsedDom,
       }
     }
     return undefined
   })
   const state = {
     ...createDefaultState(),
-    uid: 1,
+    parsedDom: currentParsedDom,
+    parsedNodesChildNodeCount: 1,
     sandboxRpc: {
       invoke,
     } as any,
-    parsedDom: currentParsedDom,
-    parsedNodesChildNodeCount: 1,
+    uid: 1,
   }
 
   const result = await CallAndUpdate.callAndUpdate(state, 'SandBox.eval')
