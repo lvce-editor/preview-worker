@@ -4,28 +4,30 @@ import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaul
 import * as DiffItems from '../src/parts/DiffItems/DiffItems.ts'
 import { rerender } from '../src/parts/Rerender/Rerender.ts'
 
-test('rerender should cause DiffItems.isEqual to return false', () => {
+test('rerender should cause DiffItems.isEqual to return false', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
+    loadJavaScript: false,
     parsedDom: [{ childCount: 0, type: 1 }],
   }
 
-  const newState = rerender(state)
+  const newState = await rerender(state)
 
   // DiffItems.isEqual should return false because parsedDom reference changed
   expect(DiffItems.isEqual(state, newState)).toBe(false)
 })
 
-test('rerender should trigger rerender even with same content', () => {
+test('rerender should trigger rerender even with same content', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
     content: '<div>same content</div>',
     initial: false,
+    loadJavaScript: false,
     parsedDom: [{ childCount: 1, type: 1 }],
     warningCount: 0,
   }
 
-  const newState = rerender(state)
+  const newState = await rerender(state)
 
   // Even though content, warningCount, and initial are the same,
   // the parsedDom reference change should trigger diff
