@@ -2,7 +2,7 @@ import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { updateContent } from '../UpdateContent/UpdateContent.ts'
 
 export const setUri = async (state: PreviewState, uri: string): Promise<PreviewState> => {
-  const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts } = await updateContent(state, uri)
+  const { content, css, errorMessage, parsedDom, parsedNodesChildNodeCount, scripts, styleSheets } = await updateContent(state, uri)
 
   return {
     ...state,
@@ -12,6 +12,7 @@ export const setUri = async (state: PreviewState, uri: string): Promise<PreviewS
     parsedDom,
     parsedNodesChildNodeCount,
     scripts,
+    styleSheets,
     uri,
   }
 }

@@ -7,14 +7,15 @@ import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 
 export const updateContent = async (state: PreviewState, uri: string): Promise<PreviewState> => {
   try {
+    const { loadExternalStyleSheets, loadJavaScript, loadStyleElements } = state
     // Read the file content using RendererWorker RPC
     const content = await RendererWorker.readFile(uri)
 
     // Parse the content into virtual DOM and CSS
     const parseResult = ParseHtml.parseHtml(content)
     const parsedDom = parseResult.dom
-    const css = await LoadStyleSheets.loadStyleSheets(state.uri, parseResult.styleSheets, state.loadExternalStyleSheets, state.loadStyleElements)
-    const scripts = state.loadJavaScript ? parseResult.scripts : []
+    const css = await LoadStyleSheets.loadStyleSheets(uri, parseResult.styleSheets, loadExternalStyleSheets, loadStyleElements)
+    const scripts = loadJavaScript ? parseResult.scripts : []
 
     if (scripts.length > 0) {
       return LoadScripts.loadScripts(state, content, css, scripts)
