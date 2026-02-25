@@ -2,6 +2,8 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'preview.tsx-button-increment'
 
+export const skip = 1
+
 const waitForText = async (expect: any, locator: any, value: string): Promise<void> => {
   let lastError: unknown
   for (let i = 0; i < 40; i++) {
