@@ -9,9 +9,7 @@ test('updateContent should execute tsx content in sandbox with react and babel s
   const originalCaches = (globalThis as any).caches
 
   const fetchMock = jest.fn(async (url: string) => {
-    const text = url.includes('babel')
-      ? 'globalThis.Babel = { transform: (source) => ({ code: source }) }'
-      : '/* cdn script */'
+    const text = url.includes('babel') ? 'globalThis.Babel = { transform: (source) => ({ code: source }) }' : '/* cdn script */'
     return {
       ok: true,
       text: async () => text,
