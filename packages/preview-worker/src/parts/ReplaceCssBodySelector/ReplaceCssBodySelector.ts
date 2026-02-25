@@ -1,4 +1,5 @@
 const PREVIEW_SELECTOR = '.Preview'
+const HTML_SELECTOR = '.Preview .Html'
 
 const isIdentifierChar = (char: string | undefined): boolean => {
   if (!char) {
@@ -87,7 +88,7 @@ const replaceHtmlAndBodyTypeSelectors = (selector: string): string => {
       const shouldReplace = (lowerToken === 'html' || lowerToken === 'body') && isLikelyTypeSelectorStart(selector, i)
 
       if (shouldReplace) {
-        result += PREVIEW_SELECTOR
+        result += HTML_SELECTOR
       } else {
         result += token
       }
