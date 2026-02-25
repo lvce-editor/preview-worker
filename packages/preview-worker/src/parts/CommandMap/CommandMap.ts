@@ -22,6 +22,7 @@ import { saveState } from '../SaveState/SaveState.ts'
 import { setUri } from '../SetUri/SetUri.ts'
 import { triggerRerender } from '../TriggerRerender/TriggerRerender.ts'
 import { waitForClick } from '../WaitForClick/WaitForClick.ts'
+import { waitForMutation } from '../WaitForMutation/WaitForMutation.ts'
 
 export const commandMap = {
   handleEditorChanged: handleEditorChanged,
@@ -49,4 +50,5 @@ export const commandMap = {
   'Preview.terminate': terminate,
   'Preview.triggerRerender': wrapCommand(triggerRerender),
   'Preview.waitForClick': wrapCommand(waitForClick),
+  'Preview.waitForMutation': wrapCommand(waitForMutation),
 }
