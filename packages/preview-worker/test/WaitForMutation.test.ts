@@ -3,11 +3,12 @@ import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaul
 import { waitForMutation } from '../src/parts/WaitForMutation/WaitForMutation.ts'
 
 test('waitForMutation should resolve when selector is found in sandbox serialized dom', async () => {
+  const invoke = jest.fn<(method: string, uid: number) => Promise<{ dom: readonly { id?: string; type: number }[] }>>()
+  invoke.mockResolvedValueOnce({ dom: [{ type: 1 }] })
+  invoke.mockResolvedValueOnce({ dom: [{ id: 'jsx-heading', type: 1 }] })
+
   const sandboxRpc = {
-    invoke: jest
-      .fn()
-      .mockResolvedValueOnce({ dom: [{ type: 1 }] })
-      .mockResolvedValueOnce({ dom: [{ id: 'jsx-heading', type: 1 }] }),
+    invoke,
   }
 
   const state = {
@@ -23,8 +24,11 @@ test('waitForMutation should resolve when selector is found in sandbox serialize
 })
 
 test('waitForMutation should throw for unsupported selector syntax', async () => {
+  const invoke = jest.fn<(method: string, uid: number) => Promise<{ dom: readonly { id?: string; type: number }[] }>>()
+  invoke.mockResolvedValue({ dom: [] })
+
   const sandboxRpc = {
-    invoke: jest.fn().mockResolvedValue({ dom: [] }),
+    invoke,
   }
 
   const state = {

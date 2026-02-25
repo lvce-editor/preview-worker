@@ -8,7 +8,7 @@ interface WaitForMutationOptions {
   readonly timeout?: number
 }
 
-const defaultTimeout = 5_000
+const defaultTimeout = 5000
 const pollInterval = 16
 
 const hasClass = (className: unknown, expectedClass: string): boolean => {
@@ -20,7 +20,7 @@ const hasClass = (className: unknown, expectedClass: string): boolean => {
 
 const isTagSelector = (selector: string): boolean => {
   const lowerCaseSelector = selector.toLowerCase()
-  return Object.values(ElementTags).includes(lowerCaseSelector) || lowerCaseSelector === 'html' || lowerCaseSelector === 'style'
+  return (Object.values(ElementTags) as readonly string[]).includes(lowerCaseSelector) || lowerCaseSelector === 'html' || lowerCaseSelector === 'style'
 }
 
 const hasMatchingSelector = (dom: readonly any[], selector: string): boolean => {
@@ -36,7 +36,7 @@ const hasMatchingSelector = (dom: readonly any[], selector: string): boolean => 
     const tag = getVirtualDomTag(selector.toLowerCase())
     return dom.some((node) => node && typeof node === 'object' && node.type === tag)
   }
-  throw new Error(`Unsupported selector \"${selector}\". Supported selectors: #id, .class, tag`)
+  throw new Error(`Unsupported selector "${selector}". Supported selectors: #id, .class, tag`)
 }
 
 const waitForSelector = async (state: PreviewState, selector: string, timeout: number): Promise<void> => {
@@ -50,7 +50,7 @@ const waitForSelector = async (state: PreviewState, selector: string, timeout: n
     }
     await new Promise((resolve) => setTimeout(resolve, pollInterval))
   }
-  throw new Error(`Timed out waiting for selector \"${selector}\" after ${timeout}ms`)
+  throw new Error(`Timed out waiting for selector "${selector}" after ${timeout}ms`)
 }
 
 export const waitForMutation = async (state: PreviewState, options?: WaitForMutationOptions): Promise<PreviewState> => {

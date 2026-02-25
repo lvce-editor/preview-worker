@@ -10,10 +10,13 @@ export const getBabel = async (): Promise<BabelStandalone> => {
     return babelPromise
   }
 
-  babelPromise = (async () => {
+  babelPromise = (async (): Promise<BabelStandalone> => {
     const source = await getCachedText(BABEL_CDN_URL)
-    const load = new Function('globalThis', `${source}\nreturn globalThis.Babel;`)
-    const babel = load(globalThis) as BabelStandalone | undefined
+    const blob = new Blob([source], { type: 'text/javascript' })
+    const blobUrl = URL.createObjectURL(blob)
+    await import(/* @vite-ignore */ blobUrl)
+    URL.revokeObjectURL(blobUrl)
+    const babel = globalThis.Babel as BabelStandalone | undefined
     if (!babel || typeof babel.transform !== 'function') {
       throw new Error('Failed to load Babel standalone runtime')
     }
