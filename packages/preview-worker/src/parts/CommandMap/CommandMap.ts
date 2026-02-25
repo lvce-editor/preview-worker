@@ -15,10 +15,11 @@ import * as LoadContent from '../LoadContent/LoadContent.ts'
 import { getCommandIds, wrapCommand, wrapGetter } from '../PreviewStates/PreviewStates.ts'
 import { render2 } from '../Render2/Render2.ts'
 import { renderEventListeners } from '../RenderEventListeners/RenderEventListeners.ts'
-import { rerender, triggerRerender } from '../Rerender/Rerender.ts'
+import { rerender } from '../Rerender/Rerender.ts'
 import { resize } from '../Resize/Resize.ts'
 import { saveState } from '../SaveState/SaveState.ts'
 import { setUri } from '../SetUri/SetUri.ts'
+import { triggerRerender } from '../TriggerRerender/TriggerRerender.ts'
 import { waitForClick } from '../WaitForClick/WaitForClick.ts'
 
 export const commandMap = {
