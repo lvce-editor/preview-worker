@@ -4,8 +4,9 @@ export const name = 'preview.mutation-observer'
 
 export const skip = 1
 
-export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspace }) => {
+export const test: Test = async ({ Command, expect, FileSystem, Locator, SideBar, Workspace }) => {
   // arrange
+  await SideBar.hide()
   const tmpDir = await FileSystem.getTmpDir()
   await Workspace.setPath(tmpDir)
   const filePath = `${tmpDir}/preview-test-mutation-${Date.now()}.html`
@@ -35,11 +36,12 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspa
   const contentDiv = previewArea.locator('#content')
   await expect(contentDiv).toBeVisible()
   await expect(contentDiv).toHaveText('Original content')
+  const mutationPromise = await Command.execute('Preview.waitForMutation', { selector: '#content', timeout: 5000 })
 
   // act
   await Command.execute('Preview.handleClick', '1')
-  await new Promise((resolve) => setTimeout(resolve, 100))
 
   // assert
+  await mutationPromise
   await expect(contentDiv).toHaveText('Updated content')
 }

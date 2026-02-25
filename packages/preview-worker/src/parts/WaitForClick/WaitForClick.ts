@@ -4,7 +4,7 @@ import * as WaitForClickState from '../WaitForClickState/WaitForClickState.ts'
 export const waitForClick = async (state: PreviewState): Promise<PreviewState> => {
   const { uid } = state
   const { promise, resolve } = Promise.withResolvers<void>()
-  WaitForClickState.register(uid, resolve)
+  WaitForClickState.register('click', uid, resolve)
   await promise
   return state
 }
