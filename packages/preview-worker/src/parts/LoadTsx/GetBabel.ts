@@ -16,7 +16,7 @@ export const getBabel = async (): Promise<BabelStandalone> => {
     const blobUrl = URL.createObjectURL(blob)
     await import(/* @vite-ignore */ blobUrl)
     URL.revokeObjectURL(blobUrl)
-    const babel = globalThis.Babel as BabelStandalone | undefined
+    const babel = (globalThis as typeof globalThis & { Babel?: BabelStandalone }).Babel
     if (!babel || typeof babel.transform !== 'function') {
       throw new Error('Failed to load Babel standalone runtime')
     }

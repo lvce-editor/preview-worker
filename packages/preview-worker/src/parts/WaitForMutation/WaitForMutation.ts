@@ -20,7 +20,9 @@ const hasClass = (className: unknown, expectedClass: string): boolean => {
 
 const isTagSelector = (selector: string): boolean => {
   const lowerCaseSelector = selector.toLowerCase()
-  return (Object.values(ElementTags) as readonly string[]).includes(lowerCaseSelector) || lowerCaseSelector === 'html' || lowerCaseSelector === 'style'
+  return (
+    (Object.values(ElementTags) as readonly string[]).includes(lowerCaseSelector) || lowerCaseSelector === 'html' || lowerCaseSelector === 'style'
+  )
 }
 
 const hasMatchingSelector = (dom: readonly any[], selector: string): boolean => {
