@@ -15,7 +15,7 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
   if (parsedDom && parsedDom.length > 0) {
     return [
       {
-        childCount: parsedNodesChildNodeCount,
+        childCount: 1,
         className: mergeClassNames(ClassNames.Viewlet, ClassNames.Preview),
         onClick: DomEventListenerFunctions.HandleClick,
         onInput: DomEventListenerFunctions.HandleInput,
@@ -25,6 +25,11 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
         onMouseMove: DomEventListenerFunctions.HandleMousemove,
         onMouseUp: DomEventListenerFunctions.HandleMouseup,
         tabIndex: 0,
+        type: VirtualDomElements.Div,
+      },
+      {
+        childCount: parsedNodesChildNodeCount,
+        className: ClassNames.Html,
         type: VirtualDomElements.Div,
       },
       ...parsedDom,
@@ -43,6 +48,11 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
       onMouseMove: DomEventListenerFunctions.HandleMousemove,
       onMouseUp: DomEventListenerFunctions.HandleMouseup,
       tabIndex: 0,
+      type: VirtualDomElements.Div,
+    },
+    {
+      childCount: 1,
+      className: ClassNames.Html,
       type: VirtualDomElements.Div,
     },
     {

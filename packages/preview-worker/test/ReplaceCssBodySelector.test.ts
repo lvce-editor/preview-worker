@@ -6,19 +6,19 @@ const normalizeWhitespace = (value: string): string => value.replaceAll(/\s+/g, 
 test('should replace simple body selector', () => {
   const css = 'body { color: red; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(result).toBe('.Preview {  color: red;  }')
+  expect(result).toBe('.Preview .Html {  color: red;  }')
 })
 
 test('should replace body in combined selectors', () => {
   const css = 'body, div { margin: 0; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(result).toBe('.Preview, .Preview div {  margin: 0;  }')
+  expect(result).toBe('.Preview .Html, .Preview div {  margin: 0;  }')
 })
 
 test('should replace multiple body selectors', () => {
   const css = 'body { color: red; } body p { margin: 10px; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(result).toBe('.Preview {  color: red;  } .Preview p {  margin: 10px;  }')
+  expect(result).toBe('.Preview .Html {  color: red;  } .Preview .Html p {  margin: 10px;  }')
 })
 
 test('should not replace tbody', () => {
@@ -36,19 +36,19 @@ test('should not replace body as part of another word', () => {
 test('should handle body with pseudo-classes', () => {
   const css = 'body:hover { background: yellow; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(result).toBe('.Preview:hover {  background: yellow;  }')
+  expect(result).toBe('.Preview .Html:hover {  background: yellow;  }')
 })
 
 test('should handle body with pseudo-elements', () => {
   const css = 'body::before { content: ""; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(result).toBe('.Preview::before {  content: "";  }')
+  expect(result).toBe('.Preview .Html::before {  content: "";  }')
 })
 
 test('should handle body with descendant selectors', () => {
   const css = 'body > * { box-sizing: border-box; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(result).toBe('.Preview > * {  box-sizing: border-box;  }')
+  expect(result).toBe('.Preview .Html > * {  box-sizing: border-box;  }')
 })
 
 test('should handle empty CSS string', () => {
@@ -69,7 +69,7 @@ test('should handle body with newlines', () => {
   background: white;
 }`
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(result).toBe(`.Preview {
+  expect(result).toBe(`.Preview .Html {
   color: red;
   background: white;
  }`)
@@ -78,7 +78,7 @@ test('should handle body with newlines', () => {
 test('should handle multiple body selectors in different contexts', () => {
   const css = 'body { font-size: 16px; } .container body { display: flex; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(result).toBe('.Preview {  font-size: 16px;  } .container .Preview {  display: flex;  }')
+  expect(result).toBe('.Preview .Html {  font-size: 16px;  } .container .Preview .Html {  display: flex;  }')
 })
 
 test('should scope universal selector', () => {
@@ -102,7 +102,7 @@ test('should scope universal selector with pseudo-classes', () => {
 test('should handle both body and universal selectors', () => {
   const css = 'body { color: black; } * { box-sizing: border-box; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(result).toBe('.Preview {  color: black;  } .Preview * {  box-sizing: border-box;  }')
+  expect(result).toBe('.Preview .Html {  color: black;  } .Preview * {  box-sizing: border-box;  }')
 })
 
 test('should scope rules after malformed css and prevent root breakout', () => {
@@ -116,13 +116,13 @@ test('should scope rules after malformed css and prevent root breakout', () => {
 test('should replace html selector with preview selector', () => {
   const css = 'html { color: red; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('.Preview { color: red; }')
+  expect(normalizeWhitespace(result)).toBe('.Preview .Html { color: red; }')
 })
 
 test('should replace html and body in combined selectors', () => {
   const css = 'html, body, main { margin: 0; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('.Preview, .Preview, .Preview main { margin: 0; }')
+  expect(normalizeWhitespace(result)).toBe('.Preview .Html, .Preview .Html, .Preview main { margin: 0; }')
 })
 
 test('should keep already scoped selector unchanged and scope remaining selectors', () => {
@@ -140,97 +140,97 @@ test('should handle selector list with not pseudo class commas', () => {
 test('should handle selector list with is pseudo class commas', () => {
   const css = ':is(body, html, main) { display: block; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('.Preview :is(.Preview, .Preview, main) { display: block; }')
+  expect(normalizeWhitespace(result)).toBe('.Preview :is(.Preview .Html, .Preview .Html, main) { display: block; }')
 })
 
 test('should handle attribute selector containing comma', () => {
   const css = '[data-value="a,b"], body { color: red; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('.Preview [data-value="a,b"], .Preview { color: red; }')
+  expect(normalizeWhitespace(result)).toBe('.Preview [data-value="a,b"], .Preview .Html { color: red; }')
 })
 
 test('should keep comments inside declarations', () => {
   const css = 'body { color: red; /* keep-me */ background: white; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
   expect(result).toContain('/* keep-me */')
-  expect(normalizeWhitespace(result)).toContain('.Preview { color: red; /* keep-me */ background: white; }')
+  expect(normalizeWhitespace(result)).toContain('.Preview .Html { color: red; /* keep-me */ background: white; }')
 })
 
 test('should process rules separated by comments', () => {
   const css = 'body { color: red; } /* between */ div { color: blue; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toContain('.Preview { color: red; }')
+  expect(normalizeWhitespace(result)).toContain('.Preview .Html { color: red; }')
   expect(normalizeWhitespace(result)).toContain('.Preview div { color: blue; }')
 })
 
 test('should scope selectors in media query', () => {
   const css = '@media (max-width: 500px) { body { color: red; } div { margin: 0; } }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('@media (max-width: 500px) { .Preview { color: red; } .Preview div { margin: 0; } }')
+  expect(normalizeWhitespace(result)).toBe('@media (max-width: 500px) { .Preview .Html { color: red; } .Preview div { margin: 0; } }')
 })
 
 test('should scope selectors in supports query', () => {
   const css = '@supports (display: grid) { body { display: grid; } }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('@supports (display: grid) { .Preview { display: grid; } }')
+  expect(normalizeWhitespace(result)).toBe('@supports (display: grid) { .Preview .Html { display: grid; } }')
 })
 
 test('should scope selectors in container query', () => {
   const css = '@container sidebar (min-width: 300px) { body { font-size: 12px; } }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('@container sidebar (min-width: 300px) { .Preview { font-size: 12px; } }')
+  expect(normalizeWhitespace(result)).toBe('@container sidebar (min-width: 300px) { .Preview .Html { font-size: 12px; } }')
 })
 
 test('should scope selectors in layer blocks', () => {
   const css = '@layer theme { html { color: black; } }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('@layer theme { .Preview { color: black; } }')
+  expect(normalizeWhitespace(result)).toBe('@layer theme { .Preview .Html { color: black; } }')
 })
 
 test('should scope selectors in scope blocks', () => {
   const css = '@scope (.card) { body { padding: 8px; } }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('@scope (.card) { .Preview { padding: 8px; } }')
+  expect(normalizeWhitespace(result)).toBe('@scope (.card) { .Preview .Html { padding: 8px; } }')
 })
 
 test('should scope selectors in document blocks', () => {
   const css = '@document url-prefix("https://example.com") { body { color: green; } }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('@document url-prefix("https://example.com") { .Preview { color: green; } }')
+  expect(normalizeWhitespace(result)).toBe('@document url-prefix("https://example.com") { .Preview .Html { color: green; } }')
 })
 
 test('should recurse through nested media and supports blocks', () => {
   const css = '@media (min-width: 500px) { @supports (display: flex) { body { display: flex; } } }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('@media (min-width: 500px) { @supports (display: flex) { .Preview { display: flex; } } }')
+  expect(normalizeWhitespace(result)).toBe('@media (min-width: 500px) { @supports (display: flex) { .Preview .Html { display: flex; } } }')
 })
 
 test('should preserve keyframes without scoping inside keyframes', () => {
   const css = '@keyframes fade { from { opacity: 0; } to { opacity: 1; } } body { animation: fade 1s; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
   expect(normalizeWhitespace(result)).toContain('@keyframes fade { from { opacity: 0; } to { opacity: 1; } }')
-  expect(normalizeWhitespace(result)).toContain('.Preview { animation: fade 1s; }')
+  expect(normalizeWhitespace(result)).toContain('.Preview .Html { animation: fade 1s; }')
 })
 
 test('should preserve font-face blocks', () => {
   const css = '@font-face { font-family: test; src: url(test.woff2); } body { font-family: test; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
   expect(normalizeWhitespace(result)).toContain('@font-face { font-family: test; src: url(test.woff2); }')
-  expect(normalizeWhitespace(result)).toContain('.Preview { font-family: test; }')
+  expect(normalizeWhitespace(result)).toContain('.Preview .Html { font-family: test; }')
 })
 
 test('should preserve page blocks', () => {
   const css = '@page { margin: 1cm; } body { color: black; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
   expect(normalizeWhitespace(result)).toContain('@page { margin: 1cm; }')
-  expect(normalizeWhitespace(result)).toContain('.Preview { color: black; }')
+  expect(normalizeWhitespace(result)).toContain('.Preview .Html { color: black; }')
 })
 
 test('should preserve import statements', () => {
   const css = '@import url("./foo.css"); body { color: red; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
   expect(normalizeWhitespace(result)).toContain('@import url("./foo.css");')
-  expect(normalizeWhitespace(result)).toContain('.Preview { color: red; }')
+  expect(normalizeWhitespace(result)).toContain('.Preview .Html { color: red; }')
 })
 
 test('should support css nesting syntax under scoped parent', () => {
@@ -242,7 +242,7 @@ test('should support css nesting syntax under scoped parent', () => {
 test('should support css nesting syntax with body as parent selector', () => {
   const css = 'body { & .title { color: red; } }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('.Preview { & .title { color: red; } }')
+  expect(normalizeWhitespace(result)).toBe('.Preview .Html { & .title { color: red; } }')
 })
 
 test('should scope deeply nested rule content in media query', () => {
@@ -273,6 +273,6 @@ test('should scope multiple top-level at-rule and normal rule combinations', () 
   const css = '@import url("a.css"); @media (min-width: 1px) { body { margin: 0; } } main { padding: 4px; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
   expect(normalizeWhitespace(result)).toContain('@import url("a.css");')
-  expect(normalizeWhitespace(result)).toContain('@media (min-width: 1px) { .Preview { margin: 0; } }')
+  expect(normalizeWhitespace(result)).toContain('@media (min-width: 1px) { .Preview .Html { margin: 0; } }')
   expect(normalizeWhitespace(result)).toContain('.Preview main { padding: 4px; }')
 })
