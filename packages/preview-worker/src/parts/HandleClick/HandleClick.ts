@@ -5,8 +5,8 @@ import * as WaitForClickState from '../WaitForClickState/WaitForClickState.ts'
 export const handleClick = async (state: PreviewState, hdId: string, clientX: number, clientY: number): Promise<PreviewState> => {
   const { uid } = state
   // TODO race condition: click promise should only be resolved once preview has rerendered
-  if (WaitForClickState.has(uid)) {
-    WaitForClickState.resolve(uid)
+  if (WaitForClickState.has('click', uid)) {
+    WaitForClickState.resolve('click', uid)
   }
   if (!hdId) {
     return state
