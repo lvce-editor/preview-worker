@@ -28,8 +28,9 @@ test('callAndUpdate should reuse current parsedDom reference when serialized dom
 
   expect(result.parsedDom).toBe(currentParsedDom)
   expect(result.parsedNodesChildNodeCount).toBe(1)
-  expect(invoke).toHaveBeenNthCalledWith(1, 'SandBox.eval', 1, 'abc')
-  expect(invoke).toHaveBeenNthCalledWith(2, 'SandBox.getSerializedDom', 1)
+  expect(invoke).toHaveBeenCalledTimes(2)
+  expect(invoke.mock.calls[0]).toEqual(['SandBox.eval', 1, 'abc'])
+  expect(invoke.mock.calls[1]).toEqual(['SandBox.getSerializedDom', 1])
 })
 
 test('callAndUpdate should use new parsedDom reference when serialized dom is different', async () => {

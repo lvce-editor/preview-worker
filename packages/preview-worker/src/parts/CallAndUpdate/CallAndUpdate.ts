@@ -8,9 +8,9 @@ export const callAndUpdate = async (state: PreviewState, method: string, ...args
   const serialized = await sandboxRpc.invoke('SandBox.getSerializedDom', uid)
   const nextParsedDom = serialized.dom
   const isEqualDom = isEqual(nextParsedDom, state.parsedDom)
-  const newParsedDom = isEqual ? parsedDom : nextParsedDom
+  const newParsedDom = isEqualDom ? parsedDom : nextParsedDom
   const { css } = serialized
-  const newParsedNodesChildNodeCount = isEqualDom ? parsedNodesChildNodeCount : GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
+  const newParsedNodesChildNodeCount = isEqualDom ? parsedNodesChildNodeCount : GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(nextParsedDom)
   return {
     ...state,
     css,
