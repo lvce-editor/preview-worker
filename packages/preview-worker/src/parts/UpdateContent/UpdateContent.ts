@@ -1,8 +1,10 @@
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
+import * as IsTsxUri from '../IsTsxUri/IsTsxUri.ts'
 import * as LoadScripts from '../LoadScripts/LoadScripts.ts'
 import * as LoadStyleSheets from '../LoadStyleSheets/LoadStyleSheets.ts'
+import * as LoadTsx from '../LoadTsx/LoadTsx.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 
 export const updateContent = async (state: PreviewState, uri: string): Promise<PreviewState> => {
@@ -10,6 +12,14 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
     const { loadExternalStyleSheets, loadJavaScript, loadStyleElements } = state
     // Read the file content using RendererWorker RPC
     const content = await RendererWorker.readFile(uri)
+
+    if (IsTsxUri.isTsxUri(uri)) {
+      const tsxResult = await LoadTsx.loadTsx(state, content)
+      return {
+        ...state,
+        ...tsxResult,
+      }
+    }
 
     // Parse the content into virtual DOM and CSS
     const parseResult = ParseHtml.parseHtml(content)

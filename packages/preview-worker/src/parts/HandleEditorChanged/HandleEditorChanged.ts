@@ -1,9 +1,33 @@
 import { EditorWorker, RendererWorker } from '@lvce-editor/rpc-registry'
+import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { hasMatchingLinkedStyleSheet } from '../HasMatchingLinkedStyleSheet/HasMatchingLinkedStyleSheet.ts'
+import * as IsTsxUri from '../IsTsxUri/IsTsxUri.ts'
 import * as LoadStyleSheets from '../LoadStyleSheets/LoadStyleSheets.ts'
 import { loadStyleSheetsWithEditorOverride } from '../LoadStyleSheetsWithEditorOverride/LoadStyleSheetsWithEditorOverride.ts'
+import * as LoadTsx from '../LoadTsx/LoadTsx.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as PreviewStates from '../PreviewStates/PreviewStates.ts'
+
+const getUpdatedStateFromContent = async (state: PreviewState, content: string): Promise<PreviewState> => {
+  if (IsTsxUri.isTsxUri(state.uri)) {
+    return {
+      ...state,
+      ...(await LoadTsx.loadTsx(state, content)),
+    }
+  }
+
+  const parseResult = ParseHtml.parseHtml(content, [])
+  const css = await LoadStyleSheets.loadStyleSheets(state.uri, parseResult.styleSheets, state.loadExternalStyleSheets, state.loadStyleElements)
+  return {
+    ...state,
+    content,
+    css,
+    errorMessage: '',
+    parsedDom: parseResult.dom,
+    scripts: state.loadJavaScript ? parseResult.scripts : [],
+    styleSheets: parseResult.styleSheets,
+  }
+}
 
 export const handleEditorChanged = async (editorUid?: number): Promise<void> => {
   const hasSpecificEditor = Number.isFinite(editorUid)
@@ -39,24 +63,7 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
       if (matchingEditorUid !== null) {
         try {
           const content = await EditorWorker.invoke('Editor.getText', matchingEditorUid)
-          const parseResult = ParseHtml.parseHtml(content, [])
-          const css = await LoadStyleSheets.loadStyleSheets(
-            state.uri,
-            parseResult.styleSheets,
-            state.loadExternalStyleSheets,
-            state.loadStyleElements,
-          )
-          const scripts = state.loadJavaScript ? parseResult.scripts : []
-
-          const updatedState = {
-            ...state,
-            content,
-            css,
-            errorMessage: '',
-            parsedDom: parseResult.dom,
-            scripts,
-            styleSheets: parseResult.styleSheets,
-          }
+          const updatedState = await getUpdatedStateFromContent(state, content)
 
           PreviewStates.set(previewUid, state, updatedState)
         } catch (error) {
@@ -109,19 +116,7 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
     if (changedEditorUri === state.uri) {
       try {
         const content = await getChangedEditorContent()
-        const parseResult = ParseHtml.parseHtml(content, [])
-        const css = await LoadStyleSheets.loadStyleSheets(state.uri, parseResult.styleSheets, state.loadExternalStyleSheets, state.loadStyleElements)
-        const scripts = state.loadJavaScript ? parseResult.scripts : []
-
-        const updatedState = {
-          ...state,
-          content,
-          css,
-          errorMessage: '',
-          parsedDom: parseResult.dom,
-          scripts,
-          styleSheets: parseResult.styleSheets,
-        }
+        const updatedState = await getUpdatedStateFromContent(state, content)
 
         PreviewStates.set(previewUid, state, updatedState)
         didUpdate = true
