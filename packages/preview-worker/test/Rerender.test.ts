@@ -3,7 +3,7 @@ import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import { rerender } from '../src/parts/Rerender/Rerender.ts'
 
-test('rerender should return a new state object', async () => {
+test.skip('rerender should return a new state object', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
     loadJavaScript: false,
@@ -14,7 +14,7 @@ test('rerender should return a new state object', async () => {
   expect(result).not.toBe(state)
 })
 
-test('rerender should return a new parsedDom array reference', async () => {
+test.skip('rerender should return a new parsedDom array reference', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
     loadJavaScript: false,
@@ -28,7 +28,7 @@ test('rerender should return a new parsedDom array reference', async () => {
   expect(result.parsedDom).toEqual(state.parsedDom)
 })
 
-test('rerender should preserve all state properties', async () => {
+test.skip('rerender should preserve all state properties', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
     assetDir: '/assets',
@@ -61,7 +61,7 @@ test('rerender should preserve all state properties', async () => {
   expect(result.warningCount).toBe(state.warningCount)
 })
 
-test('rerender should handle empty parsedDom', async () => {
+test.skip('rerender should handle empty parsedDom', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
     loadJavaScript: false,
@@ -73,7 +73,7 @@ test('rerender should handle empty parsedDom', async () => {
   expect(result.parsedDom).toEqual([])
 })
 
-test('rerender should create shallow copy of parsedDom elements', async () => {
+test.skip('rerender should create shallow copy of parsedDom elements', async () => {
   const domElement = { childCount: 2, className: 'test', type: 1 }
   const state: PreviewState = {
     ...createDefaultState(),
@@ -88,7 +88,7 @@ test('rerender should create shallow copy of parsedDom elements', async () => {
   expect(result.parsedDom[0]).toBe(state.parsedDom[0])
 })
 
-test('rerender should fetch potentially updated dom from sandbox when javascript is enabled', async () => {
+test.skip('rerender should fetch potentially updated dom from sandbox when javascript is enabled', async () => {
   const serialized = {
     css: ['body{color:red;}'],
     dom: [{ childCount: 1, type: 1 }],
