@@ -1,5 +1,9 @@
 export const createTsxBootstrapScript = (transpiledSource: string): string => {
-  return `(() => {
+  return `;(async () => {
+const reactModule = await import('https://esm.sh/react@19/?dev')
+const reactDomClientModule = await import('https://esm.sh/react-dom@19/client?dev')
+const React = reactModule.default ?? reactModule
+const ReactDOMClient = reactDomClientModule.default ?? reactDomClientModule
 ${transpiledSource}
 const rootElement = document.getElementById('root')
 if (!rootElement) {
@@ -10,18 +14,14 @@ if (output && typeof Node !== 'undefined' && output instanceof Node) {
   rootElement.replaceChildren(output)
   return
 }
-if (typeof ReactDOM === 'undefined') {
-  throw new Error('ReactDOM failed to load for TSX preview')
+if (!ReactDOMClient || typeof ReactDOMClient.createRoot !== 'function') {
+  throw new Error('ReactDOM client failed to load for TSX preview')
 }
-if (typeof ReactDOM.createRoot === 'function') {
-  const root = ReactDOM.createRoot(rootElement)
-  root.render(output)
-  return
-}
-if (typeof ReactDOM.render === 'function') {
-  ReactDOM.render(output, rootElement)
-  return
-}
-throw new Error('No supported ReactDOM render API found')
-})()`
+const root = ReactDOMClient.createRoot(rootElement)
+root.render(output)
+})().catch((error) => {
+  setTimeout(() => {
+    throw error
+  }, 0)
+})`
 }

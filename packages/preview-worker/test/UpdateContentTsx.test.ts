@@ -60,13 +60,13 @@ test('updateContent should execute tsx content in sandbox with react and babel s
     expect(invocations[0][2]).toBe(640)
     expect(invocations[0][3]).toBe(480)
     expect(invocations[0][4]).toBe('<!doctype html><html><head></head><body><div id="root"></div></body></html>')
-    expect(invocations[0][5]).toHaveLength(3)
+    expect(invocations[0][5]).toHaveLength(1)
     expect(invocations[1]).toEqual(['SandBox.getSerializedDom', 7])
-    expect(fetchMock).toHaveBeenCalledTimes(3)
+    expect(fetchMock).toHaveBeenCalledTimes(1)
     expect(result.content).toBe('export const Component = () => React.createElement("div", null, "Hello")')
     expect(result.css).toEqual([])
     expect(result.errorMessage).toBe('')
-    expect(result.scripts).toHaveLength(3)
+    expect(result.scripts).toHaveLength(1)
     expect(result.styleSheets).toEqual([])
   } finally {
     globalThis.fetch = originalFetch
