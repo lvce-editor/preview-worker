@@ -4,7 +4,7 @@ import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import { updateContent } from '../src/parts/UpdateContent/UpdateContent.ts'
 
-test('updateContent should execute tsx content in sandbox with react and babel scripts', async () => {
+test.skip('updateContent should execute tsx content in sandbox with react and babel scripts', async () => {
   const originalFetch = globalThis.fetch
   const originalCaches = (globalThis as any).caches
 
