@@ -1,5 +1,12 @@
 export const createTsxBootstrapScript = (transpiledSource: string): string => {
   return `;(async () => {
+const globalObject = globalThis
+if (typeof globalObject.window === 'undefined') {
+  Reflect.set(globalObject, 'window', globalObject)
+}
+if (typeof globalObject.self === 'undefined') {
+  Reflect.set(globalObject, 'self', globalObject)
+}
 const reactModule = await import('https://esm.sh/react@19/?dev')
 const reactDomClientModule = await import('https://esm.sh/react-dom@19/client?dev')
 const React = reactModule.default ?? reactModule
