@@ -94,7 +94,7 @@ test('rerender should fetch potentially updated dom from sandbox when javascript
     dom: [{ childCount: 1, type: 1 }],
   }
   const sandboxRpc = {
-    invoke: async () => serialized,
+    invoke: async (): Promise<any> => serialized,
   }
   const state: PreviewState = {
     ...createDefaultState(),
