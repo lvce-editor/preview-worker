@@ -62,7 +62,6 @@ export const test: Test = async ({ Command, Editor, expect, FileSystem, Locator,
 
   await Main.openUri(cssPath)
   await Editor.setText(updatedCss)
-  // await Main.save()
 
   await waitForCss(expect, target, 'color', 'rgb(0, 0, 255)')
 }
