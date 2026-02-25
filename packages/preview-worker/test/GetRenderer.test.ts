@@ -3,7 +3,19 @@ import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import * as DiffType from '../src/parts/DiffType/DiffType.ts'
 import * as GetRenderer from '../src/parts/GetRenderer/GetRenderer.ts'
+import * as RenderCss from '../src/parts/RenderCss/RenderCss.ts'
+import { renderIncremental } from '../src/parts/RenderIncremental/RenderIncremental.ts'
 import * as RenderItems from '../src/parts/RenderItems/RenderItems.ts'
+
+test('getRenderer should return RenderCss.renderCss for RenderCss diff type', () => {
+  const renderer = GetRenderer.getRenderer(DiffType.RenderCss)
+  expect(renderer).toBe(RenderCss.renderCss)
+})
+
+test('getRenderer should return renderIncremental for RenderIncremental diff type', () => {
+  const renderer = GetRenderer.getRenderer(DiffType.RenderIncremental)
+  expect(renderer).toBe(renderIncremental)
+})
 
 test('getRenderer should return RenderItems.renderItems for RenderItems diff type', () => {
   const renderer = GetRenderer.getRenderer(DiffType.RenderItems)
