@@ -2,8 +2,6 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'preview.canvas-resize'
 
-export const skip = 1
-
 export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspace }) => {
   // arrange
   const tmpDir = await FileSystem.getTmpDir()
@@ -69,11 +67,13 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspa
   await expect(canvas).toHaveAttribute('height', '200')
   const sizeSpan = previewArea.locator('#canvasSize')
   await expect(sizeSpan).toContainText('200x200')
+  const mutationPromise = Command.execute('Preview.waitForMutation')
 
   // act
   await Command.execute('Preview.handleClick', '2')
 
   // assert
+  await mutationPromise
   await expect(canvas).toHaveAttribute('width', '400')
   await expect(canvas).toHaveAttribute('height', '300')
   await expect(sizeSpan).toContainText('400x300')
