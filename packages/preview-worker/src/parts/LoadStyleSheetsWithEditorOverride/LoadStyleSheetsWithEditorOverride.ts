@@ -1,4 +1,5 @@
 import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
+import { isSameUri } from '../HasMatchingLinkedStyleSheet/HasMatchingLinkedStyleSheet.ts'
 import { resolveStylesheetUri } from '../ResolveStylesheetUri/ResolveStylesheetUri.ts'
 
 export const loadStyleSheetsWithEditorOverride = async (
@@ -31,7 +32,7 @@ export const loadStyleSheetsWithEditorOverride = async (
     if (!styleSheetUri) {
       continue
     }
-    if (styleSheetUri === changedEditorUri) {
+    if (isSameUri(styleSheetUri, changedEditorUri)) {
       if (changedEditorContent) {
         css.push(changedEditorContent)
       }
