@@ -3,7 +3,7 @@ import { createTsxBootstrapScript } from '../src/parts/LoadTsx/CreateTsxBootstra
 
 test('createTsxBootstrapScript should define window before loading react-dom client', () => {
   const script = createTsxBootstrapScript('const Component = () => null')
-  expect(script).toContain("const globalObject = globalThis")
+  expect(script).toContain('const globalObject = globalThis')
   expect(script).toContain("Reflect.set(globalObject, 'window', globalObject)")
   expect(script).toContain("Reflect.set(globalObject, 'self', globalObject)")
 
