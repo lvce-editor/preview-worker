@@ -60,6 +60,7 @@ const packageJson = await readJson(join(root, 'packages', 'preview-worker', 'pac
 
 delete packageJson.scripts
 delete packageJson.devDependencies
+delete packageJson.dependencies
 delete packageJson.prettier
 delete packageJson.jest
 delete packageJson.xo
