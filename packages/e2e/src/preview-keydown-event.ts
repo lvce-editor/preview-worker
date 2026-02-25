@@ -34,10 +34,12 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspa
   await expect(input).toBeVisible()
   await expect(output).toBeVisible()
   await expect(output).toHaveText('No key pressed')
+  const mutationPromise = Command.execute('Preview.waitForMutation')
 
   // act
   await Command.execute('Preview.handleKeyDown', '0', 'a', 65)
 
   // assert
+  await mutationPromise
   await expect(output).toHaveText('Key pressed: a')
 }

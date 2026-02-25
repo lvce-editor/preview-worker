@@ -32,10 +32,12 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspa
   await expect(input).toBeVisible()
   await expect(output).toBeVisible()
   await expect(output).toHaveText('No input received')
+  const mutationPromise = Command.execute('Preview.waitForMutation')
 
   // act
   await Command.execute('Preview.handleInput', '0', 'a')
 
   // assert
+  await mutationPromise
   await expect(output).toHaveText('input received')
 }

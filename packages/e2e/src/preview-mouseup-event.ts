@@ -33,10 +33,12 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspa
   await expect(button).toBeVisible()
   await expect(output).toBeVisible()
   await expect(output).toHaveText('No mouseup detected')
+  const mutationPromise = Command.execute('Preview.waitForMutation')
 
   // act
   await Command.execute('Preview.handleMouseUp', '1')
 
   // assert
+  await mutationPromise
   await expect(output).toHaveText('Mouseup detected on button')
 }
