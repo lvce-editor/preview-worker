@@ -2,6 +2,7 @@ import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import * as IsTsxUri from '../IsTsxUri/IsTsxUri.ts'
+import * as LoadScriptTags from '../LoadScriptTags/LoadScriptTags.ts'
 import * as LoadScripts from '../LoadScripts/LoadScripts.ts'
 import * as LoadStyleSheets from '../LoadStyleSheets/LoadStyleSheets.ts'
 import * as LoadTsx from '../LoadTsx/LoadTsx.ts'
@@ -25,7 +26,7 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
     const parseResult = ParseHtml.parseHtml(content)
     const parsedDom = parseResult.dom
     const css = await LoadStyleSheets.loadStyleSheets(uri, parseResult.styleSheets, loadExternalStyleSheets, loadStyleElements)
-    const scripts = loadJavaScript ? parseResult.scripts : []
+    const scripts = loadJavaScript ? await LoadScriptTags.loadScriptTags(uri, parseResult.scriptTags) : []
 
     if (scripts.length > 0) {
       return LoadScripts.loadScripts(state, content, css, scripts)
