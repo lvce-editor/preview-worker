@@ -1,6 +1,7 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import { text } from '@lvce-editor/virtual-dom-worker'
 import type { ParseResult } from '../ParseResult/ParseResult.ts'
+import type { ScriptTag } from '../ScriptTag/ScriptTag.ts'
 import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
 import * as Assert from '../Assert/Assert.ts'
 import * as GetVirtualDomTag from '../GetVirtualDomTag/GetVirtualDomTag.ts'
@@ -37,6 +38,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
   const dom: VirtualDomNode[] = []
   const css: string[] = []
   const scripts: string[] = []
+  const scriptTags: ScriptTag[] = []
   const styleSheets: StyleSheet[] = []
   const stylesheets: string[] = []
   const root: VirtualDomNode = {
@@ -53,6 +55,8 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
   let cssContent = '' // Accumulate CSS content
   let captureJs = false // Track if we're inside a script tag
   let jsContent = '' // Accumulate JavaScript content
+  let captureScriptAttributes = false
+  let scriptSrc = ''
   let captureStylesheetLink = false
   let stylesheetHref = ''
   let stylesheetRel = ''
@@ -78,16 +82,26 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
     stylesheetRel = ''
   }
 
+  const setScriptAttribute = (name: string, value: string): void => {
+    if (name === 'src') {
+      scriptSrc = value
+    }
+  }
+
   for (const token of tokens) {
     switch (token.type) {
       case HtmlTokenType.AttributeName:
-        if (skipDepth === 0 && !captureCss && !captureJs) {
+        if (captureScriptAttributes) {
+          attributeName = token.text
+        } else if (skipDepth === 0 && !captureCss && !captureJs) {
           attributeName = token.text
         }
         break
       case HtmlTokenType.AttributeValue:
         if (captureStylesheetLink) {
           setStylesheetAttribute(attributeName, token.text)
+        } else if (captureScriptAttributes) {
+          setScriptAttribute(attributeName, token.text)
         } else if (
           skipDepth === 0 &&
           !captureCss &&
@@ -101,6 +115,13 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
         attributeName = ''
         break
       case HtmlTokenType.ClosingAngleBracket:
+        if (captureScriptAttributes) {
+          if (attributeName) {
+            setScriptAttribute(attributeName, attributeName)
+          }
+          captureScriptAttributes = false
+          attributeName = ''
+        }
         if (captureStylesheetLink && lastTagWasSelfClosing) {
           finalizeStylesheetLink()
         }
@@ -151,11 +172,22 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
           captureCss = false
         } else if (TAGS_TO_CAPTURE_AS_JS.has(tagNameToClose)) {
           // Finished capturing JavaScript
-          if (jsContent.trim()) {
+          if (scriptSrc.trim()) {
+            scriptTags.push({
+              src: scriptSrc,
+              type: 'external',
+            })
+          } else if (jsContent.trim()) {
             scripts.push(jsContent)
+            scriptTags.push({
+              content: jsContent,
+              type: 'inline',
+            })
           }
           jsContent = ''
+          scriptSrc = ''
           captureJs = false
+          captureScriptAttributes = false
         } else if (tagNameToClose === 'link' && captureStylesheetLink) {
           finalizeStylesheetLink()
         } else if (TAGS_TO_SKIP_COMPLETELY.has(tagNameToClose)) {
@@ -185,6 +217,8 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
         else if (TAGS_TO_CAPTURE_AS_JS.has(tagNameLower)) {
           captureJs = true
           jsContent = ''
+          scriptSrc = ''
+          captureScriptAttributes = true
           tagStack.push(token.text)
         } else if (tagNameLower === 'link') {
           captureStylesheetLink = true
@@ -228,6 +262,8 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
       case HtmlTokenType.WhitespaceInsideOpeningTag:
         if (captureStylesheetLink && attributeName) {
           setStylesheetAttribute(attributeName, attributeName)
+        } else if (captureScriptAttributes && attributeName) {
+          setScriptAttribute(attributeName, attributeName)
         } else if (
           skipDepth === 0 &&
           !captureCss &&
@@ -255,7 +291,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
     ;(dom as any).rootChildCount = root.childCount
   }
 
-  return { css, dom, scripts, styleSheets, stylesheets }
+  return { css, dom, scripts, scriptTags, styleSheets, stylesheets }
 }
 
 // Test helper: returns just the DOM array for backward compatibility with existing tests

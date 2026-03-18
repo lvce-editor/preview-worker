@@ -136,3 +136,30 @@ test('parseHtml should handle script with event handler code', () => {
   const btnNode = result.dom.find((n) => n.type === VirtualDomElements.Button)
   expect(btnNode).toBeDefined()
 })
+
+test('parseHtml should capture external script src as script tag metadata', () => {
+  const src = 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js'
+  const result = parseHtml(`<script src="${src}"></script>`)
+  expect(result.scripts).toEqual([])
+  expect(result.scriptTags).toEqual([
+    {
+      src,
+      type: 'external',
+    },
+  ])
+})
+
+test('parseHtml should keep inline and external script order in script tags', () => {
+  const src = 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js'
+  const result = parseHtml(`<script src="${src}"></script><script>console.log(THREE)</script>`)
+  expect(result.scriptTags).toEqual([
+    {
+      src,
+      type: 'external',
+    },
+    {
+      content: 'console.log(THREE)',
+      type: 'inline',
+    },
+  ])
+})

@@ -2,6 +2,7 @@ import { EditorWorker, RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { hasMatchingLinkedStyleSheet } from '../HasMatchingLinkedStyleSheet/HasMatchingLinkedStyleSheet.ts'
 import * as IsTsxUri from '../IsTsxUri/IsTsxUri.ts'
+import * as LoadScriptTags from '../LoadScriptTags/LoadScriptTags.ts'
 import * as LoadStyleSheets from '../LoadStyleSheets/LoadStyleSheets.ts'
 import { loadStyleSheetsWithEditorOverride } from '../LoadStyleSheetsWithEditorOverride/LoadStyleSheetsWithEditorOverride.ts'
 import * as LoadTsx from '../LoadTsx/LoadTsx.ts'
@@ -18,13 +19,14 @@ const getUpdatedStateFromContent = async (state: PreviewState, content: string):
 
   const parseResult = ParseHtml.parseHtml(content, [])
   const css = await LoadStyleSheets.loadStyleSheets(state.uri, parseResult.styleSheets, state.loadExternalStyleSheets, state.loadStyleElements)
+  const scripts = state.loadJavaScript ? await LoadScriptTags.loadScriptTags(state.uri, parseResult.scriptTags) : []
   return {
     ...state,
     content,
     css,
     errorMessage: '',
     parsedDom: parseResult.dom,
-    scripts: state.loadJavaScript ? parseResult.scripts : [],
+    scripts,
     styleSheets: parseResult.styleSheets,
   }
 }
