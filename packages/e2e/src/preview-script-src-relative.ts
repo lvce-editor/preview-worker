@@ -23,6 +23,7 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   const script = `const statusNode = document.getElementById('status')
 if (statusNode) {
   statusNode.textContent = 'after external script'
+  statusNode.setAttribute('data-script-loaded', 'yes')
 }`
 
   await FileSystem.writeFile(scriptPath, script)
@@ -37,4 +38,5 @@ if (statusNode) {
   const status = previewArea.locator('#status')
   await expect(status).toBeVisible()
   await expect(status).toContainText('after external script')
+  await expect(status).toHaveAttribute('data-script-loaded', 'yes')
 }

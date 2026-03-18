@@ -5,8 +5,8 @@ import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
 export interface ParseResult {
   readonly css: readonly string[]
   readonly dom: readonly VirtualDomNode[]
-  readonly scriptTags: readonly ScriptTag[]
   readonly scripts: readonly string[]
+  readonly scriptTags: readonly ScriptTag[]
   readonly styleSheets: readonly StyleSheet[]
   readonly stylesheets: readonly string[]
 }

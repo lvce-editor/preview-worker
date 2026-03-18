@@ -291,7 +291,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
     ;(dom as any).rootChildCount = root.childCount
   }
 
-  return { css, dom, scriptTags, scripts, styleSheets, stylesheets }
+  return { css, dom, scripts, scriptTags, styleSheets, stylesheets }
 }
 
 // Test helper: returns just the DOM array for backward compatibility with existing tests

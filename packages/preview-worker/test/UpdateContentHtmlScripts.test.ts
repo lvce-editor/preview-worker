@@ -53,7 +53,7 @@ test('updateContent should load external script src and execute scripts in order
 
     expect(rpc.invocations).toEqual([['FileSystem.readFile', '/tmp/index.html']])
     expect(fetchMock).toHaveBeenCalledTimes(1)
-    expect(fetchMock).toHaveBeenCalledWith('https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js')
+    expect(fetchMock.mock.calls[0]).toEqual(['https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js'])
     expect(invocations).toHaveLength(2)
     expect(invocations[0][0]).toBe('SandBox.loadContent')
     expect(invocations[0][1]).toBe(7)
