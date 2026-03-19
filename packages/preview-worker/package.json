@@ -43,7 +43,7 @@
     }
   },
   "dependencies": {
-    "@lvce-editor/virtual-dom-worker": "^9.2.0",
+    "@lvce-editor/virtual-dom-worker": "^9.3.0",
     "lodash-es": "^4.17.23"
   },
   "devDependencies": {
