@@ -3,6 +3,27 @@ import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import { rerender } from '../src/parts/Rerender/Rerender.ts'
 
+test('rerender should not ask sandbox for dom when preview has no scripts', async () => {
+  const sandboxRpc = {
+    invoke: async (): Promise<any> => {
+      throw new Error('sandbox should not be called')
+    },
+  }
+  const state: PreviewState = {
+    ...createDefaultState(),
+    loadJavaScript: true,
+    parsedDom: [{ childCount: 0, type: 1 }] as any,
+    parsedNodesChildNodeCount: 1,
+    sandboxRpc: sandboxRpc as any,
+    scripts: [],
+    uid: 42,
+  }
+
+  const result = await rerender(state)
+
+  expect(result).toBe(state)
+})
+
 test.skip('rerender should return a new state object', async () => {
   const state: PreviewState = {
     ...createDefaultState(),
