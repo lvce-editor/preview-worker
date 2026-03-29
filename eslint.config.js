@@ -9,4 +9,9 @@ export default [
   ...config.default,
   ...actions.default,
   ...tsconfig.default,
+  {
+    rules: {
+      'typescript-eslint/prefer-readonly-parameter-types': 'off',
+    },
+  },
 ]
