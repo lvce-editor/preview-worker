@@ -1,6 +1,21 @@
 const PREVIEW_SELECTOR = '.Preview'
 const HTML_SELECTOR = '.Preview .Html'
 
+const startsWithRootPseudoSelector = (selector: string): boolean => {
+  return selector.toLowerCase().startsWith(':root') && !isIdentifierChar(selector[5])
+}
+
+const replaceRootPseudoSelector = (selector: string): string => {
+  const normalizedHtmlRootSelector = `${HTML_SELECTOR}:root`
+  if (selector.toLowerCase().startsWith(normalizedHtmlRootSelector.toLowerCase()) && !isIdentifierChar(selector[normalizedHtmlRootSelector.length])) {
+    return `${HTML_SELECTOR}${selector.slice(normalizedHtmlRootSelector.length)}`
+  }
+  if (startsWithRootPseudoSelector(selector)) {
+    return `${HTML_SELECTOR}${selector.slice(5)}`
+  }
+  return selector
+}
+
 const isIdentifierChar = (char: string | undefined): boolean => {
   if (!char) {
     return false
@@ -279,7 +294,7 @@ const scopeSingleSelector = (selector: string): string => {
     return ''
   }
 
-  const normalized = replaceHtmlAndBodyTypeSelectors(trimmed)
+  const normalized = replaceRootPseudoSelector(replaceHtmlAndBodyTypeSelectors(trimmed))
 
   if (isAlreadyScopedSelector(normalized)) {
     return normalized
