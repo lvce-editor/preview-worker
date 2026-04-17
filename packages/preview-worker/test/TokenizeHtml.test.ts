@@ -203,6 +203,32 @@ test('tokenizeHtml should still tokenize normal html correctly', () => {
   ])
 })
 
+test('tokenizeHtml should handle single quoted attributes', () => {
+  const tokens = getTokens("<div id='greeting' class='message'>hello</div>")
+  expect(tokens).toEqual([
+    { text: '<', type: HtmlTokenType.OpeningAngleBracket },
+    { text: 'div', type: HtmlTokenType.TagNameStart },
+    { text: ' ', type: HtmlTokenType.WhitespaceInsideOpeningTag },
+    { text: 'id', type: HtmlTokenType.AttributeName },
+    { text: '=', type: HtmlTokenType.AttributeEqualSign },
+    { text: "'", type: HtmlTokenType.AttributeQuoteStart },
+    { text: 'greeting', type: HtmlTokenType.AttributeValue },
+    { text: "'", type: HtmlTokenType.AttributeQuoteEnd },
+    { text: ' ', type: HtmlTokenType.WhitespaceInsideOpeningTag },
+    { text: 'class', type: HtmlTokenType.AttributeName },
+    { text: '=', type: HtmlTokenType.AttributeEqualSign },
+    { text: "'", type: HtmlTokenType.AttributeQuoteStart },
+    { text: 'message', type: HtmlTokenType.AttributeValue },
+    { text: "'", type: HtmlTokenType.AttributeQuoteEnd },
+    { text: '>', type: HtmlTokenType.ClosingAngleBracket },
+    { text: 'hello', type: HtmlTokenType.Content },
+    { text: '<', type: HtmlTokenType.OpeningAngleBracket },
+    { text: '/', type: HtmlTokenType.ClosingTagSlash },
+    { text: 'div', type: HtmlTokenType.TagNameEnd },
+    { text: '>', type: HtmlTokenType.ClosingAngleBracket },
+  ])
+})
+
 test('tokenizeHtml should handle script between other elements', () => {
   const tokens = getTokens('<div>before</div><script>if (a < b) {}</script><div>after</div>')
   const contentTokens = tokens.filter((t: Readonly<{ text: string; type: HtmlTokenType.HtmlTokenType }>) => t.type === HtmlTokenType.Content)
