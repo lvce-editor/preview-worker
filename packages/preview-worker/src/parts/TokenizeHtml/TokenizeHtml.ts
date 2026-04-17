@@ -8,11 +8,13 @@ const State = {
   AfterAttributeName: 7,
   AfterAttributeValueClosingQuote: 11,
   AfterAttributeValueInsideDoubleQuote: 10,
+  AfterAttributeValueInsideSingleQuote: 19,
   AfterClosingTagName: 5,
   AfterClosingTagSlash: 4,
   AfterExclamationMark: 16,
   AfterOpeningAngleBracket: 2,
   InsideAttributeAfterDoubleQuote: 9,
+  InsideAttributeAfterSingleQuote: 20,
   InsideComment: 17,
   InsideOpeningTag: 3,
   InsideOpeningTagAfterWhitespace: 6,
@@ -33,7 +35,9 @@ const RE_WHITESPACE = /^\s+/
 const RE_ATTRIBUTE_NAME = /^[a-zA-Z\d-]+/
 const RE_EQUAL_SIGN = /^=/
 const RE_DOUBLE_QUOTE = /^"/
+const RE_SINGLE_QUOTE = /^'/
 const RE_ATTRIBUTE_VALUE_INSIDE_DOUBLE_QUOTE = /^[^"\n]+/
+const RE_ATTRIBUTE_VALUE_INSIDE_SINGLE_QUOTE = /^[^'\n]+/
 const RE_TEXT = /^[^<>]+/
 const RE_EXCLAMATION_MARK = /^!/
 const RE_DASH_DASH = /^--/
@@ -61,6 +65,9 @@ export const tokenizeHtml = (text: string): readonly HtmlToken[] => {
         if ((next = part.match(RE_DOUBLE_QUOTE))) {
           token = TokenType.AttributeQuoteStart
           state = State.InsideAttributeAfterDoubleQuote
+        } else if ((next = part.match(RE_SINGLE_QUOTE))) {
+          token = TokenType.AttributeQuoteStart
+          state = State.InsideAttributeAfterSingleQuote
         } else if ((next = part.match(RE_ANGLE_BRACKET_CLOSE))) {
           token = TokenType.ClosingAngleBracket
           state = State.TopLevelContent
@@ -105,6 +112,14 @@ export const tokenizeHtml = (text: string): readonly HtmlToken[] => {
         break
       case State.AfterAttributeValueInsideDoubleQuote:
         if ((next = part.match(RE_DOUBLE_QUOTE))) {
+          token = TokenType.AttributeQuoteEnd
+          state = State.AfterAttributeValueClosingQuote
+        } else {
+          throw new UnexpectedTokenError()
+        }
+        break
+      case State.AfterAttributeValueInsideSingleQuote:
+        if ((next = part.match(RE_SINGLE_QUOTE))) {
           token = TokenType.AttributeQuoteEnd
           state = State.AfterAttributeValueClosingQuote
         } else {
@@ -181,6 +196,17 @@ export const tokenizeHtml = (text: string): readonly HtmlToken[] => {
           token = TokenType.AttributeValue
           state = State.AfterAttributeValueInsideDoubleQuote
         } else if ((next = part.match(RE_DOUBLE_QUOTE))) {
+          token = TokenType.AttributeQuoteEnd
+          state = State.AfterAttributeValueClosingQuote
+        } else {
+          throw new UnexpectedTokenError()
+        }
+        break
+      case State.InsideAttributeAfterSingleQuote:
+        if ((next = text.slice(index).match(RE_ATTRIBUTE_VALUE_INSIDE_SINGLE_QUOTE))) {
+          token = TokenType.AttributeValue
+          state = State.AfterAttributeValueInsideSingleQuote
+        } else if ((next = part.match(RE_SINGLE_QUOTE))) {
           token = TokenType.AttributeQuoteEnd
           state = State.AfterAttributeValueClosingQuote
         } else {

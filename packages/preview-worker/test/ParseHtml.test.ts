@@ -116,6 +116,12 @@ test('parseHtml should allow multiple attributes when specified', () => {
   expect(result).toEqual(expectedArray)
 })
 
+test('parseHtml should allow single quoted attributes', () => {
+  const expectedArray = [{ childCount: 0, className: 'message', id: 'greeting', type: VirtualDomElements.Div }]
+  const result = parseHtmlDom("<div id='greeting' class='message'></div>", ['id', 'class'])
+  expect(result).toEqual(expectedArray)
+})
+
 test('parseHtml should allow only specified attributes from multiple', () => {
   const expectedArray = [{ childCount: 0, 'data-id': '123', type: VirtualDomElements.Div }]
   const result = parseHtmlDom('<div data-id="123" onclick="alert()"></div>', ['data-id'])
