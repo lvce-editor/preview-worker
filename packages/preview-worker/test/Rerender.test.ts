@@ -131,3 +131,34 @@ test.skip('rerender should fetch potentially updated dom from sandbox when javas
   expect(result.css).toEqual(serialized.css)
   expect(result.parsedNodesChildNodeCount).toBe(1)
 })
+
+test('rerender should preserve linked stylesheet css when sandbox serialization omits it', async () => {
+  const serialized = {
+    css: ['#overlay.hidden { opacity: 0; }'],
+    dom: [{ childCount: 1, type: 1 }],
+  }
+  const sandboxRpc = {
+    invoke: async (): Promise<any> => serialized,
+  }
+  const state: PreviewState = {
+    ...createDefaultState(),
+    css: ['.app-shell { display: flex; }', '#overlay.hidden { opacity: 0; }'],
+    loadExternalStyleSheets: true,
+    loadJavaScript: true,
+    loadStyleElements: true,
+    parsedDom: [{ childCount: 0, type: 1 }],
+    sandboxRpc: sandboxRpc as any,
+    scripts: ['startBtn.addEventListener("click", () => {})'],
+    styleSheets: [
+      { href: './style.css', type: 'link' },
+      { content: '#overlay.hidden { opacity: 0; }', type: 'style' },
+    ],
+    uid: 42,
+  }
+
+  const result = await rerender(state)
+
+  expect(result.parsedDom).toBe(serialized.dom)
+  expect(result.css).toEqual(['#overlay.hidden { opacity: 0; }', '.app-shell { display: flex; }'])
+  expect(result.parsedNodesChildNodeCount).toBe(1)
+})
