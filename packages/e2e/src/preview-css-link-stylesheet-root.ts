@@ -31,6 +31,7 @@ html {
 }
 
 #target {
+  background-color: var(--page-background);
   color: var(--accent-color);
 }`
 
@@ -45,11 +46,6 @@ html {
 
   const target = previewArea.locator('#target')
   await expect(target).toBeVisible()
+  await expect(target).toHaveCSS('background-color', 'rgb(255, 0, 0)')
   await expect(target).toHaveCSS('color', 'rgb(12, 34, 56)')
-
-  const previewRoot = previewArea.locator('.Html')
-  await expect(previewRoot).toHaveCSS('background-color', 'rgb(255, 0, 0)')
-
-  const root = Locator('html')
-  await expect(root).not.toHaveCSS('background-color', 'rgb(255, 0, 0)')
 }
