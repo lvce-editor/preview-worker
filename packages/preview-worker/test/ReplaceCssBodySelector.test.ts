@@ -109,7 +109,7 @@ test('should scope rules after malformed css and prevent root breakout', () => {
   const css = '#target { color: rgb(0, 0, 255); } } :root { background-color: rgb(255, 0, 0) !important; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
   expect(result).toContain('.Preview #target {  color: rgb(0, 0, 255);  }')
-  expect(result).toContain('.Preview .Html {  background-color: rgb(255, 0, 0) !important;  }')
+  expect(result).toContain('.Preview {  background-color: rgb(255, 0, 0) !important;  }')
   expect(result).not.toContain(' } :root {')
 })
 
@@ -122,7 +122,7 @@ test('should replace html selector with preview selector', () => {
 test('should replace root selector with preview html selector', () => {
   const css = ':root { color: red; }'
   const result = ReplaceCssBodySelector.replaceCssBodySelector(css)
-  expect(normalizeWhitespace(result)).toBe('.Preview .Html { color: red; }')
+  expect(normalizeWhitespace(result)).toBe('.Preview { color: red; }')
 })
 
 test('should replace html and body in combined selectors', () => {
