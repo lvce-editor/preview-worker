@@ -12,7 +12,7 @@ test('rerender should not ask sandbox for dom when preview has no scripts', asyn
   const state: PreviewState = {
     ...createDefaultState(),
     loadJavaScript: true,
-    parsedDom: [{ childCount: 0, type: 1 }] as any,
+    parsedDom: [{ childCount: 0, type: 1 }],
     parsedNodesChildNodeCount: 1,
     sandboxRpc: sandboxRpc as any,
     scripts: [],
