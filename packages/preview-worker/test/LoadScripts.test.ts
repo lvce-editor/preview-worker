@@ -25,7 +25,7 @@ test('loadScripts should load content in sandbox and update dom from serialized 
     ...createDefaultState(),
     errorMessage: 'previous error',
     height: 480,
-    parsedDom: [{ childCount: 1, type: 1 } as any],
+    parsedDom: [{ childCount: 1, type: 1 }],
     parsedNodesChildNodeCount: 1,
     sandboxRpc: sandboxRpc as any,
     uid: 7,

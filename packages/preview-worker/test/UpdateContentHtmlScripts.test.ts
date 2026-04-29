@@ -14,7 +14,7 @@ test('updateContent should load external script src and execute scripts in order
     } as Response
   })
 
-  globalThis.fetch = fetchMock as any
+  globalThis.fetch = fetchMock
 
   let rpc: any
   try {
