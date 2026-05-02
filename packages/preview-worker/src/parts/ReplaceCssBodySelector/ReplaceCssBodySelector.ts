@@ -1,5 +1,6 @@
 const PREVIEW_SELECTOR = '.Preview'
 const HTML_SELECTOR = '.Preview .Html'
+const ROOT_SELECTOR = PREVIEW_SELECTOR
 
 const startsWithRootPseudoSelector = (selector: string): boolean => {
   return selector.toLowerCase().startsWith(':root') && !isIdentifierChar(selector[5])
@@ -8,10 +9,10 @@ const startsWithRootPseudoSelector = (selector: string): boolean => {
 const replaceRootPseudoSelector = (selector: string): string => {
   const normalizedHtmlRootSelector = `${HTML_SELECTOR}:root`
   if (selector.toLowerCase().startsWith(normalizedHtmlRootSelector.toLowerCase()) && !isIdentifierChar(selector[normalizedHtmlRootSelector.length])) {
-    return `${HTML_SELECTOR}${selector.slice(normalizedHtmlRootSelector.length)}`
+    return `${ROOT_SELECTOR}${selector.slice(normalizedHtmlRootSelector.length)}`
   }
   if (startsWithRootPseudoSelector(selector)) {
-    return `${HTML_SELECTOR}${selector.slice(5)}`
+    return `${ROOT_SELECTOR}${selector.slice(5)}`
   }
   return selector
 }

@@ -49,7 +49,11 @@
   "devDependencies": {
     "@jest/globals": "^30.3.0",
     "@lvce-editor/assert": "^1.5.1",
+<<<<<<< HEAD
     "@lvce-editor/constants": "^5.12.0",
+=======
+    "@lvce-editor/constants": "^5.11.0",
+>>>>>>> origin/main
     "@lvce-editor/rpc": "^6.4.0",
     "@lvce-editor/rpc-registry": "^9.22.0",
     "@lvce-editor/verror": "^1.7.0",
