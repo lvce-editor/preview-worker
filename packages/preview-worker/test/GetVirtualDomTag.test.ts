@@ -149,6 +149,11 @@ test('getVirtualDomTag should return Span element for "span" tag', () => {
   expect(result).toBe(VirtualDomElements.Span)
 })
 
+test('getVirtualDomTag should return Strong element for "strong" tag', () => {
+  const result = getVirtualDomTag(ElementTags.Strong)
+  expect(result).toBe(VirtualDomElements.Strong)
+})
+
 test('getVirtualDomTag should return Tfoot element for "tfoot" tag', () => {
   const result = getVirtualDomTag(ElementTags.Tfoot)
   expect(result).toBe(VirtualDomElements.Tfoot)
