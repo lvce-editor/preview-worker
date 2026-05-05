@@ -85,6 +85,8 @@ export const getVirtualDomTag = (text: string): number => {
       return VirtualDomElements.Select
     case ElementTags.Span:
       return VirtualDomElements.Span
+    case ElementTags.Strong:
+      return VirtualDomElements.Strong
     case ElementTags.Table:
       return VirtualDomElements.Table
     case ElementTags.TBody:

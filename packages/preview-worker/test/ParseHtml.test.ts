@@ -395,7 +395,7 @@ test('parseHtml should parse section tag', () => {
 // Text formatting tags
 test('parseHtml should parse strong tag', () => {
   const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.Strong },
     { childCount: 0, text: 'Bold', type: VirtualDomElements.Text },
   ]
   const result = parseHtmlDom('<strong>Bold</strong>', [])
