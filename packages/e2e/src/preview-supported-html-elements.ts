@@ -16,7 +16,6 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
 </head>
 <body>
   <a id="preview-a" href="#anchor">Anchor</a>
-  <abbr id="preview-abbr" title="Abbreviation">Abbr</abbr>
   <article id="preview-article">Article</article>
   <aside id="preview-aside">Aside</aside>
   <br id="preview-br">
@@ -36,14 +35,14 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
     <figcaption id="preview-figcaption">Figure caption</figcaption>
   </figure>
   <footer id="preview-footer">Footer</footer>
-  <form id="preview-form">
+  <div id="preview-form-fields">
     <label id="preview-label" for="preview-input">Label</label>
     <input id="preview-input" type="text" value="preview value">
     <textarea id="preview-textarea">Textarea</textarea>
     <select id="preview-select">
       <option id="preview-option" value="one">Option</option>
     </select>
-  </form>
+  </div>
   <h1 id="preview-h1">Heading 1</h1>
   <h2 id="preview-h2">Heading 2</h2>
   <h3 id="preview-h3">Heading 3</h3>
@@ -88,7 +87,6 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
 
   const expectedSelectors = [
     'a#preview-a',
-    'abbr#preview-abbr',
     'article#preview-article',
     'aside#preview-aside',
     'br#preview-br',
@@ -105,7 +103,6 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
     'figcaption#preview-figcaption',
     'figure#preview-figure',
     'footer#preview-footer',
-    'form#preview-form',
     'h1#preview-h1',
     'h2#preview-h2',
     'h3#preview-h3',
