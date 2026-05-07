@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
-
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import { text } from '@lvce-editor/virtual-dom-worker'
 import type { ParseResult } from '../ParseResult/ParseResult.ts'

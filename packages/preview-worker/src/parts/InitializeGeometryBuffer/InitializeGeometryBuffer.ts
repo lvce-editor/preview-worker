@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import { createGeometryBuffer } from '../CreateGeometryBuffer/CreateGeometryBuffer.ts'
 

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
-
 import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
 import type { StyleElementStyleSheet } from '../StyleSheet/StyleSheet.ts'
 import { isSameUri } from '../HasMatchingLinkedStyleSheet/HasMatchingLinkedStyleSheet.ts'

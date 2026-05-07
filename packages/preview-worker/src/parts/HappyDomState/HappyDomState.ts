@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
 interface HappyDomInstance {
   readonly document: any
   readonly elementMap: Map<string, any>

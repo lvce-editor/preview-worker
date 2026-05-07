@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
-
 import type { HtmlToken } from '../HtmlToken/HtmlToken.ts'
 import * as Assert from '../Assert/Assert.ts'
 import * as TokenType from '../HtmlTokenType/HtmlTokenType.ts'

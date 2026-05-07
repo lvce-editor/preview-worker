@@ -1,3 +1,5 @@
+/* eslint-disable jest/no-disabled-tests */
+
 import { expect, test } from '@jest/globals'
 import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
