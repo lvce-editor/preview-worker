@@ -7,6 +7,7 @@ export const createDefaultState = (): PreviewState => {
     css: [],
     errorCount: 0,
     errorMessage: '',
+    geometryBuffer: null,
     height: 0,
     initial: true,
     listenerId: '',

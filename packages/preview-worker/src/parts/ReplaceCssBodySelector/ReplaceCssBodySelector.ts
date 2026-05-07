@@ -32,165 +32,174 @@ const isLikelyTypeSelectorStart = (selector: string, tokenStart: number): boolea
   return /[\s,+>~(|&]/.test(previous)
 }
 
+const isQuoteChar = (char: string | undefined): boolean => {
+  return char === '"' || char === "'"
+}
+
+const isCommentStart = (value: string, index: number): boolean => {
+  return value[index] === '/' && value[index + 1] === '*'
+}
+
+const getCommentEnd = (value: string, index: number): number => {
+  const end = value.indexOf('*/', index + 2)
+  return end === -1 ? value.length : end + 2
+}
+
+const getQuotedEnd = (value: string, index: number): number => {
+  const quote = value[index]
+  let current = index + 1
+  while (current < value.length) {
+    if (value[current] === '\\') {
+      current += 2
+      continue
+    }
+    if (value[current] === quote) {
+      return current + 1
+    }
+    current++
+  }
+  return current
+}
+
+const getSkippedSegmentEnd = (value: string, index: number): number | undefined => {
+  if (isCommentStart(value, index)) {
+    return getCommentEnd(value, index)
+  }
+  if (isQuoteChar(value[index])) {
+    return getQuotedEnd(value, index)
+  }
+  return undefined
+}
+
+const getIdentifierEnd = (value: string, index: number): number => {
+  let current = index + 1
+  while (current < value.length && isIdentifierChar(value[current])) {
+    current++
+  }
+  return current
+}
+
+const getNextBracketDepth = (bracketsDepth: number, char: string): number | undefined => {
+  if (char === '[') {
+    return bracketsDepth + 1
+  }
+  if (char === ']') {
+    return Math.max(0, bracketsDepth - 1)
+  }
+  return undefined
+}
+
+const getTypeSelectorReplacement = (selector: string, index: number, bracketsDepth: number): { nextIndex: number; text: string } | undefined => {
+  const char = selector[index]
+  if (bracketsDepth !== 0 || !/[a-zA-Z_-]/.test(char)) {
+    return undefined
+  }
+  const identifierEnd = getIdentifierEnd(selector, index)
+  const token = selector.slice(index, identifierEnd)
+  const lowerToken = token.toLowerCase()
+  const shouldReplace = (lowerToken === 'html' || lowerToken === 'body') && isLikelyTypeSelectorStart(selector, index)
+  return {
+    nextIndex: identifierEnd,
+    text: shouldReplace ? HTML_SELECTOR : token,
+  }
+}
+
+const getNextSelectorDepths = (
+  parenthesesDepth: number,
+  bracketsDepth: number,
+  char: string,
+): { bracketsDepth: number; parenthesesDepth: number } | undefined => {
+  if (char === '(') {
+    return { bracketsDepth, parenthesesDepth: parenthesesDepth + 1 }
+  }
+  if (char === ')') {
+    return { bracketsDepth, parenthesesDepth: Math.max(0, parenthesesDepth - 1) }
+  }
+  const nextBracketDepth = getNextBracketDepth(bracketsDepth, char)
+  if (nextBracketDepth === undefined) {
+    return undefined
+  }
+  return { bracketsDepth: nextBracketDepth, parenthesesDepth }
+}
+
+const isTopLevelPreviewMatch = (selector: string, index: number): boolean => {
+  if (!selector.startsWith(PREVIEW_SELECTOR, index)) {
+    return false
+  }
+  if (index === 0) {
+    return true
+  }
+  return /[\s>+~,&|]/.test(selector[index - 1])
+}
+
 const replaceHtmlAndBodyTypeSelectors = (selector: string): string => {
   let result = ''
-  let quote: string | undefined
-  let inComment = false
   let bracketsDepth = 0
 
-  for (let i = 0; i < selector.length; i++) {
-    const char = selector[i]
-    const next = selector[i + 1]
+  let index = 0
+  while (index < selector.length) {
+    const char = selector[index]
 
-    if (inComment) {
+    const skippedSegmentEnd = getSkippedSegmentEnd(selector, index)
+    if (skippedSegmentEnd !== undefined) {
+      result += selector.slice(index, skippedSegmentEnd)
+      index = skippedSegmentEnd
+      continue
+    }
+
+    const nextBracketDepth = getNextBracketDepth(bracketsDepth, char)
+    if (nextBracketDepth !== undefined) {
+      bracketsDepth = nextBracketDepth
       result += char
-      if (char === '*' && next === '/') {
-        result += '/'
-        i++
-        inComment = false
-      }
+      index++
       continue
     }
 
-    if (quote) {
-      result += char
-      if (char === '\\') {
-        const escaped = selector[i + 1]
-        if (escaped) {
-          result += escaped
-          i++
-        }
-        continue
-      }
-      if (char === quote) {
-        quote = undefined
-      }
-      continue
-    }
-
-    if (char === '/' && next === '*') {
-      result += '/*'
-      i++
-      inComment = true
-      continue
-    }
-
-    if (char === '"' || char === "'") {
-      result += char
-      quote = char
-      continue
-    }
-
-    if (char === '[') {
-      bracketsDepth++
-      result += char
-      continue
-    }
-
-    if (char === ']') {
-      bracketsDepth = Math.max(0, bracketsDepth - 1)
-      result += char
-      continue
-    }
-
-    if (bracketsDepth === 0 && /[a-zA-Z_-]/.test(char)) {
-      let j = i + 1
-      while (j < selector.length && isIdentifierChar(selector[j])) {
-        j++
-      }
-
-      const token = selector.slice(i, j)
-      const lowerToken = token.toLowerCase()
-      const shouldReplace = (lowerToken === 'html' || lowerToken === 'body') && isLikelyTypeSelectorStart(selector, i)
-
-      if (shouldReplace) {
-        result += HTML_SELECTOR
-      } else {
-        result += token
-      }
-      i = j - 1
+    const replacement = getTypeSelectorReplacement(selector, index, bracketsDepth)
+    if (replacement) {
+      result += replacement.text
+      index = replacement.nextIndex
       continue
     }
 
     result += char
+    index++
   }
 
   return result
 }
 
 const hasTopLevelPreviewAnchor = (selector: string): boolean => {
-  let quote: string | undefined
-  let inComment = false
   let parenthesesDepth = 0
   let bracketsDepth = 0
 
-  for (let i = 0; i < selector.length; i++) {
-    const char = selector[i]
-    const next = selector[i + 1]
+  let index = 0
+  while (index < selector.length) {
+    const char = selector[index]
 
-    if (inComment) {
-      if (char === '*' && next === '/') {
-        i++
-        inComment = false
-      }
+    const skippedSegmentEnd = getSkippedSegmentEnd(selector, index)
+    if (skippedSegmentEnd !== undefined) {
+      index = skippedSegmentEnd
       continue
     }
 
-    if (quote) {
-      if (char === '\\') {
-        i++
-        continue
-      }
-      if (char === quote) {
-        quote = undefined
-      }
-      continue
-    }
-
-    if (char === '/' && next === '*') {
-      i++
-      inComment = true
-      continue
-    }
-
-    if (char === '"' || char === "'") {
-      quote = char
-      continue
-    }
-
-    if (char === '(') {
-      parenthesesDepth++
-      continue
-    }
-
-    if (char === ')') {
-      parenthesesDepth = Math.max(0, parenthesesDepth - 1)
-      continue
-    }
-
-    if (char === '[') {
-      bracketsDepth++
-      continue
-    }
-
-    if (char === ']') {
-      bracketsDepth = Math.max(0, bracketsDepth - 1)
+    const nextDepths = getNextSelectorDepths(parenthesesDepth, bracketsDepth, char)
+    if (nextDepths) {
+      ;({ bracketsDepth, parenthesesDepth } = nextDepths)
+      index++
       continue
     }
 
     if (parenthesesDepth !== 0 || bracketsDepth !== 0) {
+      index++
       continue
     }
 
-    if (selector.startsWith(PREVIEW_SELECTOR, i)) {
-      if (i === 0) {
-        return true
-      }
-      const previous = selector[i - 1]
-      if (/[\s>+~,&|]/.test(previous)) {
-        return true
-      }
+    if (isTopLevelPreviewMatch(selector, index)) {
+      return true
     }
+
+    index++
   }
 
   return false
@@ -204,85 +213,37 @@ const isAlreadyScopedSelector = (selector: string): boolean => {
 const splitByCommaAtTopLevel = (selectorText: string): readonly string[] => {
   const selectors: string[] = []
   let current = ''
-  let quote: string | undefined
-  let inComment = false
   let parenthesesDepth = 0
   let bracketsDepth = 0
 
-  for (let i = 0; i < selectorText.length; i++) {
-    const char = selectorText[i]
-    const next = selectorText[i + 1]
+  let index = 0
+  while (index < selectorText.length) {
+    const char = selectorText[index]
 
-    if (inComment) {
-      current += char
-      if (char === '*' && next === '/') {
-        current += '/'
-        i++
-        inComment = false
-      }
+    const skippedSegmentEnd = getSkippedSegmentEnd(selectorText, index)
+    if (skippedSegmentEnd !== undefined) {
+      current += selectorText.slice(index, skippedSegmentEnd)
+      index = skippedSegmentEnd
       continue
     }
 
-    if (quote) {
+    const nextDepths = getNextSelectorDepths(parenthesesDepth, bracketsDepth, char)
+    if (nextDepths) {
+      ;({ bracketsDepth, parenthesesDepth } = nextDepths)
       current += char
-      if (char === '\\') {
-        const escaped = selectorText[i + 1]
-        if (escaped) {
-          current += escaped
-          i++
-        }
-        continue
-      }
-      if (char === quote) {
-        quote = undefined
-      }
-      continue
-    }
-
-    if (char === '/' && next === '*') {
-      current += '/*'
-      i++
-      inComment = true
-      continue
-    }
-
-    if (char === '"' || char === "'") {
-      current += char
-      quote = char
-      continue
-    }
-
-    if (char === '(') {
-      parenthesesDepth++
-      current += char
-      continue
-    }
-
-    if (char === ')') {
-      parenthesesDepth = Math.max(0, parenthesesDepth - 1)
-      current += char
-      continue
-    }
-
-    if (char === '[') {
-      bracketsDepth++
-      current += char
-      continue
-    }
-
-    if (char === ']') {
-      bracketsDepth = Math.max(0, bracketsDepth - 1)
-      current += char
+      index++
       continue
     }
 
     if (char === ',' && parenthesesDepth === 0 && bracketsDepth === 0) {
       selectors.push(current)
       current = ''
+      index++
       continue
     }
 
     current += char
+    index++
   }
 
   selectors.push(current)
@@ -311,55 +272,36 @@ const scopeSelectorList = (selectorList: string): string => {
 }
 
 const findBlockEnd = (css: string, blockStart: number): number => {
-  let quote: string | undefined
-  let inComment = false
   let depth = 1
 
-  for (let i = blockStart + 1; i < css.length; i++) {
-    const char = css[i]
-    const next = css[i + 1]
+  let index = blockStart + 1
+  while (index < css.length) {
+    const char = css[index]
 
-    if (inComment) {
-      if (char === '*' && next === '/') {
-        i++
-        inComment = false
-      }
+    if (isCommentStart(css, index)) {
+      index = getCommentEnd(css, index)
       continue
     }
 
-    if (quote) {
-      if (char === '\\') {
-        i++
-        continue
-      }
-      if (char === quote) {
-        quote = undefined
-      }
-      continue
-    }
-
-    if (char === '/' && next === '*') {
-      i++
-      inComment = true
-      continue
-    }
-
-    if (char === '"' || char === "'") {
-      quote = char
+    if (isQuoteChar(char)) {
+      index = getQuotedEnd(css, index)
       continue
     }
 
     if (char === '{') {
       depth++
+      index++
       continue
     }
 
     if (char === '}') {
       depth--
       if (depth === 0) {
-        return i
+        return index
       }
     }
+
+    index++
   }
 
   return -1
@@ -385,139 +327,111 @@ const formatRule = (prelude: string, block: string): string => {
   return `${prelude} { ${block} }`
 }
 
+const skipRuleSeparators = (css: string, index: number): number => {
+  let current = index
+  while (current < css.length) {
+    if (css[current] === '}' || /\s/.test(css[current])) {
+      current++
+      continue
+    }
+    if (isCommentStart(css, current)) {
+      current = getCommentEnd(css, current)
+      continue
+    }
+    break
+  }
+  return current
+}
+
+const findRuleDelimiter = (css: string, index: number): { delimiter: ';' | '{'; index: number } | undefined => {
+  let parenthesesDepth = 0
+  let bracketsDepth = 0
+  let current = index
+
+  while (current < css.length) {
+    const char = css[current]
+
+    const skippedSegmentEnd = getSkippedSegmentEnd(css, current)
+    if (skippedSegmentEnd !== undefined) {
+      current = skippedSegmentEnd
+      continue
+    }
+
+    const nextDepths = getNextSelectorDepths(parenthesesDepth, bracketsDepth, char)
+    if (nextDepths) {
+      ;({ bracketsDepth, parenthesesDepth } = nextDepths)
+      current++
+      continue
+    }
+
+    if (parenthesesDepth === 0 && bracketsDepth === 0 && (char === '{' || char === ';')) {
+      return {
+        delimiter: char,
+        index: current,
+      }
+    }
+
+    current++
+  }
+
+  return undefined
+}
+
+const getScopedAtRule = (prelude: string, block: string): string | undefined => {
+  if (!shouldScopeNestedAtRule(prelude)) {
+    return formatRule(prelude, block)
+  }
+  const scopedBlock = scopeCss(block)
+  return scopedBlock ? formatRule(prelude, scopedBlock) : undefined
+}
+
+const getScopedRule = (prelude: string, block: string): string | undefined => {
+  if (!prelude) {
+    return undefined
+  }
+
+  if (prelude.startsWith('@')) {
+    return getScopedAtRule(prelude, block)
+  }
+
+  const scopedPrelude = scopeSelectorList(prelude)
+  return scopedPrelude ? formatRule(scopedPrelude, block) : undefined
+}
+
 const scopeCss = (css: string): string => {
   const rules: string[] = []
   let index = 0
 
   while (index < css.length) {
-    while (index < css.length) {
-      if (css[index] === '}' || /\s/.test(css[index])) {
-        index++
-        continue
-      }
-      if (css[index] === '/' && css[index + 1] === '*') {
-        const endComment = css.indexOf('*/', index + 2)
-        if (endComment === -1) {
-          index = css.length
-          break
-        }
-        index = endComment + 2
-        continue
-      }
-      break
-    }
-
+    index = skipRuleSeparators(css, index)
     if (index >= css.length) {
       break
     }
 
-    let quote: string | undefined
-    let inComment = false
-    let parenthesesDepth = 0
-    let bracketsDepth = 0
-    let delimiterIndex = -1
-    let delimiter = ''
-
-    for (let i = index; i < css.length; i++) {
-      const char = css[i]
-      const next = css[i + 1]
-
-      if (inComment) {
-        if (char === '*' && next === '/') {
-          i++
-          inComment = false
-        }
-        continue
-      }
-
-      if (quote) {
-        if (char === '\\') {
-          i++
-          continue
-        }
-        if (char === quote) {
-          quote = undefined
-        }
-        continue
-      }
-
-      if (char === '/' && next === '*') {
-        i++
-        inComment = true
-        continue
-      }
-
-      if (char === '"' || char === "'") {
-        quote = char
-        continue
-      }
-
-      if (char === '(') {
-        parenthesesDepth++
-        continue
-      }
-
-      if (char === ')') {
-        parenthesesDepth = Math.max(0, parenthesesDepth - 1)
-        continue
-      }
-
-      if (char === '[') {
-        bracketsDepth++
-        continue
-      }
-
-      if (char === ']') {
-        bracketsDepth = Math.max(0, bracketsDepth - 1)
-        continue
-      }
-
-      if (parenthesesDepth === 0 && bracketsDepth === 0 && (char === '{' || char === ';')) {
-        delimiterIndex = i
-        delimiter = char
-        break
-      }
-    }
-
-    if (delimiterIndex === -1) {
+    const delimiter = findRuleDelimiter(css, index)
+    if (!delimiter) {
       break
     }
 
-    if (delimiter === ';') {
-      const statement = css.slice(index, delimiterIndex + 1).trim()
+    if (delimiter.delimiter === ';') {
+      const statement = css.slice(index, delimiter.index + 1).trim()
       if (statement) {
         rules.push(statement)
       }
-      index = delimiterIndex + 1
+      index = delimiter.index + 1
       continue
     }
 
-    const prelude = css.slice(index, delimiterIndex).trim()
-    const blockEnd = findBlockEnd(css, delimiterIndex)
+    const prelude = css.slice(index, delimiter.index).trim()
+    const blockEnd = findBlockEnd(css, delimiter.index)
     if (blockEnd === -1) {
       break
     }
 
-    const block = css.slice(delimiterIndex + 1, blockEnd)
-    if (!prelude) {
-      index = blockEnd + 1
-      continue
-    }
-
-    if (prelude.startsWith('@')) {
-      if (shouldScopeNestedAtRule(prelude)) {
-        const scopedBlock = scopeCss(block)
-        if (scopedBlock) {
-          rules.push(formatRule(prelude, scopedBlock))
-        }
-      } else {
-        rules.push(formatRule(prelude, block))
-      }
-    } else {
-      const scopedPrelude = scopeSelectorList(prelude)
-      if (scopedPrelude) {
-        rules.push(formatRule(scopedPrelude, block))
-      }
+    const block = css.slice(delimiter.index + 1, blockEnd)
+    const scopedRule = getScopedRule(prelude, block)
+    if (scopedRule) {
+      rules.push(scopedRule)
     }
 
     index = blockEnd + 1
