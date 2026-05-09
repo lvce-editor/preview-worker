@@ -8,6 +8,7 @@ export interface PreviewState {
   readonly css: readonly string[]
   readonly errorCount: number
   readonly errorMessage: string
+  readonly geometryBuffer: ArrayBuffer | SharedArrayBuffer | null
   readonly height: number
   readonly initial: boolean
   readonly listenerId: string

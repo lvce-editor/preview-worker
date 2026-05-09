@@ -27,6 +27,7 @@ export const create = async (
     css: [],
     errorCount: 0,
     errorMessage: '',
+    geometryBuffer: null,
     height,
     initial: true,
     listenerId: '',

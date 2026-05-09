@@ -13,11 +13,13 @@ test('create should store state with the given uid', async () => {
   const oldStateTyped: PreviewState = oldState
   expect(newStateTyped).toBeDefined()
   expect(newStateTyped.uid).toBe(uid)
+  expect(newStateTyped.geometryBuffer).toBeNull()
   expect(newStateTyped.loadJavaScript).toBe(true)
   expect(newStateTyped.loadExternalStyleSheets).toBe(true)
   expect(newStateTyped.loadStyleElements).toBe(true)
   expect(oldStateTyped).toBeDefined()
   expect(oldStateTyped.uid).toBe(uid)
+  expect(oldStateTyped.geometryBuffer).toBeNull()
   expect(oldStateTyped.loadJavaScript).toBe(true)
   expect(oldStateTyped.loadExternalStyleSheets).toBe(true)
   expect(oldStateTyped.loadStyleElements).toBe(true)
@@ -35,6 +37,7 @@ test('create should store configured feature flags', async () => {
   const newStateTyped: PreviewState = newState
 
   expect(newStateTyped.uid).toBe(uid)
+  expect(newStateTyped.geometryBuffer).toBeNull()
   expect(newStateTyped.loadJavaScript).toBe(false)
   expect(newStateTyped.loadExternalStyleSheets).toBe(false)
   expect(newStateTyped.loadStyleElements).toBe(false)

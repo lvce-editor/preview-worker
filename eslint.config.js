@@ -11,7 +11,7 @@ export default [
   ...tsconfig.default,
   {
     rules: {
-      'typescript-eslint/prefer-readonly-parameter-types': 'off',
+      '@typescript-eslint/prefer-readonly-parameter-types': 'off',
     },
   },
 ]

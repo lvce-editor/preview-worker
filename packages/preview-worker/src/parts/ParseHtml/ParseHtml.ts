@@ -26,272 +26,386 @@ const TAGS_TO_CAPTURE_AS_JS = new Set(['script'])
 
 // Attribute name normalization is implemented in a separate module
 
+type MutableVirtualDomNode = VirtualDomNode & Record<string, any>
+
+type ParserContext = {
+  allAllowedAttributes: Set<string>
+  attributeName: string
+  captureCss: boolean
+  captureJs: boolean
+  captureScriptAttributes: boolean
+  captureStylesheetLink: boolean
+  css: string[]
+  cssContent: string
+  current: MutableVirtualDomNode
+  defaultAllowedAttributes: readonly string[]
+  dom: VirtualDomNode[]
+  jsContent: string
+  lastTagWasSelfClosing: boolean
+  root: MutableVirtualDomNode
+  scriptSrc: string
+  scriptTags: ScriptTag[]
+  scripts: string[]
+  skipDepth: number
+  stack: MutableVirtualDomNode[]
+  styleSheets: StyleSheet[]
+  stylesheetHref: string
+  stylesheetRel: string
+  stylesheets: string[]
+  tagStack: string[]
+  useBuiltInDefaults: boolean
+}
+
+const setStylesheetAttribute = (context: ParserContext, name: string, value: string): void => {
+  if (name === 'href') {
+    context.stylesheetHref = value
+  } else if (name === 'rel') {
+    context.stylesheetRel = value
+  }
+}
+
+const finalizeStylesheetLink = (context: ParserContext): void => {
+  if (context.stylesheetRel.toLowerCase() === 'stylesheet' && context.stylesheetHref) {
+    context.stylesheets.push(context.stylesheetHref)
+    context.styleSheets.push({
+      href: context.stylesheetHref,
+      type: 'link',
+    })
+  }
+  context.captureStylesheetLink = false
+  context.stylesheetHref = ''
+  context.stylesheetRel = ''
+}
+
+const setScriptAttribute = (context: ParserContext, name: string, value: string): void => {
+  if (name === 'src') {
+    context.scriptSrc = value
+  }
+}
+
+const isAllowedAttribute = (context: ParserContext, attributeName: string): boolean => {
+  return (
+    context.allAllowedAttributes.has(attributeName) ||
+    (context.useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, context.defaultAllowedAttributes))
+  )
+}
+
+const assignAllowedAttribute = (context: ParserContext, value: string): void => {
+  if (!isAllowedAttribute(context, context.attributeName)) {
+    context.attributeName = ''
+    return
+  }
+  const finalAttributeName = NormalizeAttributeName.normalizeAttributeName(context.attributeName)
+  context.current[finalAttributeName] = value
+  context.attributeName = ''
+}
+
+const flushBooleanAttribute = (context: ParserContext): void => {
+  if (!context.attributeName) {
+    return
+  }
+  assignAllowedAttribute(context, context.attributeName)
+}
+
+const isCapturingTagContent = (context: ParserContext): boolean => {
+  return context.captureCss || context.captureJs
+}
+
+const canCaptureDomAttributes = (context: ParserContext): boolean => {
+  return context.skipDepth === 0 && !isCapturingTagContent(context)
+}
+
+const closeCurrentNode = (context: ParserContext): void => {
+  if (context.stack.length > 1) {
+    context.stack.pop()
+  }
+  context.current = context.stack.at(-1) || context.root
+}
+
+const resetCurrentNode = (context: ParserContext): void => {
+  context.current = context.stack.at(-1) || context.root
+}
+
+const finalizeCapturedCss = (context: ParserContext): void => {
+  if (context.cssContent.trim()) {
+    context.css.push(context.cssContent)
+    context.styleSheets.push({
+      content: context.cssContent,
+      type: 'style',
+    })
+  }
+  context.cssContent = ''
+  context.captureCss = false
+}
+
+const finalizeCapturedScript = (context: ParserContext): void => {
+  if (context.scriptSrc.trim()) {
+    context.scriptTags.push({
+      src: context.scriptSrc,
+      type: 'external',
+    })
+  } else if (context.jsContent.trim()) {
+    context.scripts.push(context.jsContent)
+    context.scriptTags.push({
+      content: context.jsContent,
+      type: 'inline',
+    })
+  }
+  context.jsContent = ''
+  context.scriptSrc = ''
+  context.captureJs = false
+  context.captureScriptAttributes = false
+}
+
+const handleAttributeNameToken = (context: ParserContext, tokenText: string): void => {
+  if (context.captureScriptAttributes || canCaptureDomAttributes(context)) {
+    context.attributeName = tokenText
+  }
+}
+
+const handleAttributeValueToken = (context: ParserContext, tokenText: string): void => {
+  if (context.captureStylesheetLink) {
+    setStylesheetAttribute(context, context.attributeName, tokenText)
+    context.attributeName = ''
+    return
+  }
+  if (context.captureScriptAttributes) {
+    setScriptAttribute(context, context.attributeName, tokenText)
+    context.attributeName = ''
+    return
+  }
+  if (canCaptureDomAttributes(context)) {
+    assignAllowedAttribute(context, tokenText)
+  } else {
+    context.attributeName = ''
+  }
+}
+
+const handleClosingAngleBracketToken = (context: ParserContext): void => {
+  if (context.captureScriptAttributes && context.attributeName) {
+    setScriptAttribute(context, context.attributeName, context.attributeName)
+  }
+  if (context.captureScriptAttributes) {
+    context.captureScriptAttributes = false
+    context.attributeName = ''
+  }
+  if (context.captureStylesheetLink && context.lastTagWasSelfClosing) {
+    finalizeStylesheetLink(context)
+  }
+  if (context.captureStylesheetLink || !canCaptureDomAttributes(context)) {
+    return
+  }
+  flushBooleanAttribute(context)
+  if (context.lastTagWasSelfClosing) {
+    resetCurrentNode(context)
+    context.lastTagWasSelfClosing = false
+  }
+}
+
+const handleContentToken = (context: ParserContext, tokenText: string): void => {
+  if (context.captureCss) {
+    context.cssContent += tokenText
+    return
+  }
+  if (context.captureJs) {
+    context.jsContent += tokenText
+    return
+  }
+  if (context.skipDepth === 0) {
+    context.current.childCount++
+    context.dom.push(text(ParseText.parseText(tokenText)))
+  }
+}
+
+const handleTagNameEndToken = (context: ParserContext): void => {
+  const tagNameToClose = context.tagStack.pop()?.toLowerCase() || ''
+  if (TAGS_TO_CAPTURE_AS_CSS.has(tagNameToClose)) {
+    finalizeCapturedCss(context)
+    return
+  }
+  if (TAGS_TO_CAPTURE_AS_JS.has(tagNameToClose)) {
+    finalizeCapturedScript(context)
+    return
+  }
+  if (tagNameToClose === 'link' && context.captureStylesheetLink) {
+    finalizeStylesheetLink(context)
+    return
+  }
+  if (TAGS_TO_SKIP_COMPLETELY.has(tagNameToClose)) {
+    context.skipDepth--
+    return
+  }
+  if (TAGS_TO_SKIP_TAG_ONLY.has(tagNameToClose)) {
+    return
+  }
+  closeCurrentNode(context)
+}
+
+const openRegularTag = (context: ParserContext, tokenText: string): void => {
+  context.current.childCount++
+  const newNode: MutableVirtualDomNode = {
+    childCount: 0,
+    type: GetVirtualDomTag.getVirtualDomTag(tokenText),
+  }
+  context.dom.push(newNode)
+  context.current = newNode
+  if (!context.lastTagWasSelfClosing) {
+    context.stack.push(newNode)
+    context.tagStack.push(tokenText)
+  }
+}
+
+const handleTagNameStartToken = (context: ParserContext, tokenText: string): void => {
+  const tagNameLower = tokenText.toLowerCase()
+  context.lastTagWasSelfClosing = IsSelfClosingTag.isSelfClosingTag(tokenText)
+  if (TAGS_TO_CAPTURE_AS_CSS.has(tagNameLower)) {
+    context.captureCss = true
+    context.cssContent = ''
+    context.tagStack.push(tokenText)
+    return
+  }
+  if (TAGS_TO_CAPTURE_AS_JS.has(tagNameLower)) {
+    context.captureJs = true
+    context.jsContent = ''
+    context.scriptSrc = ''
+    context.captureScriptAttributes = true
+    context.tagStack.push(tokenText)
+    return
+  }
+  if (tagNameLower === 'link') {
+    context.captureStylesheetLink = true
+    context.stylesheetHref = ''
+    context.stylesheetRel = ''
+    if (!context.lastTagWasSelfClosing) {
+      context.tagStack.push(tokenText)
+    }
+    return
+  }
+  if (TAGS_TO_SKIP_COMPLETELY.has(tagNameLower)) {
+    if (!context.lastTagWasSelfClosing) {
+      context.skipDepth++
+      context.tagStack.push(tokenText)
+    }
+    return
+  }
+  if (TAGS_TO_SKIP_TAG_ONLY.has(tagNameLower)) {
+    if (!context.lastTagWasSelfClosing) {
+      context.tagStack.push(tokenText)
+    }
+    return
+  }
+  if (context.skipDepth === 0) {
+    openRegularTag(context, tokenText)
+  }
+}
+
+const handleWhitespaceInsideOpeningTagToken = (context: ParserContext): void => {
+  if (context.captureStylesheetLink && context.attributeName) {
+    setStylesheetAttribute(context, context.attributeName, context.attributeName)
+    context.attributeName = ''
+    return
+  }
+  if (context.captureScriptAttributes && context.attributeName) {
+    setScriptAttribute(context, context.attributeName, context.attributeName)
+    context.attributeName = ''
+    return
+  }
+  if (canCaptureDomAttributes(context)) {
+    flushBooleanAttribute(context)
+  }
+}
+
+const handleToken = (context: ParserContext, token: { readonly text: string; readonly type: number }): void => {
+  switch (token.type) {
+    case HtmlTokenType.AttributeName:
+      handleAttributeNameToken(context, token.text)
+      return
+    case HtmlTokenType.AttributeValue:
+      handleAttributeValueToken(context, token.text)
+      return
+    case HtmlTokenType.ClosingAngleBracket:
+      handleClosingAngleBracketToken(context)
+      return
+    case HtmlTokenType.Content:
+      handleContentToken(context, token.text)
+      return
+    case HtmlTokenType.TagNameEnd:
+      handleTagNameEndToken(context)
+      return
+    case HtmlTokenType.TagNameStart:
+      handleTagNameStartToken(context, token.text)
+      return
+    case HtmlTokenType.WhitespaceInsideOpeningTag:
+      handleWhitespaceInsideOpeningTagToken(context)
+      return
+    default:
+      return
+  }
+}
+
+const createParserContext = (allowedAttributes: readonly string[], defaultAllowedAttributes: readonly string[]): ParserContext => {
+  const root: MutableVirtualDomNode = {
+    childCount: 0,
+    type: 0,
+  }
+  return {
+    allAllowedAttributes: new Set([...defaultAllowedAttributes, ...allowedAttributes]),
+    attributeName: '',
+    captureCss: false,
+    captureJs: false,
+    captureScriptAttributes: false,
+    captureStylesheetLink: false,
+    css: [],
+    cssContent: '',
+    current: root,
+    defaultAllowedAttributes,
+    dom: [],
+    jsContent: '',
+    lastTagWasSelfClosing: false,
+    root,
+    scripts: [],
+    scriptSrc: '',
+    scriptTags: [],
+    skipDepth: 0,
+    stack: [root],
+    stylesheetHref: '',
+    stylesheetRel: '',
+    styleSheets: [],
+    stylesheets: [],
+    tagStack: [],
+    useBuiltInDefaults: allowedAttributes.length === 0,
+  }
+}
+
 export const parseHtml = (html: string, allowedAttributes: readonly string[] = [], defaultAllowedAttributes: readonly string[] = []): ParseResult => {
   Assert.string(html)
   Assert.array(allowedAttributes)
   Assert.array(defaultAllowedAttributes)
 
-  // Combine default allowed attributes with any additional ones provided
-  const allAllowedAttributes = new Set([...defaultAllowedAttributes, ...allowedAttributes])
-  const useBuiltInDefaults = allowedAttributes.length === 0
   const tokens = TokenizeHtml.tokenizeHtml(html)
-  const dom: VirtualDomNode[] = []
-  const css: string[] = []
-  const scripts: string[] = []
-  const scriptTags: ScriptTag[] = []
-  const styleSheets: StyleSheet[] = []
-  const stylesheets: string[] = []
-  const root: VirtualDomNode = {
-    childCount: 0,
-    type: 0,
-  }
-  let current: any = root
-  const stack: VirtualDomNode[] = [root]
-  const tagStack: string[] = [] // Track tag names to match closing tags
-  let attributeName = ''
-  let lastTagWasSelfClosing = false
-  let skipDepth = 0 // Track how many levels deep we are in skipped content
-  let captureCss = false // Track if we're inside a style tag
-  let cssContent = '' // Accumulate CSS content
-  let captureJs = false // Track if we're inside a script tag
-  let jsContent = '' // Accumulate JavaScript content
-  let captureScriptAttributes = false
-  let scriptSrc = ''
-  let captureStylesheetLink = false
-  let stylesheetHref = ''
-  let stylesheetRel = ''
-
-  const setStylesheetAttribute = (name: string, value: string): void => {
-    if (name === 'href') {
-      stylesheetHref = value
-    } else if (name === 'rel') {
-      stylesheetRel = value
-    }
-  }
-
-  const finalizeStylesheetLink = (): void => {
-    if (stylesheetRel.toLowerCase() === 'stylesheet' && stylesheetHref) {
-      stylesheets.push(stylesheetHref)
-      styleSheets.push({
-        href: stylesheetHref,
-        type: 'link',
-      })
-    }
-    captureStylesheetLink = false
-    stylesheetHref = ''
-    stylesheetRel = ''
-  }
-
-  const setScriptAttribute = (name: string, value: string): void => {
-    if (name === 'src') {
-      scriptSrc = value
-    }
-  }
+  const context = createParserContext(allowedAttributes, defaultAllowedAttributes)
 
   for (const token of tokens) {
-    switch (token.type) {
-      case HtmlTokenType.AttributeName:
-        if (captureScriptAttributes) {
-          attributeName = token.text
-        } else if (skipDepth === 0 && !captureCss && !captureJs) {
-          attributeName = token.text
-        }
-        break
-      case HtmlTokenType.AttributeValue:
-        if (captureStylesheetLink) {
-          setStylesheetAttribute(attributeName, token.text)
-        } else if (captureScriptAttributes) {
-          setScriptAttribute(attributeName, token.text)
-        } else if (
-          skipDepth === 0 &&
-          !captureCss &&
-          !captureJs &&
-          (allAllowedAttributes.has(attributeName) ||
-            (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
-        ) {
-          const finalAttributeName = NormalizeAttributeName.normalizeAttributeName(attributeName)
-          current[finalAttributeName] = token.text
-        }
-        attributeName = ''
-        break
-      case HtmlTokenType.ClosingAngleBracket:
-        if (captureScriptAttributes) {
-          if (attributeName) {
-            setScriptAttribute(attributeName, attributeName)
-          }
-          captureScriptAttributes = false
-          attributeName = ''
-        }
-        if (captureStylesheetLink && lastTagWasSelfClosing) {
-          finalizeStylesheetLink()
-        }
-        if (skipDepth === 0 && !captureCss && !captureJs && !captureStylesheetLink) {
-          // Handle boolean attributes (attributes without values)
-          if (
-            attributeName &&
-            (allAllowedAttributes.has(attributeName) ||
-              (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
-          ) {
-            const finalAttributeName = NormalizeAttributeName.normalizeAttributeName(attributeName)
-            current[finalAttributeName] = attributeName
-          }
-          attributeName = ''
-          // Return to parent if the current tag is self-closing
-          if (lastTagWasSelfClosing) {
-            current = stack.at(-1) || root
-            lastTagWasSelfClosing = false
-          }
-        }
-        break
-      case HtmlTokenType.Content:
-        if (captureCss) {
-          cssContent += token.text
-        } else if (captureJs) {
-          jsContent += token.text
-        } else if (skipDepth === 0) {
-          current.childCount++
-          dom.push(text(ParseText.parseText(token.text)))
-        }
-        break
-      case HtmlTokenType.Doctype:
-        // Ignore DOCTYPE - it's parsed but not rendered since we're in a div
-        break
-      case HtmlTokenType.TagNameEnd:
-        const tagNameToClose = tagStack.pop()?.toLowerCase() || ''
-
-        if (TAGS_TO_CAPTURE_AS_CSS.has(tagNameToClose)) {
-          // Finished capturing CSS
-          if (cssContent.trim()) {
-            css.push(cssContent)
-            styleSheets.push({
-              content: cssContent,
-              type: 'style',
-            })
-          }
-          cssContent = ''
-          captureCss = false
-        } else if (TAGS_TO_CAPTURE_AS_JS.has(tagNameToClose)) {
-          // Finished capturing JavaScript
-          if (scriptSrc.trim()) {
-            scriptTags.push({
-              src: scriptSrc,
-              type: 'external',
-            })
-          } else if (jsContent.trim()) {
-            scripts.push(jsContent)
-            scriptTags.push({
-              content: jsContent,
-              type: 'inline',
-            })
-          }
-          jsContent = ''
-          scriptSrc = ''
-          captureJs = false
-          captureScriptAttributes = false
-        } else if (tagNameToClose === 'link' && captureStylesheetLink) {
-          finalizeStylesheetLink()
-        } else if (TAGS_TO_SKIP_COMPLETELY.has(tagNameToClose)) {
-          // We were skipping this content, so decrement skipDepth
-          skipDepth--
-        } else if (TAGS_TO_SKIP_TAG_ONLY.has(tagNameToClose)) {
-          // We were not skipping children, so nothing to do for skipDepth
-        } else {
-          // Normal tag - pop from stack
-          if (stack.length > 1) {
-            stack.pop()
-          }
-          current = stack.at(-1) || root
-        }
-        break
-      case HtmlTokenType.TagNameStart:
-        const tagNameLower = token.text.toLowerCase()
-        lastTagWasSelfClosing = IsSelfClosingTag.isSelfClosingTag(token.text)
-
-        // Check if this tag captures CSS content
-        if (TAGS_TO_CAPTURE_AS_CSS.has(tagNameLower)) {
-          captureCss = true
-          cssContent = ''
-          tagStack.push(token.text)
-        }
-        // Check if this tag captures JavaScript content
-        else if (TAGS_TO_CAPTURE_AS_JS.has(tagNameLower)) {
-          captureJs = true
-          jsContent = ''
-          scriptSrc = ''
-          captureScriptAttributes = true
-          tagStack.push(token.text)
-        } else if (tagNameLower === 'link') {
-          captureStylesheetLink = true
-          stylesheetHref = ''
-          stylesheetRel = ''
-          if (!lastTagWasSelfClosing) {
-            tagStack.push(token.text)
-          }
-        }
-        // Check if this tag should be completely skipped (meta, title)
-        else if (TAGS_TO_SKIP_COMPLETELY.has(tagNameLower)) {
-          if (!lastTagWasSelfClosing) {
-            // For non-self-closing tags like title, mark as skipped
-            skipDepth++
-            tagStack.push(token.text)
-          }
-          // For self-closing tags like meta, we just skip them without tracking
-        }
-        // Check if this tag should have its opening/closing tags skipped (html, head)
-        else if (TAGS_TO_SKIP_TAG_ONLY.has(tagNameLower)) {
-          if (!lastTagWasSelfClosing) {
-            // Track the tag name for matching the closing tag
-            tagStack.push(token.text)
-          }
-        }
-        // Normal tag processing
-        else if (skipDepth === 0) {
-          current.childCount++
-          const newNode: VirtualDomNode = {
-            childCount: 0,
-            type: GetVirtualDomTag.getVirtualDomTag(token.text),
-          }
-          dom.push(newNode)
-          current = newNode
-          if (!lastTagWasSelfClosing) {
-            stack.push(current)
-            tagStack.push(token.text)
-          }
-        }
-        break
-      case HtmlTokenType.WhitespaceInsideOpeningTag:
-        if (captureStylesheetLink && attributeName) {
-          setStylesheetAttribute(attributeName, attributeName)
-        } else if (captureScriptAttributes && attributeName) {
-          setScriptAttribute(attributeName, attributeName)
-        } else if (
-          skipDepth === 0 &&
-          !captureCss &&
-          !captureJs && // Handle boolean attributes (attributes without values)
-          attributeName &&
-          (allAllowedAttributes.has(attributeName) ||
-            (useBuiltInDefaults && IsDefaultAllowedAttribute.isDefaultAllowedAttribute(attributeName, defaultAllowedAttributes)))
-        ) {
-          const finalAttributeName = NormalizeAttributeName.normalizeAttributeName(attributeName)
-          current[finalAttributeName] = attributeName
-        }
-        attributeName = ''
-        break
-      default:
-        break
-    }
+    handleToken(context, token)
   }
   try {
-    Object.defineProperty(dom, 'rootChildCount', {
+    Object.defineProperty(context.dom, 'rootChildCount', {
       configurable: true,
       enumerable: false,
-      value: root.childCount,
+      value: context.root.childCount,
     })
   } catch {
-    ;(dom as any).rootChildCount = root.childCount
+    ;(context.dom as any).rootChildCount = context.root.childCount
   }
 
-  return { css, dom, scripts, scriptTags, styleSheets, stylesheets }
+  return {
+    css: context.css,
+    dom: context.dom,
+    scripts: context.scripts,
+    scriptTags: context.scriptTags,
+    styleSheets: context.styleSheets,
+    stylesheets: context.stylesheets,
+  }
 }
 
 // Test helper: returns just the DOM array for backward compatibility with existing tests

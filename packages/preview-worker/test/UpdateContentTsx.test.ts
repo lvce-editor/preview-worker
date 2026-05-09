@@ -1,3 +1,5 @@
+/* eslint-disable jest/no-disabled-tests */
+
 import { expect, jest, test } from '@jest/globals'
 import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'

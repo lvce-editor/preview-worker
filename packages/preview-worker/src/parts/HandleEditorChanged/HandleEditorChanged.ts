@@ -10,6 +10,105 @@ import * as LoadTsx from '../LoadTsx/LoadTsx.ts'
 import * as ParseHtml from '../ParseHtml/ParseHtml.ts'
 import * as PreviewStates from '../PreviewStates/PreviewStates.ts'
 
+const createErrorState = (state: PreviewState, error: unknown): PreviewState => {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+  return {
+    ...state,
+    content: '',
+    css: [],
+    errorMessage,
+    parsedDom: [],
+    scripts: [],
+    styleSheets: [],
+  }
+}
+
+const createPartialErrorState = (state: PreviewState, error: unknown): PreviewState => {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+  return {
+    ...state,
+    errorMessage,
+  }
+}
+
+const setPreviewState = (previewUid: number, oldState: PreviewState, newState: PreviewState): void => {
+  PreviewStates.set(previewUid, oldState, newState)
+}
+
+const findMatchingEditorUid = async (editorKeys: readonly string[], uri: string): Promise<number | undefined> => {
+  for (const editorKey of editorKeys) {
+    const currentEditorUid = Number.parseFloat(editorKey)
+    const editorUri = await EditorWorker.invoke('Editor.getUri', currentEditorUid)
+    if (editorUri === uri) {
+      return currentEditorUid
+    }
+  }
+  return undefined
+}
+
+const updatePreviewFromEditorContent = async (previewUid: number, state: PreviewState, content: string): Promise<void> => {
+  try {
+    const updatedState = await getUpdatedStateFromContent(state, content)
+    setPreviewState(previewUid, state, updatedState)
+  } catch (error) {
+    setPreviewState(previewUid, state, createErrorState(state, error))
+  }
+}
+
+const updatePreviewFromEditor = async (previewUid: number, state: PreviewState, getContent: () => Promise<string>): Promise<void> => {
+  try {
+    const content = await getContent()
+    await updatePreviewFromEditorContent(previewUid, state, content)
+  } catch (error) {
+    setPreviewState(previewUid, state, createErrorState(state, error))
+  }
+}
+
+const updatePreviewFromStylesheetOverride = async (
+  previewUid: number,
+  state: PreviewState,
+  changedEditorUri: string,
+  content: string,
+): Promise<void> => {
+  try {
+    const css = await loadStyleSheetsWithEditorOverride(
+      state.uri,
+      state.styleSheets,
+      state.css,
+      state.loadExternalStyleSheets,
+      state.loadStyleElements,
+      changedEditorUri,
+      content,
+    )
+    setPreviewState(previewUid, state, {
+      ...state,
+      css,
+      errorMessage: '',
+    })
+  } catch (error) {
+    setPreviewState(previewUid, state, createPartialErrorState(state, error))
+  }
+}
+
+const refreshAllPreviews = async (): Promise<void> => {
+  const previewKeys = PreviewStates.getKeys()
+  const editorKeys = await EditorWorker.invoke('Editor.getKeys')
+
+  for (const previewUid of previewKeys) {
+    const { newState: state } = PreviewStates.get(previewUid)
+    if (!state.uri) {
+      continue
+    }
+    const matchingEditorUid = await findMatchingEditorUid(editorKeys, state.uri)
+    if (matchingEditorUid === undefined) {
+      continue
+    }
+    await updatePreviewFromEditor(previewUid, state, () => EditorWorker.invoke('Editor.getText', matchingEditorUid))
+  }
+
+  await RendererWorker.invoke('Preview.rerender')
+}
+
 const getUpdatedStateFromContent = async (state: PreviewState, content: string): Promise<PreviewState> => {
   if (IsTsxUri.isTsxUri(state.uri)) {
     return {
@@ -38,59 +137,7 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
   const hasSpecificEditor = Number.isFinite(editorUid)
 
   if (!hasSpecificEditor) {
-    // Get all preview instance keys
-    const previewKeys = PreviewStates.getKeys()
-
-    // Get all editor keys from the editor worker
-    const editorKeys = await EditorWorker.invoke('Editor.getKeys')
-
-    // For each preview instance
-    for (const previewUid of previewKeys) {
-      const { newState: state } = PreviewStates.get(previewUid)
-
-      // Skip if no URI is set
-      if (!state.uri) {
-        continue
-      }
-
-      // Find the editor that matches our preview's URI
-      let matchingEditorUid: any = null
-      for (const editorKey of editorKeys) {
-        const currentEditorUid = Number.parseFloat(editorKey)
-        const editorUri = await EditorWorker.invoke('Editor.getUri', currentEditorUid)
-        if (editorUri === state.uri) {
-          matchingEditorUid = currentEditorUid
-          break
-        }
-      }
-
-      // If we found a matching editor, get its text and update the preview
-      if (matchingEditorUid !== null) {
-        try {
-          const content = await EditorWorker.invoke('Editor.getText', matchingEditorUid)
-          const updatedState = await getUpdatedStateFromContent(state, content)
-
-          PreviewStates.set(previewUid, state, updatedState)
-        } catch (error) {
-          // If getting text fails, update with error message
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-          const updatedState = {
-            ...state,
-            content: '',
-            css: [],
-            errorMessage,
-            parsedDom: [],
-            scripts: [],
-            styleSheets: [],
-          }
-
-          PreviewStates.set(previewUid, state, updatedState)
-        }
-      }
-    }
-
-    // Rerender all previews after updates are complete
-    await RendererWorker.invoke('Preview.rerender')
+    await refreshAllPreviews()
     return
   }
 
@@ -112,35 +159,13 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
   // Get all preview instance keys
   for (const previewUid of previewKeys) {
     const { newState: state } = PreviewStates.get(previewUid)
-
-    // Skip if no URI is set
     if (!state.uri) {
       continue
     }
 
     if (changedEditorUri === state.uri) {
-      try {
-        const content = await getChangedEditorContent()
-        const updatedState = await getUpdatedStateFromContent(state, content)
-
-        PreviewStates.set(previewUid, state, updatedState)
-        didUpdate = true
-      } catch (error) {
-        // If getting text fails, update with error message
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-        const updatedState = {
-          ...state,
-          content: '',
-          css: [],
-          errorMessage,
-          parsedDom: [],
-          scripts: [],
-          styleSheets: [],
-        }
-
-        PreviewStates.set(previewUid, state, updatedState)
-        didUpdate = true
-      }
+      await updatePreviewFromEditor(previewUid, state, getChangedEditorContent)
+      didUpdate = true
       continue
     }
 
@@ -152,33 +177,9 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
       continue
     }
 
-    try {
-      const content = await getChangedEditorContent()
-      const css = await loadStyleSheetsWithEditorOverride(
-        state.uri,
-        state.styleSheets,
-        state.css,
-        state.loadExternalStyleSheets,
-        state.loadStyleElements,
-        changedEditorUri,
-        content,
-      )
-      const updatedState = {
-        ...state,
-        css,
-        errorMessage: '',
-      }
-      PreviewStates.set(previewUid, state, updatedState)
-      didUpdate = true
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      const updatedState = {
-        ...state,
-        errorMessage,
-      }
-      PreviewStates.set(previewUid, state, updatedState)
-      didUpdate = true
-    }
+    const content = await getChangedEditorContent()
+    await updatePreviewFromStylesheetOverride(previewUid, state, changedEditorUri, content)
+    didUpdate = true
   }
 
   if (didUpdate) {
