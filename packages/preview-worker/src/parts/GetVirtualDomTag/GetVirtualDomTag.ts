@@ -41,6 +41,7 @@ const tagMap: Record<string, number> = {
   [ElementTags.Pre]: VirtualDomElements.Pre,
   [ElementTags.Search]: VirtualDomElements.Search,
   [ElementTags.Section]: VirtualDomElements.Section,
+  [ElementTags.Strong]: VirtualDomElements.Strong,
   [ElementTags.Select]: VirtualDomElements.Select,
   [ElementTags.Span]: VirtualDomElements.Span,
   [ElementTags.Table]: VirtualDomElements.Table,
