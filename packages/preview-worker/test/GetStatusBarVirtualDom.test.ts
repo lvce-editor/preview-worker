@@ -10,10 +10,10 @@ test('getPreviewDom should return an array', () => {
   expect(Array.isArray(result)).toBe(true)
 })
 
-test('getPreviewDom should return 4 elements', () => {
+test('getPreviewDom should return 5 elements', () => {
   const state = createDefaultState()
   const result = GetStatusBarVirtualDom.getPreviewDom(state)
-  expect(result).toHaveLength(4)
+  expect(result).toHaveLength(5)
 })
 
 test('getPreviewDom should return Div wrapper as first item', () => {
@@ -34,28 +34,37 @@ test('getPreviewDom should return Html wrapper as second item', () => {
   expect(secondElement.childCount).toBe(1)
 })
 
-test('getPreviewDom should return H1 element as third item', () => {
+test('getPreviewDom should return Body wrapper as third item', () => {
   const state = createDefaultState()
   const result = GetStatusBarVirtualDom.getPreviewDom(state)
   const thirdElement = result[2]
-  expect(thirdElement.type).toBe(VirtualDomElements.H1)
+  expect(thirdElement.type).toBe(VirtualDomElements.Div)
+  expect(thirdElement.className).toBe('Body')
   expect(thirdElement.childCount).toBe(1)
 })
 
-test('getPreviewDom should return Text element as fourth item with "No URI has been specified" when uri is empty', () => {
+test('getPreviewDom should return H1 element as fourth item', () => {
   const state = createDefaultState()
   const result = GetStatusBarVirtualDom.getPreviewDom(state)
   const fourthElement = result[3]
-  expect(fourthElement.type).toBe(VirtualDomElements.Text)
-  expect(fourthElement.text).toBe('No URI has been specified')
+  expect(fourthElement.type).toBe(VirtualDomElements.H1)
+  expect(fourthElement.childCount).toBe(1)
+})
+
+test('getPreviewDom should return Text element as fifth item with "No URI has been specified" when uri is empty', () => {
+  const state = createDefaultState()
+  const result = GetStatusBarVirtualDom.getPreviewDom(state)
+  const fifthElement = result[4]
+  expect(fifthElement.type).toBe(VirtualDomElements.Text)
+  expect(fifthElement.text).toBe('No URI has been specified')
 })
 
 test('getPreviewDom should return Text element with "Edit the file on the left to get started." when uri is provided', () => {
   const state: PreviewState = { ...createDefaultState(), uri: 'file:///example.html' }
   const result = GetStatusBarVirtualDom.getPreviewDom(state)
-  const fourthElement = result[3]
-  expect(fourthElement.type).toBe(VirtualDomElements.Text)
-  expect(fourthElement.text).toBe('Edit the file on the left to get started.')
+  const fifthElement = result[4]
+  expect(fifthElement.type).toBe(VirtualDomElements.Text)
+  expect(fifthElement.text).toBe('Edit the file on the left to get started.')
 })
 
 test('getPreviewDom should return consistent results', () => {

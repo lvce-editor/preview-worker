@@ -1,9 +1,10 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
-import { text } from '@lvce-editor/virtual-dom-worker'
+import { mergeClassNames, text } from '@lvce-editor/virtual-dom-worker'
 import type { ParseResult } from '../ParseResult/ParseResult.ts'
 import type { ScriptTag } from '../ScriptTag/ScriptTag.ts'
 import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
 import * as Assert from '../Assert/Assert.ts'
+import * as ClassNames from '../ClassNames/ClassNames.ts'
 import * as GetVirtualDomTag from '../GetVirtualDomTag/GetVirtualDomTag.ts'
 import * as HtmlTokenType from '../HtmlTokenType/HtmlTokenType.ts'
 import * as IsDefaultAllowedAttribute from '../IsDefaultAllowedAttribute/IsDefaultAllowedAttribute.ts'
@@ -96,7 +97,11 @@ const assignAllowedAttribute = (context: ParserContext, value: string): void => 
     return
   }
   const finalAttributeName = NormalizeAttributeName.normalizeAttributeName(context.attributeName)
-  context.current[finalAttributeName] = value
+  if (finalAttributeName === 'className' && context.current.className === ClassNames.Body) {
+    context.current.className = mergeClassNames(ClassNames.Body, value)
+  } else {
+    context.current[finalAttributeName] = value
+  }
   context.attributeName = ''
 }
 
@@ -246,6 +251,9 @@ const openRegularTag = (context: ParserContext, tokenText: string): void => {
   const newNode: MutableVirtualDomNode = {
     childCount: 0,
     type: GetVirtualDomTag.getVirtualDomTag(tokenText),
+  }
+  if (tokenText.toLowerCase() === 'body') {
+    newNode.className = ClassNames.Body
   }
   context.dom.push(newNode)
   context.current = newNode

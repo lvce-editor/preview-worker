@@ -1,5 +1,6 @@
 const PREVIEW_SELECTOR = '.Preview'
 const HTML_SELECTOR = '.Preview .Html'
+const BODY_SELECTOR = '.Preview .Html .Body'
 const ROOT_SELECTOR = PREVIEW_SELECTOR
 
 const startsWithRootPseudoSelector = (selector: string): boolean => {
@@ -98,9 +99,13 @@ const getTypeSelectorReplacement = (selector: string, index: number, bracketsDep
   const token = selector.slice(index, identifierEnd)
   const lowerToken = token.toLowerCase()
   const shouldReplace = (lowerToken === 'html' || lowerToken === 'body') && isLikelyTypeSelectorStart(selector, index)
+  let text = token
+  if (shouldReplace) {
+    text = lowerToken === 'body' ? BODY_SELECTOR : HTML_SELECTOR
+  }
   return {
     nextIndex: identifierEnd,
-    text: shouldReplace ? HTML_SELECTOR : token,
+    text,
   }
 }
 

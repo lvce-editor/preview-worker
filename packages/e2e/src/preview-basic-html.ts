@@ -26,7 +26,9 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   // assert
   const previewArea = Locator('.Viewlet.Preview')
   await expect(previewArea).toBeVisible()
-  const heading = previewArea.locator('h1')
+  const body = previewArea.locator('.Html > .Body')
+  await expect(body).toBeVisible()
+  const heading = body.locator('h1')
   await expect(heading).toBeVisible()
   await expect(heading).toContainText('Hello World')
 }

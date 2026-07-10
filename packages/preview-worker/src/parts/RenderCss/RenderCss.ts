@@ -7,7 +7,7 @@ export const renderCss = (oldState: PreviewState, newState: PreviewState): any =
   // Combine all CSS strings into a single string
   let cssString = css.join('\n')
 
-  // Replace html/body selectors with .Preview .Html since we render document content in nested div elements
+  // Replace html/body selectors with their virtual preview wrappers since document content is rendered in nested div elements
   cssString = ReplaceCssBodySelector.replaceCssBodySelector(cssString)
 
   // Return command in format that can be handled by the viewlet
