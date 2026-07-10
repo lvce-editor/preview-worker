@@ -718,9 +718,15 @@ test('parseHtml should completely skip title tags and content', () => {
 })
 
 test('parseHtml should skip html and head tags with style and body', () => {
-  // style is captured as CSS, body tag is treated as unknown tag (like div), so only the Div wrapper + text renders
-  const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Hello')]
+  // style is captured as CSS and the body is represented by a virtual div with a Body class
+  const expectedArray = [{ childCount: 1, className: 'Body', type: VirtualDomElements.Div }, text('Hello')]
   const result = parseHtmlDom('<html><head><style></style></head><body>Hello</body></html>', [])
+  expect(result).toEqual(expectedArray)
+})
+
+test('parseHtml should preserve user-provided body classes', () => {
+  const expectedArray = [{ childCount: 1, className: 'Body page', type: VirtualDomElements.Div }, text('Hello')]
+  const result = parseHtmlDom('<body class="page">Hello</body>', [])
   expect(result).toEqual(expectedArray)
 })
 
