@@ -5,8 +5,6 @@ import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaul
 import { updateContent } from '../src/parts/UpdateContent/UpdateContent.ts'
 
 test('updateContent should load external script src and execute scripts in order', async () => {
-  const originalFetch = globalThis.fetch
-
   const fetchMock = jest.fn(async () => {
     return {
       ok: true,
@@ -14,7 +12,7 @@ test('updateContent should load external script src and execute scripts in order
     } as Response
   })
 
-  globalThis.fetch = fetchMock
+  const fetchSpy = jest.spyOn(globalThis, 'fetch').mockImplementation(fetchMock)
 
   let rpc: any
   try {
@@ -68,6 +66,6 @@ test('updateContent should load external script src and execute scripts in order
   } finally {
     rpc?.dispose?.()
     rpc?.[Symbol.dispose]?.()
-    globalThis.fetch = originalFetch
+    fetchSpy.mockRestore()
   }
 })

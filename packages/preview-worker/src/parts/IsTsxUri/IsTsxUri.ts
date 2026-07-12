@@ -1,6 +1,6 @@
 const getUriPath = (uri: string): string => {
-  const withoutHash = uri.split('#')[0]
-  const withoutQuery = withoutHash.split('?')[0]
+  const withoutHash = uri.split('#', 1)[0]
+  const withoutQuery = withoutHash.split('?', 1)[0]
 
   if (withoutQuery.startsWith('file://')) {
     try {

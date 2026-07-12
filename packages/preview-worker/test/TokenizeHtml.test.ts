@@ -94,7 +94,7 @@ test('tokenizeHtml should handle script tag followed by other content', () => {
 test('tokenizeHtml should handle multiple script tags', () => {
   const tokens = getTokens('<script>var a = 1;</script><script>var b = 2;</script>')
   const contentTokens = tokens.filter((t: Readonly<{ text: string; type: number }>) => t.type === HtmlTokenType.Content)
-  expect(contentTokens.length).toBe(2)
+  expect(contentTokens).toHaveLength(2)
   expect(contentTokens[0].text).toBe('var a = 1;')
   expect(contentTokens[1].text).toBe('var b = 2;')
 })

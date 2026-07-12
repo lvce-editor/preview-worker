@@ -52,7 +52,7 @@ const getFunctionNameAt = (script: string, start: number): string | undefined =>
 
 const getIgnoredSegmentEnd = (script: string, index: number): number => {
   const char = script[index]
-  if (char === '"' || char === "'" || char === '`') {
+  if (['"', "'", '`'].includes(char)) {
     return skipQuotedString(script, index)
   }
   if (char === '/' && script[index + 1] === '/') {

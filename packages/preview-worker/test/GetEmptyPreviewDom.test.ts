@@ -9,7 +9,7 @@ test('getEmptyPreviewDom should return an array', () => {
 
 test('getEmptyPreviewDom should return 5 elements', () => {
   const result = getEmptyPreviewDom()
-  expect(result.length).toBe(5)
+  expect(result).toHaveLength(5)
 })
 
 test('getEmptyPreviewDom should have correct first element (Div container)', () => {
