@@ -7,8 +7,7 @@ import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaul
 import { updateContent } from '../src/parts/UpdateContent/UpdateContent.ts'
 
 test.skip('updateContent should execute tsx content in sandbox with react and babel scripts', async () => {
-  const originalFetch = globalThis.fetch
-  const originalCaches = (globalThis as any).caches
+  const originalCaches = Object.getOwnPropertyDescriptor(globalThis, 'caches')
 
   const fetchMock = jest.fn(async (url: string) => {
     const text = url.includes('babel') ? 'globalThis.Babel = { transform: (source) => ({ code: source }) }' : '/* cdn script */'
@@ -18,8 +17,8 @@ test.skip('updateContent should execute tsx content in sandbox with react and ba
     } as Response
   })
 
-  globalThis.fetch = fetchMock as any
-  ;(globalThis as any).caches = undefined
+  const fetchSpy = jest.spyOn(globalThis, 'fetch').mockImplementation(fetchMock as any)
+  Object.defineProperty(globalThis, 'caches', { configurable: true, value: undefined })
 
   try {
     using rpc = RendererWorker.registerMockRpc({
@@ -71,7 +70,11 @@ test.skip('updateContent should execute tsx content in sandbox with react and ba
     expect(result.scripts).toHaveLength(1)
     expect(result.styleSheets).toEqual([])
   } finally {
-    globalThis.fetch = originalFetch
-    ;(globalThis as any).caches = originalCaches
+    fetchSpy.mockRestore()
+    if (originalCaches) {
+      Object.defineProperty(globalThis, 'caches', originalCaches)
+    } else {
+      Object.defineProperty(globalThis, 'caches', { configurable: true, value: undefined })
+    }
   }
 })

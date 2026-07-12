@@ -28,8 +28,10 @@ if (statusNode) {
   statusNode.setAttribute('data-script-loaded', 'yes')
 }`
 
-  await FileSystem.writeFile(scriptPath, script)
-  await FileSystem.writeFile(htmlPath, html)
+  await FileSystem.setFiles([
+    { content: script, uri: scriptPath },
+    { content: html, uri: htmlPath },
+  ])
   await Main.openUri(htmlPath)
 
   await Command.execute('Layout.showPreview', htmlPath)

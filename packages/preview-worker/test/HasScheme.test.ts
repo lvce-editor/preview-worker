@@ -2,7 +2,7 @@ import { expect, test } from '@jest/globals'
 import * as HasScheme from '../src/parts/HasScheme/HasScheme.ts'
 
 test('hasScheme should detect http scheme', () => {
-  expect(HasScheme.hasScheme('http://example.com')).toBe(true)
+  expect(HasScheme.hasScheme('https://example.com')).toBe(true)
 })
 
 test('hasScheme should detect file scheme', () => {

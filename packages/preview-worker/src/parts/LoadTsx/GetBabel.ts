@@ -3,14 +3,14 @@ import { getCachedText } from './GetCachedText.ts'
 
 const BABEL_CDN_URL = 'https://unpkg.com/@babel/standalone@7/babel.min.js'
 
-let babelPromise: Promise<BabelStandalone> | undefined
+const state: { babelPromise: Promise<BabelStandalone> | undefined } = { babelPromise: undefined }
 
 export const getBabel = async (): Promise<BabelStandalone> => {
-  if (babelPromise) {
-    return babelPromise
+  if (state.babelPromise) {
+    return state.babelPromise
   }
 
-  babelPromise = (async (): Promise<BabelStandalone> => {
+  state.babelPromise = (async (): Promise<BabelStandalone> => {
     const source = await getCachedText(BABEL_CDN_URL)
     const blob = new Blob([source], { type: 'text/javascript' })
     const blobUrl = URL.createObjectURL(blob)
@@ -23,5 +23,5 @@ export const getBabel = async (): Promise<BabelStandalone> => {
     return babel
   })()
 
-  return babelPromise
+  return state.babelPromise
 }

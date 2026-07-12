@@ -23,12 +23,12 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   await Workspace.setPath(tmpDir)
 
   const filePath = `${tmpDir}/preview-test-tsx-button-${Date.now()}.tsx`
-  const tsx = `
-export const Component = () => {
-  const [count, setCount] = React.useState(0)
-  return <button id="tsx-counter" onClick={() => setCount(count + 1)}>Count: {count}</button>
-}
-`
+  const tsx = [
+    'export const Component = () => {',
+    '  const [count, setCount] = React.useState(0)',
+    '  return <button id="tsx-counter" onClick={() => setCount(count + 1)}>Count: {count}</button>',
+    '}',
+  ].join('\n')
 
   await FileSystem.writeFile(filePath, tsx)
   await Main.openUri(filePath)

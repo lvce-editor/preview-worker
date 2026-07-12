@@ -30,8 +30,10 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   color: rgb(255, 0, 0);
 }`
 
-  await FileSystem.writeFile(cssPath, css)
-  await FileSystem.writeFile(filePath, html)
+  await FileSystem.setFiles([
+    { content: css, uri: cssPath },
+    { content: html, uri: filePath },
+  ])
   await Main.openUri(filePath)
 
   await Command.execute('Layout.showPreview', filePath)

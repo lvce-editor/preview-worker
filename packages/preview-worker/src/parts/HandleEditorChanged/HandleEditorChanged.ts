@@ -37,7 +37,7 @@ const setPreviewState = (previewUid: number, oldState: PreviewState, newState: P
 
 const findMatchingEditorUid = async (editorKeys: readonly string[], uri: string): Promise<number | undefined> => {
   for (const editorKey of editorKeys) {
-    const currentEditorUid = Number.parseFloat(editorKey)
+    const currentEditorUid = Number(editorKey)
     const editorUri = await EditorWorker.invoke('Editor.getUri', currentEditorUid)
     if (editorUri === uri) {
       return currentEditorUid
