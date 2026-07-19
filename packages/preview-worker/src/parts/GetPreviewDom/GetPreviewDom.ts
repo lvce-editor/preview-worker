@@ -1,9 +1,10 @@
-import { mergeClassNames, VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
+import { AriaRoles, mergeClassNames, VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as ClassNames from '../ClassNames/ClassNames.ts'
 import * as DomEventListenerFunctions from '../DomEventListenerFunctions/DomEventListenerFunctions.ts'
 import { getEmptyPreviewDom } from '../GetEmptyPreviewDom/GetEmptyPreviewDom.ts'
 import { getPreviewUninitializedVirtualDom } from '../GetPreviewUninitializedVirtualDom/GetPreviewUninitializedVirtualDom.ts'
+import * as TabIndex from '../TabIndex/TabIndex.ts'
 
 export const getPreviewDom = (state: PreviewState): readonly any[] => {
   const { parsedDom, parsedNodesChildNodeCount, uri } = state
@@ -25,7 +26,8 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
         onMouseDown: DomEventListenerFunctions.HandleMousedown,
         onMouseMove: DomEventListenerFunctions.HandleMousemove,
         onMouseUp: DomEventListenerFunctions.HandleMouseup,
-        tabIndex: 0,
+        role: AriaRoles.Document,
+        tabIndex: TabIndex.Focusable,
         type: VirtualDomElements.Div,
       },
       {

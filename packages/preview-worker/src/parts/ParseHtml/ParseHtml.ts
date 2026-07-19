@@ -1,5 +1,5 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
-import { mergeClassNames, text } from '@lvce-editor/virtual-dom-worker'
+import { mergeClassNames, text, VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
 import type { ParseResult } from '../ParseResult/ParseResult.ts'
 import type { ScriptTag } from '../ScriptTag/ScriptTag.ts'
 import type { StyleSheet } from '../StyleSheet/StyleSheet.ts'
@@ -354,7 +354,7 @@ const handleToken = (context: ParserContext, token: { readonly text: string; rea
 const createParserContext = (allowedAttributes: readonly string[], defaultAllowedAttributes: readonly string[]): ParserContext => {
   const root: MutableVirtualDomNode = {
     childCount: 0,
-    type: 0,
+    type: VirtualDomElements.Root,
   }
   return {
     allAllowedAttributes: new Set([...defaultAllowedAttributes, ...allowedAttributes]),
