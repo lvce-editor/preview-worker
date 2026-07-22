@@ -29,6 +29,11 @@ const TAGS_TO_CAPTURE_AS_JS = new Set(['script'])
 
 type MutableVirtualDomNode = VirtualDomNode & Record<string, any>
 
+const rootTemplate: MutableVirtualDomNode = {
+  childCount: 0,
+  type: VirtualDomElements.Root,
+}
+
 type ParserContext = {
   allAllowedAttributes: Set<string>
   attributeName: string
@@ -352,10 +357,7 @@ const handleToken = (context: ParserContext, token: { readonly text: string; rea
 }
 
 const createParserContext = (allowedAttributes: readonly string[], defaultAllowedAttributes: readonly string[]): ParserContext => {
-  const root: MutableVirtualDomNode = {
-    childCount: 0,
-    type: VirtualDomElements.Root,
-  }
+  const root: MutableVirtualDomNode = { ...rootTemplate }
   return {
     allAllowedAttributes: new Set([...defaultAllowedAttributes, ...allowedAttributes]),
     attributeName: '',
