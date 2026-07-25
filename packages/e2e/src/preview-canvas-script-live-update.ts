@@ -21,6 +21,20 @@ const createHtml = (depth: number): string => {
 </html>`
 }
 
+const waitForText = async (expect: any, locator: any, value: string): Promise<void> => {
+  let lastError: unknown
+  for (let i = 0; i < 40; i++) {
+    try {
+      await expect(locator).toContainText(value)
+      return
+    } catch (error) {
+      lastError = error
+      await new Promise((resolve) => setTimeout(resolve, 50))
+    }
+  }
+  throw lastError
+}
+
 export const test: Test = async ({ Command, Editor, expect, FileSystem, Locator, Main, Workspace }) => {
   const tmpDir = await FileSystem.getTmpDir()
   await Workspace.setPath(tmpDir)
@@ -37,8 +51,8 @@ export const test: Test = async ({ Command, Editor, expect, FileSystem, Locator,
   await expect(status).toContainText('127 branches')
 
   await Editor.setText(createHtml(10))
-  await expect(status).toContainText('1023 branches')
+  await waitForText(expect, status, '1023 branches')
 
   await Editor.setText(createHtml(8))
-  await expect(status).toContainText('255 branches')
+  await waitForText(expect, status, '255 branches')
 }
