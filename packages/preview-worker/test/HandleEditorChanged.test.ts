@@ -112,12 +112,12 @@ test('handleEditorChanged should reinitialize scripts and use their serialized d
   const previousState = {
     ...createDefaultState(),
     content: '<canvas id="tree" width="320" height="180"></canvas><script>drawTree(7)</script>',
+    height: 480,
     sandboxRpc: sandboxRpc as any,
     scripts: ['drawTree(7)'],
     uid,
     uri: '/tmp/index.html',
     width: 640,
-    height: 480,
   }
   PreviewStates.set(uid, previousState, previousState)
 
