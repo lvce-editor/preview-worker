@@ -27,14 +27,8 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
     const parsedDom = parseResult.dom
     const css = await LoadStyleSheets.loadStyleSheets(uri, parseResult.styleSheets, loadExternalStyleSheets, loadStyleElements)
     const scripts = loadJavaScript ? await LoadScriptTags.loadScriptTags(uri, parseResult.scriptTags) : []
-
-    if (scripts.length > 0) {
-      return LoadScripts.loadScripts(state, content, css, scripts)
-    }
-
     const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parsedDom)
-
-    return {
+    const updatedState = {
       ...state,
       content,
       css,
@@ -44,6 +38,12 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
       scripts,
       styleSheets: parseResult.styleSheets,
     }
+
+    if (scripts.length > 0) {
+      return LoadScripts.loadScripts(updatedState, content, css, scripts)
+    }
+
+    return updatedState
   } catch (error) {
     // If file reading or parsing fails, return empty content and parsedDom with error message
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'

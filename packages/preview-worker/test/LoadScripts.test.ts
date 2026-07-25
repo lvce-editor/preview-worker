@@ -48,3 +48,30 @@ test('loadScripts should load content in sandbox and update dom from serialized 
   expect(result.parsedDom).toBe(serialized.dom)
   expect(result.parsedNodesChildNodeCount).toBe(2)
 })
+
+test('loadScripts should preserve parsed and script-created css', async () => {
+  const sandboxRpc = {
+    invoke: async (method: string): Promise<any> => {
+      if (method === 'SandBox.getSerializedDom') {
+        return {
+          css: ['.script-created { color: blue; }'],
+          dom: [],
+        }
+      }
+      return undefined
+    },
+  }
+  const state: PreviewState = {
+    ...createDefaultState(),
+    sandboxRpc: sandboxRpc as any,
+  }
+
+  const result = await LoadScripts.loadScripts(
+    state,
+    '<style>.parsed { color: red; }</style><script></script>',
+    ['.parsed { color: red; }'],
+    ['document.head.append(document.createElement("style"))'],
+  )
+
+  expect(result.css).toEqual(['.script-created { color: blue; }', '.parsed { color: red; }'])
+})

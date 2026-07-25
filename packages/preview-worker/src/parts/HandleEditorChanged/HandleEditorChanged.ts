@@ -3,6 +3,7 @@ import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
 import { hasMatchingLinkedStyleSheet } from '../HasMatchingLinkedStyleSheet/HasMatchingLinkedStyleSheet.ts'
 import * as IsTsxUri from '../IsTsxUri/IsTsxUri.ts'
+import * as LoadScripts from '../LoadScripts/LoadScripts.ts'
 import * as LoadScriptTags from '../LoadScriptTags/LoadScriptTags.ts'
 import * as LoadStyleSheets from '../LoadStyleSheets/LoadStyleSheets.ts'
 import { loadStyleSheetsWithEditorOverride } from '../LoadStyleSheetsWithEditorOverride/LoadStyleSheetsWithEditorOverride.ts'
@@ -121,7 +122,7 @@ const getUpdatedStateFromContent = async (state: PreviewState, content: string):
   const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parseResult.dom)
   const css = await LoadStyleSheets.loadStyleSheets(state.uri, parseResult.styleSheets, state.loadExternalStyleSheets, state.loadStyleElements)
   const scripts = state.loadJavaScript ? await LoadScriptTags.loadScriptTags(state.uri, parseResult.scriptTags) : []
-  return {
+  const updatedState = {
     ...state,
     content,
     css,
@@ -131,6 +132,10 @@ const getUpdatedStateFromContent = async (state: PreviewState, content: string):
     scripts,
     styleSheets: parseResult.styleSheets,
   }
+  if (scripts.length > 0) {
+    return LoadScripts.loadScripts(updatedState, content, css, scripts)
+  }
+  return updatedState
 }
 
 export const handleEditorChanged = async (editorUid?: number): Promise<void> => {

@@ -88,3 +88,61 @@ test('handleEditorChanged should match linked stylesheet when editor uri uses fi
   ])
   expect(rendererRpc.invocations).toEqual([['Preview.rerender']])
 })
+
+test('handleEditorChanged should reinitialize scripts and use their serialized dom', async () => {
+  const uid = 9003
+  const content = '<canvas id="tree" width="320" height="180"></canvas><script>drawTree(10)</script>'
+  const serializedDom = [
+    { childCount: 1, type: 4 },
+    { childCount: 0, id: 'tree', type: 17 },
+  ]
+  const sandboxInvocations: readonly any[][] = []
+  const sandboxRpc = {
+    invoke: async (...parameters: readonly any[]): Promise<any> => {
+      ;(sandboxInvocations as any[]).push(parameters)
+      if (parameters[0] === 'SandBox.getSerializedDom') {
+        return {
+          css: [],
+          dom: serializedDom,
+        }
+      }
+      return undefined
+    },
+  }
+  const previousState = {
+    ...createDefaultState(),
+    content: '<canvas id="tree" width="320" height="180"></canvas><script>drawTree(7)</script>',
+    height: 480,
+    sandboxRpc: sandboxRpc as any,
+    scripts: ['drawTree(7)'],
+    uid,
+    uri: '/tmp/index.html',
+    width: 640,
+  }
+  PreviewStates.set(uid, previousState, previousState)
+
+  using editorRpc = EditorWorker.registerMockRpc({
+    'Editor.getText': () => content,
+    'Editor.getUri': () => '/tmp/index.html',
+  })
+
+  using rendererRpc = RendererWorker.registerMockRpc({
+    'Preview.rerender': () => {},
+  })
+
+  await handleEditorChanged(79)
+
+  const { newState } = PreviewStates.get(uid)
+  expect(newState.content).toBe(content)
+  expect(newState.scripts).toEqual(['drawTree(10)'])
+  expect(newState.parsedDom).toBe(serializedDom)
+  expect(sandboxInvocations).toEqual([
+    ['SandBox.loadContent', uid, 640, 480, content, ['drawTree(10)']],
+    ['SandBox.getSerializedDom', uid],
+  ])
+  expect(editorRpc.invocations).toEqual([
+    ['Editor.getUri', 79],
+    ['Editor.getText', 79],
+  ])
+  expect(rendererRpc.invocations).toEqual([['Preview.rerender']])
+})

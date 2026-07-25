@@ -1,4 +1,5 @@
 import { expect, test } from '@jest/globals'
+import { RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import { handleFileEdited } from '../src/parts/HandleFileEdited/HandleFileEdited.ts'
@@ -85,4 +86,39 @@ test('handleFileEdited should handle file reading gracefully', async () => {
   expect(Array.isArray(result.parsedDom)).toBe(true)
   // When file read fails, errorMessage should be set
   expect(result.errorMessage).not.toBe('')
+})
+
+test('handleFileEdited should execute scripts once through the supported sandbox command', async () => {
+  const content = '<div id="status"></div><script>document.getElementById("status").textContent = "updated"</script>'
+  using _rendererRpc = RendererWorker.registerMockRpc({
+    'FileSystem.readFile': () => content,
+  })
+  const invocations: readonly any[][] = []
+  const sandboxRpc = {
+    invoke: async (...parameters: readonly any[]): Promise<any> => {
+      ;(invocations as any[]).push(parameters)
+      if (parameters[0] === 'SandBox.getSerializedDom') {
+        return {
+          css: [],
+          dom: [{ childCount: 0, id: 'status', type: 4 }],
+        }
+      }
+      return undefined
+    },
+  }
+  const state: PreviewState = {
+    ...createDefaultState(),
+    height: 480,
+    sandboxRpc: sandboxRpc as any,
+    uid: 91,
+    uri: '/tmp/index.html',
+    width: 640,
+  }
+
+  await handleFileEdited(state)
+
+  expect(invocations).toEqual([
+    ['SandBox.loadContent', 91, 640, 480, content, ['document.getElementById("status").textContent = "updated"']],
+    ['SandBox.getSerializedDom', 91],
+  ])
 })
