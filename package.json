@@ -16,7 +16,7 @@
     "lint": "eslint . && prettier --check .",
     "measure": "cd packages/memory && npm run measure",
     "test": "npm test --workspaces --if-present",
-    "type-check": "tsc -b"
+    "type-check": "npm run type-check --workspaces --if-present"
   },
   "prettier": {
     "semi": false,
