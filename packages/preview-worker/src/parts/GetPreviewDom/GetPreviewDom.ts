@@ -6,6 +6,21 @@ import { getEmptyPreviewDom } from '../GetEmptyPreviewDom/GetEmptyPreviewDom.ts'
 import { getPreviewUninitializedVirtualDom } from '../GetPreviewUninitializedVirtualDom/GetPreviewUninitializedVirtualDom.ts'
 import * as TabIndex from '../TabIndex/TabIndex.ts'
 
+const previewNode = {
+  childCount: 1,
+  className: mergeClassNames(ClassNames.Viewlet, ClassNames.Preview),
+  onClick: DomEventListenerFunctions.HandleClick,
+  onInput: DomEventListenerFunctions.HandleInput,
+  onKeyDown: DomEventListenerFunctions.HandleKeydown,
+  onKeyUp: DomEventListenerFunctions.HandleKeyup,
+  onMouseDown: DomEventListenerFunctions.HandleMousedown,
+  onMouseMove: DomEventListenerFunctions.HandleMousemove,
+  onMouseUp: DomEventListenerFunctions.HandleMouseup,
+  role: AriaRoles.Document,
+  tabIndex: TabIndex.Focusable,
+  type: VirtualDomElements.Div,
+}
+
 export const getPreviewDom = (state: PreviewState): readonly any[] => {
   const { parsedDom, parsedNodesChildNodeCount, uri } = state
 
@@ -16,20 +31,7 @@ export const getPreviewDom = (state: PreviewState): readonly any[] => {
   // If parsedDom is available, render it as children of the wrapper
   if (parsedDom && parsedDom.length > 0) {
     return [
-      {
-        childCount: 1,
-        className: mergeClassNames(ClassNames.Viewlet, ClassNames.Preview),
-        onClick: DomEventListenerFunctions.HandleClick,
-        onInput: DomEventListenerFunctions.HandleInput,
-        onKeyDown: DomEventListenerFunctions.HandleKeydown,
-        onKeyUp: DomEventListenerFunctions.HandleKeyup,
-        onMouseDown: DomEventListenerFunctions.HandleMousedown,
-        onMouseMove: DomEventListenerFunctions.HandleMousemove,
-        onMouseUp: DomEventListenerFunctions.HandleMouseup,
-        role: AriaRoles.Document,
-        tabIndex: TabIndex.Focusable,
-        type: VirtualDomElements.Div,
-      },
+      previewNode,
       {
         childCount: parsedNodesChildNodeCount,
         className: ClassNames.Html,
