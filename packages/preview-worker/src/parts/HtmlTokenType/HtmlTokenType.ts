@@ -1,4 +1,3 @@
-export const None = 0
 export const OpeningAngleBracket = 1
 export const ClosingAngleBracket = 2
 export const TagNameStart = 3

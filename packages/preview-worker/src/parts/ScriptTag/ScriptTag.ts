@@ -1,9 +1,9 @@
-export interface InlineScriptTag {
+interface InlineScriptTag {
   readonly content: string
   readonly type: 'inline'
 }
 
-export interface ExternalScriptTag {
+interface ExternalScriptTag {
   readonly src: string
   readonly type: 'external'
 }

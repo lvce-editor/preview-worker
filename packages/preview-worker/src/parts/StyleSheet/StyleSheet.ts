@@ -1,4 +1,4 @@
-export interface LinkStyleSheet {
+interface LinkStyleSheet {
   readonly href: string
   readonly type: 'link'
 }
