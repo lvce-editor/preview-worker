@@ -3,6 +3,7 @@ import * as Preview from '../Create/Create.ts'
 import { diff2 } from '../Diff2/Diff2.ts'
 import { getGeometryBuffer } from '../GetGeometryBuffer/GetGeometryBuffer.ts'
 import { executeCallback, getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
+import * as HandleChange from '../HandleChange/HandleChange.ts'
 import * as HandleClick from '../HandleClick/HandleClick.ts'
 import { handleEditorChanged } from '../HandleEditorChanged/HandleEditorChanged.ts'
 import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
@@ -34,6 +35,7 @@ export const commandMap = {
   'Preview.executeCallback': executeCallback,
   'Preview.getCommandIds': getCommandIds,
   'Preview.getGeometryBuffer': wrapGetter(getGeometryBuffer),
+  'Preview.handleChange': wrapCommand(HandleChange.handleChange),
   'Preview.handleClick': wrapCommand(HandleClick.handleClick),
   'Preview.handleFileEdited': wrapCommand(handleFileEdited),
   'Preview.handleInput': wrapCommand(HandleInput.handleInput),
