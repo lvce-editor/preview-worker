@@ -9,6 +9,7 @@ import * as TabIndex from '../TabIndex/TabIndex.ts'
 const previewNode = {
   childCount: 1,
   className: mergeClassNames(ClassNames.Viewlet, ClassNames.Preview),
+  onChange: DomEventListenerFunctions.HandleChange,
   onClick: DomEventListenerFunctions.HandleClick,
   onInput: DomEventListenerFunctions.HandleInput,
   onKeyDown: DomEventListenerFunctions.HandleKeydown,

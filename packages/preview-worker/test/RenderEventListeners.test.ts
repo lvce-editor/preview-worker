@@ -7,6 +7,11 @@ test('renderEventListeners should return the expected event listeners', () => {
   expect(result).toEqual([
     {
       capture: true,
+      name: DomEventListenersFunctions.HandleChange,
+      params: ['handleChange', 'event.target.dataset.id', 'event.target.value'],
+    },
+    {
+      capture: true,
       name: DomEventListenersFunctions.HandleClick,
       params: ['handleClick', 'event.target.dataset.id', 'event.clientX', 'event.clientY'],
     },

@@ -5,3 +5,4 @@ export const HandleKeyup = 13
 export const HandleMousedown = 14
 export const HandleMousemove = 15
 export const HandleMouseup = 16
+export const HandleChange = 17

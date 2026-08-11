@@ -7,6 +7,7 @@ const previewUninitializedVirtualDom: readonly any[] = [
   {
     childCount: 1,
     className: mergeClassNames(ClassNames.Viewlet, ClassNames.Preview),
+    onChange: DomEventListenerFunctions.HandleChange,
     onClick: DomEventListenerFunctions.HandleClick,
     onInput: DomEventListenerFunctions.HandleInput,
     onKeyDown: DomEventListenerFunctions.HandleKeydown,
