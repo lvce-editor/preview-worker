@@ -32,8 +32,12 @@ const createPartialErrorState = (state: PreviewState, error: unknown): PreviewSt
   }
 }
 
-const setPreviewState = (previewUid: number, oldState: PreviewState, newState: PreviewState): void => {
+const setPreviewState = (previewUid: number, oldState: PreviewState, newState: PreviewState): boolean => {
+  if (!PreviewStates.getKeys().includes(previewUid)) {
+    return false
+  }
   PreviewStates.set(previewUid, oldState, newState)
+  return true
 }
 
 const findMatchingEditorUid = async (editorKeys: readonly string[], uri: string): Promise<number | undefined> => {
@@ -47,21 +51,21 @@ const findMatchingEditorUid = async (editorKeys: readonly string[], uri: string)
   return undefined
 }
 
-const updatePreviewFromEditorContent = async (previewUid: number, state: PreviewState, content: string): Promise<void> => {
+const updatePreviewFromEditorContent = async (previewUid: number, state: PreviewState, content: string): Promise<boolean> => {
   try {
     const updatedState = await getUpdatedStateFromContent(state, content)
-    setPreviewState(previewUid, state, updatedState)
+    return setPreviewState(previewUid, state, updatedState)
   } catch (error) {
-    setPreviewState(previewUid, state, createErrorState(state, error))
+    return setPreviewState(previewUid, state, createErrorState(state, error))
   }
 }
 
-const updatePreviewFromEditor = async (previewUid: number, state: PreviewState, getContent: () => Promise<string>): Promise<void> => {
+const updatePreviewFromEditor = async (previewUid: number, state: PreviewState, getContent: () => Promise<string>): Promise<boolean> => {
   try {
     const content = await getContent()
-    await updatePreviewFromEditorContent(previewUid, state, content)
+    return updatePreviewFromEditorContent(previewUid, state, content)
   } catch (error) {
-    setPreviewState(previewUid, state, createErrorState(state, error))
+    return setPreviewState(previewUid, state, createErrorState(state, error))
   }
 }
 
@@ -70,7 +74,7 @@ const updatePreviewFromStylesheetOverride = async (
   state: PreviewState,
   changedEditorUri: string,
   content: string,
-): Promise<void> => {
+): Promise<boolean> => {
   try {
     const css = await loadStyleSheetsWithEditorOverride(
       state.uri,
@@ -81,21 +85,28 @@ const updatePreviewFromStylesheetOverride = async (
       changedEditorUri,
       content,
     )
-    setPreviewState(previewUid, state, {
+    return setPreviewState(previewUid, state, {
       ...state,
       css,
       errorMessage: '',
     })
   } catch (error) {
-    setPreviewState(previewUid, state, createPartialErrorState(state, error))
+    return setPreviewState(previewUid, state, createPartialErrorState(state, error))
   }
 }
 
 const refreshAllPreviews = async (): Promise<void> => {
   const previewKeys = PreviewStates.getKeys()
+  if (previewKeys.length === 0) {
+    return
+  }
   const editorKeys = await EditorWorker.invoke('Editor.getKeys')
+  let didUpdate = false
 
   for (const previewUid of previewKeys) {
+    if (!PreviewStates.getKeys().includes(previewUid)) {
+      continue
+    }
     const { newState: state } = PreviewStates.get(previewUid)
     if (!state.uri) {
       continue
@@ -104,10 +115,14 @@ const refreshAllPreviews = async (): Promise<void> => {
     if (matchingEditorUid === undefined) {
       continue
     }
-    await updatePreviewFromEditor(previewUid, state, () => EditorWorker.invoke('Editor.getText', matchingEditorUid))
+    if (await updatePreviewFromEditor(previewUid, state, () => EditorWorker.invoke('Editor.getText', matchingEditorUid))) {
+      didUpdate = true
+    }
   }
 
-  await RendererWorker.invoke('Preview.rerender')
+  if (didUpdate) {
+    await RendererWorker.invoke('Preview.rerender')
+  }
 }
 
 const getUpdatedStateFromContent = async (state: PreviewState, content: string): Promise<PreviewState> => {
@@ -138,6 +153,25 @@ const getUpdatedStateFromContent = async (state: PreviewState, content: string):
   return updatedState
 }
 
+const updatePreviewForChangedEditor = async (
+  previewUid: number,
+  state: PreviewState,
+  changedEditorUri: string,
+  getChangedEditorContent: () => Promise<string>,
+): Promise<boolean> => {
+  if (!state.uri) {
+    return false
+  }
+  if (changedEditorUri === state.uri) {
+    return updatePreviewFromEditor(previewUid, state, getChangedEditorContent)
+  }
+  if (!state.loadExternalStyleSheets || !hasMatchingLinkedStyleSheet(state.uri, state.styleSheets, changedEditorUri)) {
+    return false
+  }
+  const content = await getChangedEditorContent()
+  return updatePreviewFromStylesheetOverride(previewUid, state, changedEditorUri, content)
+}
+
 export const handleEditorChanged = async (editorUid?: number): Promise<void> => {
   const hasSpecificEditor = Number.isFinite(editorUid)
 
@@ -163,28 +197,13 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
 
   // Get all preview instance keys
   for (const previewUid of previewKeys) {
+    if (!PreviewStates.getKeys().includes(previewUid)) {
+      continue
+    }
     const { newState: state } = PreviewStates.get(previewUid)
-    if (!state.uri) {
-      continue
-    }
-
-    if (changedEditorUri === state.uri) {
-      await updatePreviewFromEditor(previewUid, state, getChangedEditorContent)
+    if (await updatePreviewForChangedEditor(previewUid, state, changedEditorUri, getChangedEditorContent)) {
       didUpdate = true
-      continue
     }
-
-    if (!state.loadExternalStyleSheets) {
-      continue
-    }
-
-    if (!hasMatchingLinkedStyleSheet(state.uri, state.styleSheets, changedEditorUri)) {
-      continue
-    }
-
-    const content = await getChangedEditorContent()
-    await updatePreviewFromStylesheetOverride(previewUid, state, changedEditorUri, content)
-    didUpdate = true
   }
 
   if (didUpdate) {
