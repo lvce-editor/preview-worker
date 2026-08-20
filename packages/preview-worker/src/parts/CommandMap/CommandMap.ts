@@ -1,6 +1,7 @@
 import { terminate } from '@lvce-editor/viewlet-registry'
 import * as Preview from '../Create/Create.ts'
 import { diff2 } from '../Diff2/Diff2.ts'
+import { dispose } from '../Dispose/Dispose.ts'
 import { getGeometryBuffer } from '../GetGeometryBuffer/GetGeometryBuffer.ts'
 import { executeCallback, getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
 import { getRuntimeDiagnostics } from '../GetRuntimeDiagnostics/GetRuntimeDiagnostics.ts'
@@ -33,6 +34,7 @@ export const commandMap = {
   'Preview.create': Preview.create,
   'Preview.createOffscreenCanvas': wrapGetter(getOffscreenCanvas),
   'Preview.diff2': diff2,
+  'Preview.dispose': dispose,
   'Preview.executeCallback': executeCallback,
   'Preview.getCommandIds': getCommandIds,
   'Preview.getGeometryBuffer': wrapGetter(getGeometryBuffer),

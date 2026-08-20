@@ -4,6 +4,20 @@ import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaul
 import { handleEditorChanged } from '../src/parts/HandleEditorChanged/HandleEditorChanged.ts'
 import * as PreviewStates from '../src/parts/PreviewStates/PreviewStates.ts'
 
+test('handleEditorChanged should not rerender when no preview is open', async () => {
+  using editorRpc = EditorWorker.registerMockRpc({
+    'Editor.getKeys': () => [],
+  })
+  using rendererRpc = RendererWorker.registerMockRpc({
+    'Preview.rerender': () => {},
+  })
+
+  await handleEditorChanged()
+
+  expect(editorRpc.invocations).toEqual([])
+  expect(rendererRpc.invocations).toEqual([])
+})
+
 test('handleEditorChanged should update preview css when linked stylesheet editor changes', async () => {
   const uid = 9001
   const previousState = {
