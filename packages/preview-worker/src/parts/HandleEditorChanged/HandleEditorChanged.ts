@@ -1,6 +1,7 @@
 import { EditorWorker, RendererWorker } from '@lvce-editor/rpc-registry'
 import type { PreviewState } from '../PreviewState/PreviewState.ts'
 import * as GetParsedNodesChildNodeCount from '../GetParsedNodesChildNodeCount/GetParsedNodesChildNodeCount.ts'
+import { hasMatchingLinkedScript } from '../HasMatchingLinkedScript/HasMatchingLinkedScript.ts'
 import { hasMatchingLinkedStyleSheet } from '../HasMatchingLinkedStyleSheet/HasMatchingLinkedStyleSheet.ts'
 import * as IsTsxUri from '../IsTsxUri/IsTsxUri.ts'
 import * as LoadScripts from '../LoadScripts/LoadScripts.ts'
@@ -51,9 +52,14 @@ const findMatchingEditorUid = async (editorKeys: readonly string[], uri: string)
   return undefined
 }
 
-const updatePreviewFromEditorContent = async (previewUid: number, state: PreviewState, content: string): Promise<boolean> => {
+const updatePreviewFromEditorContent = async (
+  previewUid: number,
+  state: PreviewState,
+  content: string,
+  scriptEditorOverride?: ScriptEditorOverride,
+): Promise<boolean> => {
   try {
-    const updatedState = await getUpdatedStateFromContent(state, content)
+    const updatedState = await getUpdatedStateFromContent(state, content, scriptEditorOverride)
     return setPreviewState(previewUid, state, updatedState)
   } catch (error) {
     return setPreviewState(previewUid, state, createErrorState(state, error))
@@ -125,7 +131,16 @@ const refreshAllPreviews = async (): Promise<void> => {
   }
 }
 
-const getUpdatedStateFromContent = async (state: PreviewState, content: string): Promise<PreviewState> => {
+interface ScriptEditorOverride {
+  readonly content: string
+  readonly uri: string
+}
+
+const getUpdatedStateFromContent = async (
+  state: PreviewState,
+  content: string,
+  scriptEditorOverride?: ScriptEditorOverride,
+): Promise<PreviewState> => {
   if (IsTsxUri.isTsxUri(state.uri)) {
     return {
       ...state,
@@ -136,7 +151,7 @@ const getUpdatedStateFromContent = async (state: PreviewState, content: string):
   const parseResult = ParseHtml.parseHtml(content, [])
   const parsedNodesChildNodeCount = GetParsedNodesChildNodeCount.getParsedNodesChildNodeCount(parseResult.dom)
   const css = await LoadStyleSheets.loadStyleSheets(state.uri, parseResult.styleSheets, state.loadExternalStyleSheets, state.loadStyleElements)
-  const scripts = state.loadJavaScript ? await LoadScriptTags.loadScriptTags(state.uri, parseResult.scriptTags) : []
+  const scripts = state.loadJavaScript ? await LoadScriptTags.loadScriptTags(state.uri, parseResult.scriptTags, scriptEditorOverride) : []
   const updatedState = {
     ...state,
     content,
@@ -165,11 +180,21 @@ const updatePreviewForChangedEditor = async (
   if (changedEditorUri === state.uri) {
     return updatePreviewFromEditor(previewUid, state, getChangedEditorContent)
   }
-  if (!state.loadExternalStyleSheets || !hasMatchingLinkedStyleSheet(state.uri, state.styleSheets, changedEditorUri)) {
-    return false
+  if (state.loadExternalStyleSheets && hasMatchingLinkedStyleSheet(state.uri, state.styleSheets, changedEditorUri)) {
+    const content = await getChangedEditorContent()
+    return updatePreviewFromStylesheetOverride(previewUid, state, changedEditorUri, content)
   }
-  const content = await getChangedEditorContent()
-  return updatePreviewFromStylesheetOverride(previewUid, state, changedEditorUri, content)
+  if (state.loadJavaScript) {
+    const { scriptTags } = ParseHtml.parseHtml(state.content, [])
+    if (hasMatchingLinkedScript(state.uri, scriptTags, changedEditorUri)) {
+      const content = await getChangedEditorContent()
+      return updatePreviewFromEditorContent(previewUid, state, state.content, {
+        content,
+        uri: changedEditorUri,
+      })
+    }
+  }
+  return false
 }
 
 export const handleEditorChanged = async (editorUid?: number): Promise<void> => {
