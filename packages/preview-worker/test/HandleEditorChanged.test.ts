@@ -160,3 +160,62 @@ test('handleEditorChanged should reinitialize scripts and use their serialized d
   ])
   expect(rendererRpc.invocations).toEqual([['Preview.rerender']])
 })
+
+test('handleEditorChanged should reinitialize scripts when a linked script editor changes', async () => {
+  const uid = 9004
+  const content = '<output id="status"></output><script src="./app.js"></script>'
+  const serializedDom = [
+    { childCount: 1, type: 4 },
+    { childCount: 0, id: 'status', text: '1023 branches', type: 20 },
+  ]
+  const sandboxInvocations: readonly any[][] = []
+  const sandboxRpc = {
+    invoke: async (...parameters: readonly any[]): Promise<any> => {
+      ;(sandboxInvocations as any[]).push(parameters)
+      if (parameters[0] === 'SandBox.getSerializedDom') {
+        return {
+          css: [],
+          dom: serializedDom,
+        }
+      }
+      return undefined
+    },
+  }
+  const previousState = {
+    ...createDefaultState(),
+    content,
+    height: 480,
+    sandboxRpc: sandboxRpc as any,
+    scripts: ["document.getElementById('status').textContent = '127 branches'"],
+    uid,
+    uri: '/tmp/index.html',
+    width: 640,
+  }
+  PreviewStates.set(uid, previousState, previousState)
+
+  const updatedScript = "document.getElementById('status').textContent = '1023 branches'"
+  using editorRpc = EditorWorker.registerMockRpc({
+    'Editor.getText': () => updatedScript,
+    'Editor.getUri': () => 'file:///tmp/app.js',
+  })
+
+  using rendererRpc = RendererWorker.registerMockRpc({
+    'Preview.rerender': () => {},
+  })
+
+  await handleEditorChanged(80)
+
+  const { newState } = PreviewStates.get(uid)
+  expect(newState.content).toBe(content)
+  expect(newState.scripts).toEqual([updatedScript])
+  expect(newState.parsedDom).toBe(serializedDom)
+  expect(sandboxInvocations).toEqual([
+    ['SandBox.loadContent', uid, 640, 480, content, [updatedScript]],
+    ['SandBox.getSerializedDom', uid],
+  ])
+  expect(editorRpc.invocations).toEqual([
+    ['Editor.getUri', 80],
+    ['Editor.getText', 80],
+  ])
+  expect(rendererRpc.invocations).toEqual([['Preview.rerender']])
+})
