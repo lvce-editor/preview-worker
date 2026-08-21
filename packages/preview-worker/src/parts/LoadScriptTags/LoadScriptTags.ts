@@ -1,5 +1,5 @@
-import { isSameUri } from '../HasMatchingLinkedStyleSheet/HasMatchingLinkedStyleSheet.ts'
 import type { ScriptTag } from '../ScriptTag/ScriptTag.ts'
+import { isSameUri } from '../HasMatchingLinkedStyleSheet/HasMatchingLinkedStyleSheet.ts'
 import { loadLinkedScript } from '../LoadLinkedScript/LoadLinkedScript.ts'
 import { resolveScriptUri } from '../ResolveScriptUri/ResolveScriptUri.ts'
 
