@@ -1,7 +1,6 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'preview.svg-path'
-
 export const skip = 1
 
 export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, Workspace }) => {
@@ -27,6 +26,7 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
 
   const target = previewArea.locator('#target-path')
   await expect(target).toBeVisible()
+  await expect(target).toHaveJSProperty('tagName', 'path')
   await expect(target).toHaveAttribute('d', 'M10 80 Q 70 10 130 80')
   await expect(target).toHaveAttribute('fill', 'none')
 }

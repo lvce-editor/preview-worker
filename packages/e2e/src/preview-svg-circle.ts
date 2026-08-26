@@ -1,7 +1,6 @@
 import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'preview.svg-circle'
-
 export const skip = 1
 
 export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, Workspace }) => {
@@ -27,6 +26,7 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
 
   const target = previewArea.locator('#target-circle')
   await expect(target).toBeVisible()
+  await expect(target).toHaveJSProperty('tagName', 'circle')
   await expect(target).toHaveAttribute('cx', '60')
   await expect(target).toHaveAttribute('cy', '60')
   await expect(target).toHaveAttribute('r', '30')
