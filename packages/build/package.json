@@ -10,14 +10,14 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@babel/preset-typescript": "^7.29.7",
-    "@rollup/plugin-babel": "^7.0.0",
-    "@rollup/plugin-commonjs": "^29.0.2",
+    "@babel/preset-typescript": "^8.0.1",
+    "@rollup/plugin-babel": "^7.1.0",
+    "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/node": "^22.14.1",
-    "esbuild": "^0.28.0",
-    "execa": "^9.6.1",
+    "esbuild": "^0.28.2",
+    "execa": "^10.0.1",
     "rollup": "^4.40.0"
   }
 }
