@@ -23,8 +23,9 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   const previewArea = Locator('.Viewlet.Preview')
   await expect(previewArea).toBeVisible()
 
-  const target = previewArea.locator('rect#target-rect')
+  const target = previewArea.locator('#target-rect')
   await expect(target).toBeVisible()
+  await expect(target).toHaveJSProperty('tagName', 'rect')
   await expect(target).toHaveAttribute('width', '100')
   await expect(target).toHaveAttribute('height', '60')
   await expect(target).toHaveAttribute('rx', '8')

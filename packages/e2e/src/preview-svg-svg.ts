@@ -23,8 +23,9 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   const previewArea = Locator('.Viewlet.Preview')
   await expect(previewArea).toBeVisible()
 
-  const target = previewArea.locator('svg#target-svg')
+  const target = previewArea.locator('#target-svg')
   await expect(target).toBeVisible()
+  await expect(target).toHaveJSProperty('tagName', 'svg')
   await expect(target).toHaveAttribute('width', '160')
   await expect(target).toHaveAttribute('height', '120')
   await expect(target).toHaveAttribute('viewBox', '0 0 160 120')

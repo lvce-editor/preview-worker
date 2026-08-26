@@ -23,8 +23,9 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   const previewArea = Locator('.Viewlet.Preview')
   await expect(previewArea).toBeVisible()
 
-  const target = previewArea.locator('path#target-path')
+  const target = previewArea.locator('#target-path')
   await expect(target).toBeVisible()
+  await expect(target).toHaveJSProperty('tagName', 'path')
   await expect(target).toHaveAttribute('d', 'M10 80 Q 70 10 130 80')
   await expect(target).toHaveAttribute('fill', 'none')
 }

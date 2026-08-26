@@ -23,8 +23,9 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   const previewArea = Locator('.Viewlet.Preview')
   await expect(previewArea).toBeVisible()
 
-  const target = previewArea.locator('circle#target-circle')
+  const target = previewArea.locator('#target-circle')
   await expect(target).toBeVisible()
+  await expect(target).toHaveJSProperty('tagName', 'circle')
   await expect(target).toHaveAttribute('cx', '60')
   await expect(target).toHaveAttribute('cy', '60')
   await expect(target).toHaveAttribute('r', '30')
