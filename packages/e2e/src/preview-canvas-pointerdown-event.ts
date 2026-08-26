@@ -29,7 +29,13 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Workspa
   await expect(canvas).toBeVisible()
   await expect(status).toHaveText('Ready')
 
-  await canvas.dispatchEvent('pointerdown', { bubbles: true, clientX: 20, clientY: 20, pointerId: 1, pointerType: 'mouse' })
+  await canvas.dispatchEvent('pointerdown', {
+    bubbles: true,
+    clientX: 20,
+    clientY: 20,
+    pointerId: 1,
+    pointerType: 'mouse',
+  } as unknown as string)
 
   await expect(status).toHaveText('Flying')
 }
