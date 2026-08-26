@@ -17,6 +17,7 @@ const previewNode = {
   onMouseDown: DomEventListenerFunctions.HandleMousedown,
   onMouseMove: DomEventListenerFunctions.HandleMousemove,
   onMouseUp: DomEventListenerFunctions.HandleMouseup,
+  onPointerDown: DomEventListenerFunctions.HandlePointerdown,
   role: AriaRoles.Document,
   tabIndex: TabIndex.Focusable,
   type: VirtualDomElements.Div,

@@ -45,5 +45,10 @@ test('renderEventListeners should return the expected event listeners', () => {
       name: DomEventListenersFunctions.HandleMouseup,
       params: ['handleMouseup', 'event.target.dataset.id'],
     },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandlePointerdown,
+      params: ['handlePointerdown', 'event.target.dataset.id', 'event.clientX', 'event.clientY'],
+    },
   ])
 })
