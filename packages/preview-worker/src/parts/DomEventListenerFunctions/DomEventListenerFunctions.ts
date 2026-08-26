@@ -1,8 +1,9 @@
-export const HandleInput = 4
-export const HandleClick = 11
-export const HandleKeydown = 12
-export const HandleKeyup = 13
-export const HandleMousedown = 14
-export const HandleMousemove = 15
-export const HandleMouseup = 16
-export const HandleChange = 17
+export const HandleChange = 9
+export const HandleClick = 10
+export const HandleInput = 12
+export const HandleKeydown = 13
+export const HandleKeyup = 14
+export const HandleMousedown = 15
+export const HandleMousemove = 16
+export const HandleMouseup = 17
+export const HandlePointerdown = 19
