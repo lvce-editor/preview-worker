@@ -37,6 +37,21 @@ test('parseHtml should parse simple span tag', () => {
   expect(result).toEqual(expectedArray)
 })
 
+test('parseHtml should preserve inline SVG elements and attributes', () => {
+  const result = parseHtmlDom(
+    '<svg viewBox="0 0 100 100"><rect x="1" y="2" width="30" height="40"></rect><polygon points="0,0 10,0 5,10"></polygon><path d="M0 0 L10 10"></path><circle cx="5" cy="5" r="4"></circle></svg>',
+    [],
+  )
+
+  expect(result).toEqual([
+    { childCount: 4, type: VirtualDomElements.Svg, viewBox: '0 0 100 100' },
+    { childCount: 0, height: '40', type: VirtualDomElements.Rect, width: '30', x: '1', y: '2' },
+    { childCount: 0, points: '0,0 10,0 5,10', type: VirtualDomElements.Polygon },
+    { childCount: 0, d: 'M0 0 L10 10', type: VirtualDomElements.Path },
+    { childCount: 0, cx: '5', cy: '5', r: '4', type: VirtualDomElements.Circle },
+  ])
+})
+
 test('parseHtml should parse paragraph tag', () => {
   const expectedArray = [{ childCount: 0, type: VirtualDomElements.P }]
   const result = parseHtmlDom('<p></p>', [])

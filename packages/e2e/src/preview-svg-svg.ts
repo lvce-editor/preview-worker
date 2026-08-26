@@ -2,8 +2,6 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'preview.svg-svg'
 
-export const skip = 1
-
 export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, Workspace }) => {
   const tmpDir = await FileSystem.getTmpDir()
   await Workspace.setPath(tmpDir)
@@ -25,7 +23,7 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator, Main, W
   const previewArea = Locator('.Viewlet.Preview')
   await expect(previewArea).toBeVisible()
 
-  const target = previewArea.locator('#target-svg')
+  const target = previewArea.locator('svg#target-svg')
   await expect(target).toBeVisible()
   await expect(target).toHaveAttribute('width', '160')
   await expect(target).toHaveAttribute('height', '120')
