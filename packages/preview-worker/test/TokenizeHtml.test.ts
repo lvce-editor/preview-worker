@@ -179,6 +179,16 @@ test('tokenizeHtml should still tokenize normal html correctly', () => {
   ])
 })
 
+test('tokenizeHtml should handle punctuation in multiline html comments', () => {
+  const tokens = getTokens(`<div>before</div><!-- Pedestrians use staggered, separate sidewalk bands:
+the rear pair travels above the far lane. --><div>after</div>`)
+  const divStartTokens = tokens.filter((token) => token.type === HtmlTokenType.TagNameStart && token.text === 'div')
+  const contentTokens = tokens.filter((token) => token.type === HtmlTokenType.Content)
+
+  expect(divStartTokens).toHaveLength(2)
+  expect(contentTokens.map((token) => token.text)).toEqual(['before', 'after'])
+})
+
 test('tokenizeHtml should handle single quoted attributes', () => {
   const tokens = getTokens("<div id='greeting' class='message'>hello</div>")
   expect(tokens).toEqual([
