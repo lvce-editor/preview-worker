@@ -7,3 +7,5 @@ export const HandleMousedown = 15
 export const HandleMousemove = 16
 export const HandleMouseup = 17
 export const HandlePointerdown = 19
+export const HandlePointermove = 20
+export const HandlePointerup = 21

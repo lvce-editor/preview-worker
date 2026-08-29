@@ -48,6 +48,17 @@ export const renderEventListeners = (): readonly DomEventListener[] => {
       capture: true,
       name: DomEventListenersFunctions.HandlePointerdown,
       params: ['handlePointerdown', 'event.target.dataset.id', EventExpression.ClientX, EventExpression.ClientY],
+      trackPointerEvents: [DomEventListenersFunctions.HandlePointermove, DomEventListenersFunctions.HandlePointerup],
+    },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandlePointermove,
+      params: ['handlePointermove', 'event.target.dataset.id', EventExpression.ClientX, EventExpression.ClientY],
+    },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandlePointerup,
+      params: ['handlePointerup', 'event.target.dataset.id', EventExpression.ClientX, EventExpression.ClientY],
     },
   ]
 }
