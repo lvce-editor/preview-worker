@@ -17,6 +17,8 @@ import * as HandleMousemove from '../HandleMousemove/HandleMousemove.ts'
 import * as HandleMouseup from '../HandleMouseup/HandleMouseup.ts'
 import { handleMutation } from '../HandleMutation/HandleMutation.ts'
 import * as HandlePointerdown from '../HandlePointerdown/HandlePointerdown.ts'
+import * as HandlePointermove from '../HandlePointermove/HandlePointermove.ts'
+import * as HandlePointerup from '../HandlePointerup/HandlePointerup.ts'
 import { initializeGeometryBuffer } from '../InitializeGeometryBuffer/InitializeGeometryBuffer.ts'
 import * as LoadContent from '../LoadContent/LoadContent.ts'
 import { getCommandIds, wrapCommand, wrapGetter } from '../PreviewStates/PreviewStates.ts'
@@ -51,6 +53,8 @@ export const commandMap = {
   'Preview.handleMouseup': wrapCommand(HandleMouseup.handleMouseup),
   'Preview.handleMutation': wrapCommand(handleMutation),
   'Preview.handlePointerdown': wrapCommand(HandlePointerdown.handlePointerdown),
+  'Preview.handlePointermove': wrapCommand(HandlePointermove.handlePointermove),
+  'Preview.handlePointerup': wrapCommand(HandlePointerup.handlePointerup),
   'Preview.initializeGeometryBuffer': wrapCommand(initializeGeometryBuffer),
   'Preview.loadContent': wrapCommand(LoadContent.loadContent),
   'Preview.render2': render2,
