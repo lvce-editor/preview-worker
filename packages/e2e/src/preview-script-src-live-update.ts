@@ -44,6 +44,9 @@ export const test: Test = async ({ Command, Editor, expect, FileSystem, Locator,
   await expect(status).toHaveAttribute('data-branches', '127')
 
   await Main.openUri(scriptPath)
+  for (let branches = 128; branches < 148; branches++) {
+    await Editor.setText(createScript(branches))
+  }
   await Editor.setText(createScript(1023))
 
   await waitForAttribute(expect, status, '1023')
