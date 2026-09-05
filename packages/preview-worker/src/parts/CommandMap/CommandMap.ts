@@ -7,7 +7,6 @@ import { executeCallback, getOffscreenCanvas } from '../GetOffscreenCanvas/GetOf
 import { getRuntimeDiagnostics } from '../GetRuntimeDiagnostics/GetRuntimeDiagnostics.ts'
 import * as HandleChange from '../HandleChange/HandleChange.ts'
 import * as HandleClick from '../HandleClick/HandleClick.ts'
-import { handleEditorChanged } from '../HandleEditorChanged/HandleEditorChanged.ts'
 import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
 import * as HandleInput from '../HandleInput/HandleInput.ts'
 import * as HandleKeydown from '../HandleKeydown/HandleKeydown.ts'
@@ -27,13 +26,14 @@ import { renderEventListeners } from '../RenderEventListeners/RenderEventListene
 import { rerender } from '../Rerender/Rerender.ts'
 import { resize } from '../Resize/Resize.ts'
 import { saveState } from '../SaveState/SaveState.ts'
+import { scheduleEditorChanged } from '../ScheduleEditorChanged/ScheduleEditorChanged.ts'
 import { setUri } from '../SetUri/SetUri.ts'
 import { triggerRerender } from '../TriggerRerender/TriggerRerender.ts'
 import { waitForClick } from '../WaitForClick/WaitForClick.ts'
 import { waitForMutation } from '../WaitForMutation/WaitForMutation.ts'
 
 export const commandMap = {
-  handleEditorChanged: handleEditorChanged,
+  handleEditorChanged: scheduleEditorChanged,
   'Preview.create': Preview.create,
   'Preview.createOffscreenCanvas': wrapGetter(getOffscreenCanvas),
   'Preview.diff2': diff2,
