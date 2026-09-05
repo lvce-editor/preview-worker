@@ -22,10 +22,19 @@ test('editor change notification completes while the preview is still rendering'
     },
   })
   const notification = Promise.resolve(commandMap.handleEditorChanged(77))
+  const waitForAcknowledgement = async (): Promise<string> => {
+    await notification
+    return 'acknowledged'
+  }
   try {
     await started.promise
-    const result = await Promise.race([notification.then(() => 'acknowledged'), setImmediate('blocked')])
+    const result = await Promise.race([waitForAcknowledgement(), setImmediate('blocked')])
     expect(result).toBe('acknowledged')
+    expect(editorRpc.invocations).toEqual([
+      ['Editor.getUri', 77],
+      ['Editor.getText', 77],
+    ])
+    expect(rendererRpc.invocations).toEqual([['Preview.rerender']])
   } finally {
     rendering.resolve()
     await notification
@@ -60,7 +69,7 @@ test('rapid changes during script execution run one latest refresh without overl
     await started.promise
     for (let i = 1; i <= 100; i++) {
       content = `<script>draw(${i})</script>`
-      await commandMap.handleEditorChanged(77)
+      await Promise.resolve(commandMap.handleEditorChanged(77))
     }
     expect(invoke).toHaveBeenCalledTimes(1)
     expect(rendererRpc.invocations).toEqual([])
@@ -96,7 +105,7 @@ test('pending changes from different editors are both applied', async () => {
   let content = '<p>initial</p>'
   using editorRpc = EditorWorker.registerMockRpc({
     'Editor.getText': () => content,
-    'Editor.getUri': (editorUid: number) => (editorUid === 77 ? firstState.uri : secondState.uri),
+    'Editor.getUri': (editorUid: number) => `/tmp/${editorUid === 77 ? 'first' : 'second'}.html`,
   })
   using rendererRpc = RendererWorker.registerMockRpc({
     'Preview.rerender': () => {
@@ -115,6 +124,7 @@ test('pending changes from different editors are both applied', async () => {
 
     expect(PreviewStates.get(firstUid).newState.content).toBe(content)
     expect(PreviewStates.get(secondUid).newState.content).toBe(content)
+    expect(editorRpc.invocations).toContainEqual(['Editor.getText', 78])
     expect(rendererRpc.invocations).toHaveLength(3)
   } finally {
     rendering.resolve()
@@ -134,7 +144,7 @@ test('a failed background refresh does not prevent queued or future updates', as
   using warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
   using editorRpc = EditorWorker.registerMockRpc({
     'Editor.getText': () => '<p>latest</p>',
-    'Editor.getUri': () => {
+    'Editor.getUri': async () => {
       if (first) {
         first = false
         return firstUri.promise
@@ -151,6 +161,7 @@ test('a failed background refresh does not prevent queued or future updates', as
     firstUri.reject(failure)
     await setImmediate()
     expect(warn).toHaveBeenCalledWith('Failed to update preview after editor change:', failure)
+    expect(editorRpc.invocations).toContainEqual(['Editor.getText', 78])
     expect(PreviewStates.get(uid).newState.content).toBe('<p>latest</p>')
     expect(rendererRpc.invocations).toHaveLength(1)
 
@@ -188,6 +199,7 @@ test('closing a preview during a refresh does not restore it or render queued ed
     content.resolve('<p>updated</p>')
     await setImmediate()
     expect(PreviewStates.getKeys()).not.toContain(uid)
+    expect(editorRpc.invocations.filter(([method]) => method === 'Editor.getText')).toHaveLength(1)
     expect(rendererRpc.invocations).toEqual([])
   } finally {
     content.resolve('')
