@@ -20,6 +20,7 @@ import * as HandlePointermove from '../HandlePointermove/HandlePointermove.ts'
 import * as HandlePointerup from '../HandlePointerup/HandlePointerup.ts'
 import { initializeGeometryBuffer } from '../InitializeGeometryBuffer/InitializeGeometryBuffer.ts'
 import * as LoadContent from '../LoadContent/LoadContent.ts'
+import { clearOutput, logWarning } from '../PreviewSandboxOutput/PreviewSandboxOutput.ts'
 import { getCommandIds, wrapCommand, wrapGetter } from '../PreviewStates/PreviewStates.ts'
 import { render2 } from '../Render2/Render2.ts'
 import { renderEventListeners } from '../RenderEventListeners/RenderEventListeners.ts'
@@ -32,7 +33,7 @@ import { triggerRerender } from '../TriggerRerender/TriggerRerender.ts'
 import { waitForClick } from '../WaitForClick/WaitForClick.ts'
 import { waitForMutation } from '../WaitForMutation/WaitForMutation.ts'
 
-export const commandMap = {
+const existingCommandMap = {
   handleEditorChanged: scheduleEditorChanged,
   'Preview.create': Preview.create,
   'Preview.createOffscreenCanvas': wrapGetter(getOffscreenCanvas),
@@ -67,4 +68,11 @@ export const commandMap = {
   'Preview.triggerRerender': wrapCommand(triggerRerender),
   'Preview.waitForClick': wrapCommand(waitForClick),
   'Preview.waitForMutation': wrapCommand(waitForMutation),
+}
+
+// Keep new commands after the indexed preview event handlers.
+export const commandMap = {
+  ...existingCommandMap,
+  'Preview.clearOutput': clearOutput,
+  'Preview.logWarning': logWarning,
 }
