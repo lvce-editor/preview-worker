@@ -1,7 +1,8 @@
 import { join } from 'node:path'
 import { root } from './root.ts'
 
-export const threshold = 531_000
+// Preview Sandbox Output RPC handlers add approximately 1.1 kB to worker startup.
+export const threshold = 532_000
 
 export const instantiations = 220_000
 
