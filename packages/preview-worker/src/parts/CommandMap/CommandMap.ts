@@ -5,7 +5,6 @@ import { dispose } from '../Dispose/Dispose.ts'
 import { getGeometryBuffer } from '../GetGeometryBuffer/GetGeometryBuffer.ts'
 import { executeCallback, getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
 import { getRuntimeDiagnostics } from '../GetRuntimeDiagnostics/GetRuntimeDiagnostics.ts'
-import { clearOutput, logWarning } from '../PreviewSandboxOutput/PreviewSandboxOutput.ts'
 import * as HandleChange from '../HandleChange/HandleChange.ts'
 import * as HandleClick from '../HandleClick/HandleClick.ts'
 import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
@@ -21,6 +20,7 @@ import * as HandlePointermove from '../HandlePointermove/HandlePointermove.ts'
 import * as HandlePointerup from '../HandlePointerup/HandlePointerup.ts'
 import { initializeGeometryBuffer } from '../InitializeGeometryBuffer/InitializeGeometryBuffer.ts'
 import * as LoadContent from '../LoadContent/LoadContent.ts'
+import { clearOutput, logWarning } from '../PreviewSandboxOutput/PreviewSandboxOutput.ts'
 import { getCommandIds, wrapCommand, wrapGetter } from '../PreviewStates/PreviewStates.ts'
 import { render2 } from '../Render2/Render2.ts'
 import { renderEventListeners } from '../RenderEventListeners/RenderEventListeners.ts'
@@ -35,6 +35,7 @@ import { waitForMutation } from '../WaitForMutation/WaitForMutation.ts'
 
 export const commandMap = {
   handleEditorChanged: scheduleEditorChanged,
+  'Preview.clearOutput': clearOutput,
   'Preview.create': Preview.create,
   'Preview.createOffscreenCanvas': wrapGetter(getOffscreenCanvas),
   'Preview.diff2': diff2,
@@ -59,7 +60,6 @@ export const commandMap = {
   'Preview.initializeGeometryBuffer': wrapCommand(initializeGeometryBuffer),
   'Preview.loadContent': wrapCommand(LoadContent.loadContent),
   'Preview.logWarning': logWarning,
-  'Preview.clearOutput': clearOutput,
   'Preview.render2': render2,
   'Preview.renderEventListeners': renderEventListeners,
   'Preview.rerender': wrapCommand(rerender),
