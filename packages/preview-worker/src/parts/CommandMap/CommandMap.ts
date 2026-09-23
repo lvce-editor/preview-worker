@@ -5,6 +5,7 @@ import { dispose } from '../Dispose/Dispose.ts'
 import { getGeometryBuffer } from '../GetGeometryBuffer/GetGeometryBuffer.ts'
 import { executeCallback, getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
 import { getRuntimeDiagnostics } from '../GetRuntimeDiagnostics/GetRuntimeDiagnostics.ts'
+import { clearOutput, logWarning } from '../PreviewSandboxOutput/PreviewSandboxOutput.ts'
 import * as HandleChange from '../HandleChange/HandleChange.ts'
 import * as HandleClick from '../HandleClick/HandleClick.ts'
 import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
@@ -57,6 +58,8 @@ export const commandMap = {
   'Preview.handlePointerup': wrapCommand(HandlePointerup.handlePointerup),
   'Preview.initializeGeometryBuffer': wrapCommand(initializeGeometryBuffer),
   'Preview.loadContent': wrapCommand(LoadContent.loadContent),
+  'Preview.logWarning': logWarning,
+  'Preview.clearOutput': clearOutput,
   'Preview.render2': render2,
   'Preview.renderEventListeners': renderEventListeners,
   'Preview.rerender': wrapCommand(rerender),
