@@ -45,12 +45,14 @@ jobs:
         run: node packages/e2e-integration/prepare.mjs .tmp/lvce-integration
       - name: Build application static export
         working-directory: .tmp/lvce-integration
-        run: |-
-          npm run build:static:ignore-icon-theme
-          npm run build:server
-          npm run test-static-export
+        run: npm run build:static:ignore-icon-theme
         env:
           PATH_PREFIX: /lvce-editor
+      - name: Build server and verify static export
+        working-directory: .tmp/lvce-integration
+        run: |-
+          npm run build:server
+          npm run test-static-export
       - name: Test HTML preview browser integration
         working-directory: .tmp/lvce-integration/packages/extension-host-worker-tests
         run: node src/_all.js --ci --headless --test-name-prefix=viewlet.layout-html-preview
