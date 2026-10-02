@@ -58,6 +58,23 @@ test('parseHtml should parse paragraph tag', () => {
   expect(result).toEqual(expectedArray)
 })
 
+test('parseHtml should preserve em and i elements, nesting, text and attributes', () => {
+  const result = parseHtmlDom(
+    '<p id="parent" class="copy">before <em id="emphasis" class="em">emphasis <i id="italic" class="i">italic</i></em> after</p>',
+    ['id', 'class'],
+  )
+
+  expect(result).toEqual([
+    { childCount: 3, className: 'copy', id: 'parent', type: VirtualDomElements.P },
+    text('before '),
+    { childCount: 2, className: 'em', id: 'emphasis', type: VirtualDomElements.Em },
+    text('emphasis '),
+    { childCount: 1, className: 'i', id: 'italic', type: VirtualDomElements.I },
+    text('italic'),
+    text(' after'),
+  ])
+})
+
 // Text content tests
 test('parseHtml should parse text content', () => {
   const expectedArray = [text('Hello World')]
@@ -428,7 +445,7 @@ test('parseHtml should parse strong tag', () => {
 
 test('parseHtml should parse em tag', () => {
   const expectedArray = [
-    { childCount: 1, type: VirtualDomElements.Div },
+    { childCount: 1, type: VirtualDomElements.Em },
     { childCount: 0, text: 'Italic', type: VirtualDomElements.Text },
   ]
   const result = parseHtmlDom('<em>Italic</em>', [])

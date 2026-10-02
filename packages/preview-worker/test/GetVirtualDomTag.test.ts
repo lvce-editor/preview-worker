@@ -49,6 +49,11 @@ test('getVirtualDomTag should return Div element for "div" tag', () => {
   expect(result).toBe(VirtualDomElements.Div)
 })
 
+test('getVirtualDomTag should return Em element for "em" tag', () => {
+  const result = getVirtualDomTag(ElementTags.Em)
+  expect(result).toBe(VirtualDomElements.Em)
+})
+
 test('getVirtualDomTag should return Dl element for "dl" tag', () => {
   const result = getVirtualDomTag(ElementTags.Dl)
   expect(result).toBe(VirtualDomElements.Dl)
@@ -107,6 +112,11 @@ test('getVirtualDomTag should return Hr element for "hr" tag', () => {
 test('getVirtualDomTag should return Img element for "img" tag', () => {
   const result = getVirtualDomTag(ElementTags.Img)
   expect(result).toBe(VirtualDomElements.Img)
+})
+
+test('getVirtualDomTag should return I element for "i" tag', () => {
+  const result = getVirtualDomTag(ElementTags.I)
+  expect(result).toBe(VirtualDomElements.I)
 })
 
 test('getVirtualDomTag should return Li element for "li" tag', () => {
