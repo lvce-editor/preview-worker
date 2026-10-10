@@ -45,14 +45,20 @@ export const test: Test = async ({ Command, Editor, expect, FileSystem, Locator,
   await Command.execute('Layout.showPreview', filePath)
 
   const previewArea = Locator('.Viewlet.Preview')
-  const canvas = previewArea.locator('canvas')
+  const canvas = previewArea.locator('#tree')
   const status = previewArea.locator('#status')
   await expect(canvas).toBeVisible()
   await expect(status).toContainText('127 branches')
 
   await Editor.setText(createHtml(10))
   await waitForText(expect, status, '1023 branches')
+  await expect(canvas).toBeVisible()
+  await expect(canvas).toHaveAttribute('width', '320')
+  await expect(canvas).toHaveAttribute('height', '180')
 
   await Editor.setText(createHtml(8))
   await waitForText(expect, status, '255 branches')
+  await expect(canvas).toBeVisible()
+  await expect(canvas).toHaveAttribute('width', '320')
+  await expect(canvas).toHaveAttribute('height', '180')
 }
