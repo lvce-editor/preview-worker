@@ -1,39 +1,29 @@
-import { cp, readFile, writeFile } from 'node:fs/promises'
+import { cp, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { root } from './root.js'
 
 const sharedProcessPath = join(root, 'node_modules', '@lvce-editor', 'shared-process', 'index.js')
+const sharedProcess = await import(pathToFileURL(sharedProcessPath).toString())
 
-const sharedProcessUrl = pathToFileURL(sharedProcessPath).toString()
-
-const sharedProcess = await import(sharedProcessUrl)
-
-process.env.PATH_PREFIX = '/preview-worker'
+const pathPrefix = '/preview-worker'
+process.env.PATH_PREFIX = pathPrefix
 const { commitHash } = await sharedProcess.exportStatic({
   root,
   extensionPath: '',
   testPath: 'packages/e2e',
 })
 
-const rendererWorkerPath = join(root, 'dist', commitHash, 'packages', 'renderer-worker', 'dist', 'rendererWorkerMain.js')
+const indexPath = join(root, 'dist', 'index.html')
+const content = await readFile(indexPath, 'utf8')
+const configPattern = /(<script id="Config" type="application\/json">)(.*?)(<\/script>)/s
+const match = configPattern.exec(content)
+if (!match) throw new Error('Exported runtime configuration not found')
+const config = JSON.parse(match[2])
+config.workerUrls['develop.previewWorkerPath'] = `${pathPrefix}/${commitHash}/packages/preview-worker/dist/previewWorkerMain.js`
+await writeFile(indexPath, content.replace(match[0], `${match[1]}${JSON.stringify(config)}${match[3]}`))
+await cp(join(root, '.tmp', 'dist', 'dist'), join(root, 'dist', commitHash, 'packages', 'preview-worker', 'dist'), { recursive: true })
 
-export const getRemoteUrl = (path: string): string => {
-  const url = pathToFileURL(path).toString().slice(8)
-  return `/remote/${url}`
-}
-
-const content = await readFile(rendererWorkerPath, 'utf8')
-const workerPath = join(root, '.tmp/dist/dist/previewWorkerMain.js')
-const remoteUrl = getRemoteUrl(workerPath)
-
-const occurrence = `// const previewWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/previewWorkerMain.js\`
-const previewWorkerUrl = \`${remoteUrl}\``
-const replacement = `const previewWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/previewWorkerMain.js\``
-if (!content.includes(occurrence)) {
-  throw new Error('occurrence not found')
-}
-const newContent = content.replace(occurrence, replacement)
-await writeFile(rendererWorkerPath, newContent)
-
-await cp(join(root, 'dist'), join(root, '.tmp', 'static'), { recursive: true })
+const staticDirectory = join(root, '.tmp', 'static')
+await rm(staticDirectory, { recursive: true, force: true })
+await cp(join(root, 'dist'), staticDirectory, { recursive: true })

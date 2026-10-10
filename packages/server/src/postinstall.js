@@ -1,40 +1,14 @@
-import { cp, readFile, readdir, writeFile } from 'node:fs/promises'
-import { dirname, join } from 'node:path'
+import { readFile, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
-const root = join(__dirname, '..', '..', '..')
-
-export const getRemoteUrl = (path) => {
-  const url = pathToFileURL(path).toString().slice(8)
-  return `/remote/${url}`
-}
-
-const nodeModulesPath = join(root, 'node_modules')
-
-const serverStaticPath = join(nodeModulesPath, '@lvce-editor', 'static-server', 'static')
-
-const RE_COMMIT_HASH = /^[a-z\d]+$/
-const isCommitHash = (dirent) => {
-  return dirent.length === 7 && dirent.match(RE_COMMIT_HASH)
-}
-
-const dirents = await readdir(serverStaticPath)
-const commitHash = dirents.find(isCommitHash) || ''
-const rendererWorkerMainPath = join(serverStaticPath, commitHash, 'packages', 'renderer-worker', 'dist', 'rendererWorkerMain.js')
-
-const content = await readFile(rendererWorkerMainPath, 'utf-8')
-
-const previewWorkerPath = join(root, '.tmp/dist/dist/previewWorkerMain.js')
-
-const remoteUrl = getRemoteUrl(previewWorkerPath)
-if (!content.includes('// const previewWorkerUrl = ')) {
-  await cp(rendererWorkerMainPath, rendererWorkerMainPath + '.original')
-  const occurrence = `const previewWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/previewWorkerMain.js\``
-  const replacement = `// const previewWorkerUrl = \`\${assetDir}/packages/preview-worker/dist/previewWorkerMain.js\`
-const previewWorkerUrl = \`${remoteUrl}\``
-
-  const newContent = content.replace(occurrence, replacement)
-  await writeFile(rendererWorkerMainPath, newContent)
-}
+const root = fileURLToPath(new URL('../../../', import.meta.url))
+const indexPath = join(root, 'node_modules', '@lvce-editor', 'static-server', 'static', 'index.html')
+const content = await readFile(indexPath, 'utf8')
+const configPattern = /(<script id="Config" type="application\/json">)(.*?)(<\/script>)/s
+const match = configPattern.exec(content)
+if (!match) throw new Error('Runtime configuration not found')
+const config = JSON.parse(match[2])
+const workerPath = join(root, '.tmp', 'dist', 'dist', 'previewWorkerMain.js')
+config.workerUrls['develop.previewWorkerPath'] = `/remote/${pathToFileURL(workerPath).toString().slice(8)}`
+await writeFile(indexPath, content.replace(match[0], `${match[1]}${JSON.stringify(config)}${match[3]}`))
