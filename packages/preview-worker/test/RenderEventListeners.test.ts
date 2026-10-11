@@ -48,7 +48,7 @@ test('renderEventListeners should return the expected event listeners', () => {
     {
       capture: true,
       name: DomEventListenersFunctions.HandlePointerdown,
-      params: ['handlePointerdown', 'event.target.dataset.id', 'event.clientX', 'event.clientY'],
+      params: ['handlePointerdown', 'event.target.dataset.id', 'event.clientX', 'event.clientY', 'event.button'],
       trackPointerEvents: [DomEventListenersFunctions.HandlePointermove, DomEventListenersFunctions.HandlePointerup],
     },
     {
@@ -60,6 +60,13 @@ test('renderEventListeners should return the expected event listeners', () => {
       capture: true,
       name: DomEventListenersFunctions.HandlePointerup,
       params: ['handlePointerup', 'event.target.dataset.id', 'event.clientX', 'event.clientY'],
+    },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleWheel,
+      params: ['handleWheel', 'event.target.dataset.id', 'event.deltaY', 'event.ctrlKey'],
+      passive: false,
+      preventDefault: true,
     },
   ])
 })
