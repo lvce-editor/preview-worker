@@ -8,7 +8,14 @@ export const dispose = async (uid: number): Promise<void> => {
   const { newState: state } = PreviewStates.get(uid)
   const { sandboxRpc } = state
   PreviewStates.dispose(uid)
-  const disposals = [sandboxRpc.dispose()]
+  const disposeSandbox = async (): Promise<void> => {
+    try {
+      await sandboxRpc.invoke('SandBox.dispose', uid)
+    } finally {
+      await sandboxRpc.dispose()
+    }
+  }
+  const disposals = [disposeSandbox()]
   if (PreviewStates.getKeys().length === 0) {
     disposals.push(EditorWorker.invoke('Listener.unregister', EditorChange, rpcId))
   }
