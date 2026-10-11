@@ -22,6 +22,11 @@ if (!match) throw new Error('Exported runtime configuration not found')
 const config = JSON.parse(match[2])
 config.workerUrls['develop.previewWorkerPath'] = `${pathPrefix}/${commitHash}/packages/preview-worker/dist/previewWorkerMain.js`
 await writeFile(indexPath, content.replace(match[0], `${match[1]}${JSON.stringify(config)}${match[3]}`))
+await cp(
+  new URL('./', import.meta.resolve('@lvce-editor/preview-sandbox-worker')),
+  join(root, 'dist', commitHash, 'packages', 'preview-sandbox-worker', 'dist'),
+  { recursive: true, force: true },
+)
 await cp(join(root, '.tmp', 'dist', 'dist'), join(root, 'dist', commitHash, 'packages', 'preview-worker', 'dist'), { recursive: true })
 
 const staticDirectory = join(root, '.tmp', 'static')

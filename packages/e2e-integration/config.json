@@ -1,4 +1,7 @@
 {
-  "artifacts": [[".tmp/dist", "packages/renderer-worker/node_modules/@lvce-editor/preview-worker"]],
+  "artifacts": [
+    [".tmp/dist", "packages/renderer-worker/node_modules/@lvce-editor/preview-worker"],
+    ["node_modules/@lvce-editor/preview-sandbox-worker", "packages/renderer-worker/node_modules/@lvce-editor/preview-sandbox-worker"]
+  ],
   "scripts": []
 }

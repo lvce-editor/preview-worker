@@ -10,7 +10,7 @@ test('dispose removes the preview and stops rerenders after it is closed', async
   const disposeSandbox = jest.fn(async () => {})
   const state = {
     ...createDefaultState(),
-    sandboxRpc: { dispose: disposeSandbox } as any,
+    sandboxRpc: { dispose: disposeSandbox, invoke: jest.fn(async () => {}) } as any,
     uid,
     uri: '/tmp/index.html',
   }
@@ -28,6 +28,7 @@ test('dispose removes the preview and stops rerenders after it is closed', async
   await handleEditorChanged(77)
 
   expect(PreviewStates.getKeys()).not.toContain(uid)
+  expect(state.sandboxRpc.invoke).toHaveBeenCalledWith('SandBox.dispose', uid)
   expect(disposeSandbox).toHaveBeenCalledTimes(1)
   expect(editorRpc.invocations).toEqual([
     ['Listener.unregister', 1, 9112],
@@ -41,12 +42,12 @@ test('dispose keeps the editor change listener while another preview is open', a
   const secondUid = 9006
   const firstState = {
     ...createDefaultState(),
-    sandboxRpc: { dispose: jest.fn(async () => {}) } as any,
+    sandboxRpc: { dispose: jest.fn(async () => {}), invoke: jest.fn(async () => {}) } as any,
     uid: firstUid,
   }
   const secondState = {
     ...createDefaultState(),
-    sandboxRpc: { dispose: jest.fn(async () => {}) } as any,
+    sandboxRpc: { dispose: jest.fn(async () => {}), invoke: jest.fn(async () => {}) } as any,
     uid: secondUid,
   }
   PreviewStates.set(firstUid, firstState, firstState)
@@ -69,7 +70,7 @@ test('an editor update in flight does not restore or rerender a disposed preview
   const uid = 9007
   const state = {
     ...createDefaultState(),
-    sandboxRpc: { dispose: jest.fn(async () => {}) } as any,
+    sandboxRpc: { dispose: jest.fn(async () => {}), invoke: jest.fn(async () => {}) } as any,
     uid,
     uri: '/tmp/index.html',
   }
@@ -96,4 +97,28 @@ test('an editor update in flight does not restore or rerender a disposed preview
     ['Listener.unregister', 1, 9112],
   ])
   expect(rendererRpc.invocations).toEqual([])
+})
+
+test('sandbox resources are disposed before the port closes even when cleanup fails', async () => {
+  const uid = 9008
+  const order: string[] = []
+  const state = {
+    ...createDefaultState(),
+    sandboxRpc: {
+      dispose: jest.fn(async () => {
+        order.push('close')
+      }),
+      invoke: jest.fn(async () => {
+        order.push('cleanup')
+        throw new Error('cleanup failed')
+      }),
+    } as any,
+    uid,
+  }
+  PreviewStates.set(uid, state, state)
+  using editorRpc = EditorWorker.registerMockRpc({ 'Listener.unregister': () => {} })
+  await expect(dispose(uid)).rejects.toThrow('cleanup failed')
+  expect(order).toEqual(['cleanup', 'close'])
+  expect(editorRpc.invocations).toEqual([['Listener.unregister', 1, 9112]])
+  expect(PreviewStates.getKeys()).not.toContain(uid)
 })
