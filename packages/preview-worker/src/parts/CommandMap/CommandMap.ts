@@ -18,6 +18,7 @@ import { handleMutation } from '../HandleMutation/HandleMutation.ts'
 import * as HandlePointerdown from '../HandlePointerdown/HandlePointerdown.ts'
 import * as HandlePointermove from '../HandlePointermove/HandlePointermove.ts'
 import * as HandlePointerup from '../HandlePointerup/HandlePointerup.ts'
+import * as HandleWheel from '../HandleWheel/HandleWheel.ts'
 import { initializeGeometryBuffer } from '../InitializeGeometryBuffer/InitializeGeometryBuffer.ts'
 import * as LoadContent from '../LoadContent/LoadContent.ts'
 import { clearOutput, logWarning } from '../PreviewSandboxOutput/PreviewSandboxOutput.ts'
@@ -56,6 +57,7 @@ const existingCommandMap = {
   'Preview.handlePointerdown': wrapCommand(HandlePointerdown.handlePointerdown),
   'Preview.handlePointermove': wrapCommand(HandlePointermove.handlePointermove),
   'Preview.handlePointerup': wrapCommand(HandlePointerup.handlePointerup),
+  'Preview.handleWheel': wrapCommand(HandleWheel.handleWheel),
   'Preview.initializeGeometryBuffer': wrapCommand(initializeGeometryBuffer),
   'Preview.loadContent': wrapCommand(LoadContent.loadContent),
   'Preview.render2': render2,

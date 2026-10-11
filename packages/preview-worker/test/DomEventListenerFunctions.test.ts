@@ -20,4 +20,5 @@ test('event listener indices resolve to their commands', () => {
   expect(getCommandId(DomEventListenerFunctions.HandlePointerdown)).toBe('handlePointerdown')
   expect(getCommandId(DomEventListenerFunctions.HandlePointermove)).toBe('handlePointermove')
   expect(getCommandId(DomEventListenerFunctions.HandlePointerup)).toBe('handlePointerup')
+  expect(getCommandId(DomEventListenerFunctions.HandleWheel)).toBe('handleWheel')
 })

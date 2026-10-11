@@ -47,7 +47,7 @@ export const renderEventListeners = (): readonly DomEventListener[] => {
     {
       capture: true,
       name: DomEventListenersFunctions.HandlePointerdown,
-      params: ['handlePointerdown', 'event.target.dataset.id', EventExpression.ClientX, EventExpression.ClientY],
+      params: ['handlePointerdown', 'event.target.dataset.id', EventExpression.ClientX, EventExpression.ClientY, 'event.button'],
       trackPointerEvents: [DomEventListenersFunctions.HandlePointermove, DomEventListenersFunctions.HandlePointerup],
     },
     {
@@ -59,6 +59,13 @@ export const renderEventListeners = (): readonly DomEventListener[] => {
       capture: true,
       name: DomEventListenersFunctions.HandlePointerup,
       params: ['handlePointerup', 'event.target.dataset.id', EventExpression.ClientX, EventExpression.ClientY],
+    },
+    {
+      capture: true,
+      name: DomEventListenersFunctions.HandleWheel,
+      params: ['handleWheel', 'event.target.dataset.id', 'event.deltaY', 'event.ctrlKey'],
+      passive: false,
+      preventDefault: true,
     },
   ]
 }
