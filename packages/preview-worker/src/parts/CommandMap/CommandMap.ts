@@ -75,8 +75,8 @@ const existingCommandMap = {
 
 // Keep new commands after the indexed preview event handlers.
 export const commandMap = {
-  'Preview.handleMessagePort': HandleMessagePort.handleMessagePort,
   ...existingCommandMap,
   'Preview.clearOutput': clearOutput,
+  'Preview.handleMessagePort': HandleMessagePort.handleMessagePort,
   'Preview.logWarning': logWarning,
 }
