@@ -11,6 +11,7 @@ import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
 import * as HandleInput from '../HandleInput/HandleInput.ts'
 import * as HandleKeydown from '../HandleKeydown/HandleKeydown.ts'
 import * as HandleKeyup from '../HandleKeyup/HandleKeyup.ts'
+import * as HandleMessagePort from '../HandleMessagePort/HandleMessagePort.ts'
 import * as HandleMousedown from '../HandleMousedown/HandleMousedown.ts'
 import * as HandleMousemove from '../HandleMousemove/HandleMousemove.ts'
 import * as HandleMouseup from '../HandleMouseup/HandleMouseup.ts'
@@ -22,7 +23,7 @@ import * as HandleWheel from '../HandleWheel/HandleWheel.ts'
 import { initializeGeometryBuffer } from '../InitializeGeometryBuffer/InitializeGeometryBuffer.ts'
 import * as LoadContent from '../LoadContent/LoadContent.ts'
 import { clearOutput, logWarning } from '../PreviewSandboxOutput/PreviewSandboxOutput.ts'
-import { getCommandIds, wrapCommand, wrapGetter } from '../PreviewStates/PreviewStates.ts'
+import { getCommandIds, wrapCommand, wrapGetter, wrapObserver } from '../PreviewStates/PreviewStates.ts'
 import { render2 } from '../Render2/Render2.ts'
 import { renderEventListeners } from '../RenderEventListeners/RenderEventListeners.ts'
 import { rerender } from '../Rerender/Rerender.ts'
@@ -53,7 +54,7 @@ const existingCommandMap = {
   'Preview.handleMousedown': wrapCommand(HandleMousedown.handleMousedown),
   'Preview.handleMousemove': wrapCommand(HandleMousemove.handleMousemove),
   'Preview.handleMouseup': wrapCommand(HandleMouseup.handleMouseup),
-  'Preview.handleMutation': wrapCommand(handleMutation),
+  'Preview.handleMutation': wrapObserver(handleMutation),
   'Preview.handlePointerdown': wrapCommand(HandlePointerdown.handlePointerdown),
   'Preview.handlePointermove': wrapCommand(HandlePointermove.handlePointermove),
   'Preview.handlePointerup': wrapCommand(HandlePointerup.handlePointerup),
@@ -67,14 +68,15 @@ const existingCommandMap = {
   'Preview.saveState': wrapGetter(saveState),
   'Preview.setUri': wrapCommand(setUri),
   'Preview.terminate': terminate,
-  'Preview.triggerRerender': wrapCommand(triggerRerender),
-  'Preview.waitForClick': wrapCommand(waitForClick),
-  'Preview.waitForMutation': wrapCommand(waitForMutation),
+  'Preview.triggerRerender': wrapObserver(triggerRerender),
+  'Preview.waitForClick': wrapObserver(waitForClick),
+  'Preview.waitForMutation': wrapObserver(waitForMutation),
 }
 
 // Keep new commands after the indexed preview event handlers.
 export const commandMap = {
   ...existingCommandMap,
   'Preview.clearOutput': clearOutput,
+  'Preview.handleMessagePort': HandleMessagePort.handleMessagePort,
   'Preview.logWarning': logWarning,
 }
