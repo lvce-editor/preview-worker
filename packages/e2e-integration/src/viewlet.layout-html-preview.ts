@@ -19,7 +19,9 @@ export const test: Test = async ({ Command, Editor, expect, FileSystem, Locator,
   await expect(preview).toBeVisible()
   await expect(preview.locator('#message')).toHaveText('hello world')
   await expect(preview.locator('#message')).toHaveCSS('color', 'rgb(255, 0, 0)')
-  await expect(Locator('.SimpleBrowser input[name="simple-browser-address"]')).toHaveValue(`html-preview:///${encodeURIComponent(first)}`)
+  await expect(Locator('.SimpleBrowser input[name="simple-browser-address"]')).toHaveValue(
+    `html-preview:///memfs/${encodeURIComponent(first.slice('memfs://'.length)).replaceAll('%2F', '/')}`,
+  )
   await expect(Locator('.Viewlet.Preview')).toHaveCount(1)
   await Command.execute('Layout.showPreview', second)
   await expect(Locator('.SimpleBrowserTab')).toHaveCount(2)
