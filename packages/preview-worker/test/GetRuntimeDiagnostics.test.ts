@@ -1,6 +1,7 @@
 import { expect, jest, test } from '@jest/globals'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import { getRuntimeDiagnostics } from '../src/parts/GetRuntimeDiagnostics/GetRuntimeDiagnostics.ts'
+import { getTitle } from '../src/parts/GetTitle/GetTitle.ts'
 
 test('gets runtime diagnostics from the preview sandbox', async () => {
   const diagnostics = {
@@ -38,4 +39,13 @@ test('returns empty diagnostics when the preview has no scripts', async () => {
     errorCount: 0,
   })
   expect(invoke).not.toHaveBeenCalled()
+})
+
+test('gets the parsed document title', () => {
+  const state = {
+    ...createDefaultState(),
+    title: 'my favorite file',
+  }
+
+  expect(getTitle(state)).toBe('my favorite file')
 })
