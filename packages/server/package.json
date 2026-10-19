@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@lvce-editor/server": "^0.121.23",
-    "@lvce-editor/preview-sandbox-worker": "^4.17.0"
+    "@lvce-editor/preview-sandbox-worker": "^4.17.0",
+    "@lvce-editor/server": "^0.123.26"
   }
 }

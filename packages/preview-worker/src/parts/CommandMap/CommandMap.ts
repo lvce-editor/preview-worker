@@ -36,7 +36,7 @@ import { triggerRerender } from '../TriggerRerender/TriggerRerender.ts'
 import { waitForClick } from '../WaitForClick/WaitForClick.ts'
 import { waitForMutation } from '../WaitForMutation/WaitForMutation.ts'
 
-const existingCommandMap = {
+export const viewletCommandMap = {
   handleEditorChanged: scheduleEditorChanged,
   'Preview.create': Preview.create,
   'Preview.createOffscreenCanvas': wrapGetter(getOffscreenCanvas),
@@ -75,9 +75,10 @@ const existingCommandMap = {
   'Preview.waitForMutation': wrapObserver(waitForMutation),
 }
 
-// Keep new commands after the indexed preview event handlers.
+// Transport commands must not be advertised as view commands: their renderer
+// handlers would be replaced by wrappers forwarding back to this worker.
 export const commandMap = {
-  ...existingCommandMap,
+  ...viewletCommandMap,
   'Preview.clearOutput': clearOutput,
   'Preview.handleMessagePort': HandleMessagePort.handleMessagePort,
   'Preview.logWarning': logWarning,
