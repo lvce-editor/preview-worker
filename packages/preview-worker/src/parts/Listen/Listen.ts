@@ -4,7 +4,7 @@ import * as CommandMap from '../CommandMap/CommandMap.ts'
 import { registerCommands } from '../PreviewStates/PreviewStates.ts'
 
 export const listen = async (): Promise<void> => {
-  registerCommands(CommandMap.commandMap)
+  registerCommands(CommandMap.viewletCommandMap)
   const rpc = await WebWorkerRpcClient.create({
     commandMap: CommandMap.commandMap,
   })
