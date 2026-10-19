@@ -37,6 +37,7 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
       parsedNodesChildNodeCount,
       scripts,
       styleSheets: parseResult.styleSheets,
+      title: parseResult.title,
     }
 
     if (scripts.length > 0) {
@@ -56,6 +57,7 @@ export const updateContent = async (state: PreviewState, uri: string): Promise<P
       parsedNodesChildNodeCount: 0,
       scripts: [],
       styleSheets: [],
+      title: '',
     }
   }
 }

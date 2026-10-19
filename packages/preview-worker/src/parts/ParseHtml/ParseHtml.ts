@@ -59,6 +59,9 @@ type ParserContext = {
   stylesheetRel: string
   stylesheets: string[]
   tagStack: string[]
+  title: string
+  titleContent: string
+  titleDepth: number
   useBuiltInDefaults: boolean
 }
 
@@ -213,6 +216,10 @@ const handleClosingAngleBracketToken = (context: ParserContext): void => {
 }
 
 const handleContentToken = (context: ParserContext, tokenText: string): void => {
+  if (context.titleDepth > 0) {
+    context.titleContent += ParseText.parseText(tokenText)
+    return
+  }
   if (context.captureCss) {
     context.cssContent += tokenText
     return
@@ -225,6 +232,28 @@ const handleContentToken = (context: ParserContext, tokenText: string): void => 
     context.current.childCount++
     context.dom.push(text(ParseText.parseText(tokenText)))
   }
+}
+
+const finishSkippedTag = (context: ParserContext, tagName: string): void => {
+  if (tagName === 'title') {
+    context.titleDepth--
+    if (!context.title && context.titleContent.trim()) {
+      context.title = context.titleContent.trim().replaceAll(/\s+/g, ' ')
+    }
+  }
+  context.skipDepth--
+}
+
+const startSkippedTag = (context: ParserContext, tagName: string): void => {
+  if (tagName === 'title') {
+    context.titleContent = ''
+  }
+  if (context.lastTagWasSelfClosing) return
+  if (tagName === 'title') {
+    context.titleDepth++
+  }
+  context.skipDepth++
+  context.tagStack.push(tagName)
 }
 
 const handleTagNameEndToken = (context: ParserContext): void => {
@@ -242,7 +271,7 @@ const handleTagNameEndToken = (context: ParserContext): void => {
     return
   }
   if (TAGS_TO_SKIP_COMPLETELY.has(tagNameToClose)) {
-    context.skipDepth--
+    finishSkippedTag(context, tagNameToClose)
     return
   }
   if (TAGS_TO_SKIP_TAG_ONLY.has(tagNameToClose)) {
@@ -295,10 +324,7 @@ const handleTagNameStartToken = (context: ParserContext, tokenText: string): voi
     return
   }
   if (TAGS_TO_SKIP_COMPLETELY.has(tagNameLower)) {
-    if (!context.lastTagWasSelfClosing) {
-      context.skipDepth++
-      context.tagStack.push(tokenText)
-    }
+    startSkippedTag(context, tagNameLower)
     return
   }
   if (TAGS_TO_SKIP_TAG_ONLY.has(tagNameLower)) {
@@ -383,6 +409,9 @@ const createParserContext = (allowedAttributes: readonly string[], defaultAllowe
     styleSheets: [],
     stylesheets: [],
     tagStack: [],
+    title: '',
+    titleContent: '',
+    titleDepth: 0,
     useBuiltInDefaults: allowedAttributes.length === 0,
   }
 }
@@ -415,6 +444,7 @@ export const parseHtml = (html: string, allowedAttributes: readonly string[] = [
     scriptTags: context.scriptTags,
     styleSheets: context.styleSheets,
     stylesheets: context.stylesheets,
+    title: context.title,
   }
 }
 

@@ -783,6 +783,17 @@ test('parseHtml should handle title with multiple words', () => {
   expect(result).toEqual(expectedArray)
 })
 
+test('parseHtml should return a decoded, normalized title without rendering it', () => {
+  const result = parseHtml('<title>  &lt;my &amp; favorite&gt;  </title><div>Content</div>')
+  expect(result.title).toBe('<my & favorite>')
+  expect(result.dom).toEqual([{ childCount: 1, type: VirtualDomElements.Div }, text('Content')])
+})
+
+test('parseHtml should return an empty title when it is missing or empty', () => {
+  expect(parseHtml('<div>Content</div>').title).toBe('')
+  expect(parseHtml('<title>  </title><div>Content</div>').title).toBe('')
+})
+
 test('parseHtml should handle multiple meta tags', () => {
   const expectedArray = [{ childCount: 1, type: VirtualDomElements.Div }, text('Content')]
   const result = parseHtmlDom('<meta charset="utf-8"><meta name="viewport" content="width=device-width"><div>Content</div>', [

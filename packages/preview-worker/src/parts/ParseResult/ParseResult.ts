@@ -9,4 +9,5 @@ export interface ParseResult {
   readonly scriptTags: readonly ScriptTag[]
   readonly styleSheets: readonly StyleSheet[]
   readonly stylesheets: readonly string[]
+  readonly title: string
 }
