@@ -20,6 +20,7 @@ export const createDefaultState = (): PreviewState => {
     sandboxRpc: null as any,
     scripts: [],
     styleSheets: [],
+    title: '',
     uid: 0,
     uri: '',
     warningCount: 0,

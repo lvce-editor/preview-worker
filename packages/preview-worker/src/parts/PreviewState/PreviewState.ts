@@ -21,6 +21,7 @@ export interface PreviewState {
   readonly sandboxRpc: Rpc
   readonly scripts: readonly string[]
   readonly styleSheets: readonly StyleSheet[]
+  readonly title: string
   readonly uid: number
   readonly uri: string
   readonly warningCount: number

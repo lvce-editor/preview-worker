@@ -4,6 +4,17 @@ import type { PreviewState } from '../src/parts/PreviewState/PreviewState.ts'
 import { createDefaultState } from '../src/parts/CreateDefaultState/CreateDefaultState.ts'
 import { updateContent } from '../src/parts/UpdateContent/UpdateContent.ts'
 
+test('updateContent keeps the document title in preview state', async () => {
+  using _rpc = RendererWorker.registerMockRpc({
+    'FileSystem.readFile': () => '<title>  My &amp; file </title><h1>Content</h1>',
+  })
+  const state = { ...createDefaultState(), loadJavaScript: false }
+  const nextState = await updateContent(state, '/tmp/title.html')
+  expect(nextState.title).toBe('My & file')
+  expect(nextState.parsedDom).toHaveLength(2)
+  expect(nextState.parsedDom[1]).toMatchObject({ text: 'Content' })
+})
+
 test('updateContent should load external script src and execute scripts in order', async () => {
   const fetchMock = jest.fn(async () => {
     return {

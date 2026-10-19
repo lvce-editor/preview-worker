@@ -161,6 +161,7 @@ const getUpdatedStateFromContent = async (
     parsedNodesChildNodeCount,
     scripts,
     styleSheets: parseResult.styleSheets,
+    title: parseResult.title,
   }
   if (scripts.length > 0) {
     return LoadScripts.loadScripts(updatedState, content, css, scripts)
