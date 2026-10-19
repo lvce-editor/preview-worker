@@ -5,6 +5,7 @@ import { dispose } from '../Dispose/Dispose.ts'
 import { getGeometryBuffer } from '../GetGeometryBuffer/GetGeometryBuffer.ts'
 import { executeCallback, getOffscreenCanvas } from '../GetOffscreenCanvas/GetOffscreenCanvas.ts'
 import { getRuntimeDiagnostics } from '../GetRuntimeDiagnostics/GetRuntimeDiagnostics.ts'
+import { getTitle } from '../GetTitle/GetTitle.ts'
 import * as HandleChange from '../HandleChange/HandleChange.ts'
 import * as HandleClick from '../HandleClick/HandleClick.ts'
 import { handleFileEdited } from '../HandleFileEdited/HandleFileEdited.ts'
@@ -45,6 +46,7 @@ const existingCommandMap = {
   'Preview.getCommandIds': getCommandIds,
   'Preview.getGeometryBuffer': wrapGetter(getGeometryBuffer),
   'Preview.getRuntimeDiagnostics': wrapGetter(getRuntimeDiagnostics),
+  'Preview.getTitle': wrapGetter(getTitle),
   'Preview.handleChange': wrapCommand(HandleChange.handleChange),
   'Preview.handleClick': wrapCommand(HandleClick.handleClick),
   'Preview.handleFileEdited': wrapCommand(handleFileEdited),
