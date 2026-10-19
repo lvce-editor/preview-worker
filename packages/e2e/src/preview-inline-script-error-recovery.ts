@@ -46,18 +46,19 @@ export const test: Test = async ({ Command, Editor, expect, FileSystem, Locator,
   }
   await Editor.setText(createHtml(script))
   const input = Locator('.Viewlet.Preview #color')
+  const body = Locator('.Viewlet.Preview .Body')
   await expect(input).toBeVisible()
   await input.type('green')
   await expect(status).toHaveText('green')
   await input.dispatchEvent('change', { bubbles: true } as unknown as string)
   await expect(status).toHaveText('changed')
-  await expect(Locator('.Viewlet.Preview .Body')).toHaveCSS('background-color', 'rgb(0, 128, 0)')
+  await expect(body).toHaveCSS('background-color', 'rgb(0, 128, 0)')
 
   // Close while an editor update may still be pending, then reopen saved content.
   await Editor.setText(createHtml('const input ='))
   await Command.execute('Layout.hidePreview')
   await Command.execute('Layout.showPreview', filePath)
-  await expect(Locator('.Viewlet.Preview #color')).toBeVisible()
-  await Locator('.Viewlet.Preview #color').type('blue')
+  await expect(input).toBeVisible()
+  await input.type('blue')
   await expect(status).toHaveText('blue')
 }
