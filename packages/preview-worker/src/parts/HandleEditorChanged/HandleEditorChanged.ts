@@ -207,7 +207,15 @@ export const handleEditorChanged = async (editorUid?: number): Promise<void> => 
   }
 
   const changedEditorUid = editorUid as number
-  const changedEditorUri = await EditorWorker.invoke('Editor.getUri', changedEditorUid)
+  let changedEditorUri: string
+  try {
+    changedEditorUri = await EditorWorker.invoke('Editor.getUri', changedEditorUid)
+  } catch (error) {
+    if (error instanceof Error && error.message === `editor ${changedEditorUid} not found`) {
+      return
+    }
+    throw error
+  }
   const previewKeys = PreviewStates.getKeys()
   let changedEditorContent: string | undefined
   const getChangedEditorContent = async (): Promise<string> => {

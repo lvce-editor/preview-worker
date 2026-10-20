@@ -13,6 +13,10 @@ test('diff2 should return empty array when old and new state are equal', () => {
   expect(result).toEqual([])
 })
 
+test('diff2 should return empty array when the preview was disposed', () => {
+  expect(Diff2.diff2(1004)).toEqual([])
+})
+
 test('diff2 should return RenderIncremental for non-css changes', () => {
   const uid = 1002
   const state = createDefaultState()

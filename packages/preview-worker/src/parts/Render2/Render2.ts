@@ -4,6 +4,9 @@ import * as States from '../PreviewStates/PreviewStates.ts'
 import { queueRender } from '../QueueRender/QueueRender.ts'
 
 export const render2 = (uid: number, diffResult: readonly number[]): readonly any[] | Promise<readonly any[]> => {
+  if (!States.get(uid)) {
+    return []
+  }
   const pendingDiffs = [...new Set([...diffResult, ...Diff2.diff2(uid)])]
   const { oldState, scheduledState } = States.get(uid)
   const commands = ApplyRender.applyRender(oldState, scheduledState, pendingDiffs)

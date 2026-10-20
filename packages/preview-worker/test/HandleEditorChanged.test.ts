@@ -18,6 +18,39 @@ test('handleEditorChanged should not rerender when no preview is open', async ()
   expect(rendererRpc.invocations).toEqual([])
 })
 
+test('handleEditorChanged should ignore an editor closed before its uri is read', async () => {
+  const uid = 9000
+  const state = { ...createDefaultState(), uid, uri: '/tmp/index.html' }
+  PreviewStates.set(uid, state, state)
+
+  using editorRpc = EditorWorker.registerMockRpc({
+    'Editor.getUri': () => {
+      throw new Error('editor 77 not found')
+    },
+  })
+  using rendererRpc = RendererWorker.registerMockRpc({
+    'Preview.rerender': () => {},
+  })
+
+  await expect(handleEditorChanged(77)).resolves.toBeUndefined()
+  expect(PreviewStates.get(uid).newState).toBe(state)
+  expect(editorRpc.invocations).toEqual([['Editor.getUri', 77]])
+  expect(rendererRpc.invocations).toEqual([])
+  PreviewStates.dispose(uid)
+})
+
+test('handleEditorChanged should preserve uri lookup failures for an open editor', async () => {
+  const failure = new Error('failed to read editor uri')
+  using editorRpc = EditorWorker.registerMockRpc({
+    'Editor.getUri': () => {
+      throw failure
+    },
+  })
+
+  await expect(handleEditorChanged(77)).rejects.toBe(failure)
+  expect(editorRpc.invocations).toEqual([['Editor.getUri', 77]])
+})
+
 test('handleEditorChanged should update preview css when linked stylesheet editor changes', async () => {
   const uid = 9001
   const previousState = {
