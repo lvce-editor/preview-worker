@@ -175,6 +175,40 @@ test('a failed background refresh does not prevent queued or future updates', as
   }
 })
 
+test('a closed editor notification does not warn or block later preview updates', async () => {
+  const uid = 9106
+  const state = { ...createDefaultState(), uid, uri: '/tmp/index.html' }
+  PreviewStates.set(uid, state, state)
+  using warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+  using editorRpc = EditorWorker.registerMockRpc({
+    'Editor.getText': () => '<p>updated</p>',
+    'Editor.getUri': (editorUid: number) => {
+      if (editorUid === 77) {
+        throw new Error('editor 77 not found')
+      }
+      return state.uri
+    },
+  })
+  using rendererRpc = RendererWorker.registerMockRpc({
+    'Preview.rerender': () => {},
+  })
+
+  commandMap.handleEditorChanged(77)
+  await setImmediate()
+
+  expect(warn).not.toHaveBeenCalled()
+  expect(PreviewStates.get(uid).newState).toBe(state)
+  expect(editorRpc.invocations).toEqual([['Editor.getUri', 77]])
+  expect(rendererRpc.invocations).toEqual([])
+
+  commandMap.handleEditorChanged(78)
+  await setImmediate()
+
+  expect(PreviewStates.get(uid).newState.content).toBe('<p>updated</p>')
+  expect(rendererRpc.invocations).toHaveLength(1)
+  PreviewStates.dispose(uid)
+})
+
 test('closing a preview during a refresh does not restore it or render queued edits', async () => {
   const uid = 9105
   const state = { ...createDefaultState(), uid, uri: '/tmp/index.html' }
